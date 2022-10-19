@@ -1,6 +1,8 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'org.jetbrains.kotlin.kapt'
+    id 'com.google.dagger.hilt.android'
 }
 
 android {
@@ -36,12 +38,15 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion libs.versions.compose.compiler.get()
     }
+    kapt {
+        correctErrorTypes true
+    }
     packagingOptions {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
-    namespace 'com.example.android.wearable.composestarter'
+    namespace 'dev.katiebarnett.stitchcounter'
 }
 
 dependencies {
@@ -56,13 +61,21 @@ dependencies {
     // androidx.wear.compose:compose-material please raise a bug to let us know:
     // https://issuetracker.google.com/issues/new?component=1077552&template=1598429&pli=1
     implementation libs.wear.compose.material
+    implementation libs.compose.material.iconscore
+    implementation libs.compose.material.iconsext
 
     // Foundation is additive, so you can use the mobile version in your Wear OS app.
     implementation libs.wear.compose.foundation
 
     // If you are using Compose Navigation, use the Wear OS version (NOT the
     // androidx.navigation:navigation-compose version), that is, uncomment the line below.
-//     implementation libs.wear.compose.navigation
+    implementation libs.wear.compose.navigation
+
+
+    implementation libs.wear.input
+
+    implementation libs.hilt.android
+    kapt libs.hilt.compiler
 
     // Testing
     testImplementation libs.junit

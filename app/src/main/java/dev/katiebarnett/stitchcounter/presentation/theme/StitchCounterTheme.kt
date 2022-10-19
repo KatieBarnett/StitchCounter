@@ -1,10 +1,10 @@
-package com.example.android.wearable.composestarter.presentation.theme
+package dev.katiebarnett.stitchcounter.presentation.theme
 
 import androidx.compose.runtime.Composable
 import androidx.wear.compose.material.MaterialTheme
 
 @Composable
-fun WearAppTheme(
+fun StitchCounterTheme(
     content: @Composable () -> Unit
 ) {
     MaterialTheme(
