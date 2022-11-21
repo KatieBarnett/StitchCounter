@@ -2,30 +2,18 @@ package dev.katiebarnett.stitchcounter
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.katiebarnett.stitchcounter.models.Counter
-import dev.katiebarnett.stitchcounter.models.Project
+import dev.katiebarnett.stitchcounter.data.models.Counter
+import dev.katiebarnett.stitchcounter.storage.ProjectsRepository
 import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
+    private val savedProjectsRepository: ProjectsRepository
 ) : ViewModel() {
 
-    val projects = listOf(
-        Project(
-            id = 0,
-            name = "shawl",
-            counters = listOf(
-                Counter(id = 1, name = "pattern", currentCount = 7),
-                Counter(id = 2, name = "plain", currentCount = 8)
-            )
-        ),
-        Project(id = 1, name = "blanket"),
-        Project(id = 2, name = "toy")
-    )
+    val projects = savedProjectsRepository.getProjects()
 
-    val nextProjectId = 3
-
-    fun getProject(id: Int) = projects.firstOrNull() { it.id == id }
+    fun getProject(id: Int) = savedProjectsRepository.getProject(id)
 
     fun updateCounter(counter: Counter) {
 

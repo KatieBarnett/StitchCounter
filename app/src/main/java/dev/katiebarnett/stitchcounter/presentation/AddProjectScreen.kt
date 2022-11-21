@@ -7,7 +7,6 @@ import android.view.inputmethod.EditorInfo
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -32,18 +31,15 @@ import androidx.wear.compose.material.Icon
 import androidx.wear.compose.material.Text
 import androidx.wear.input.RemoteInputIntentHelper
 import androidx.wear.input.wearableExtender
-import dev.katiebarnett.stitchcounter.MainViewModel
 import dev.katiebarnett.stitchcounter.R
 import dev.katiebarnett.stitchcounter.presentation.theme.Dimen
 
 @Composable
 fun AddProjectScreen(
-    viewModel: MainViewModel,
     onComplete: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     AddProjectContent(
-        nextProjectId = viewModel.nextProjectId,
         onSave = {
             onComplete.invoke()
         },
@@ -55,12 +51,11 @@ fun AddProjectScreen(
 
 @Composable
 fun AddProjectContent(
-    nextProjectId: Int,
     onSave: (projectName: String) -> Unit,
     onCancel: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val projectDefaultName = stringResource(id = R.string.project_name_default, nextProjectId)
+    val projectDefaultName = stringResource(id = R.string.project_name_default)
     var projectName by remember { mutableStateOf(projectDefaultName) }
 
     val inputTextKey = "input_text"
@@ -129,5 +124,5 @@ fun AddProjectContent(
 @Preview(device = Devices.WEAR_OS_SMALL_ROUND, showSystemUi = true)
 @Composable
 fun AddProjectContentPreview() {
-    AddProjectContent(3, {}, {})
+    AddProjectContent({}, {})
 }

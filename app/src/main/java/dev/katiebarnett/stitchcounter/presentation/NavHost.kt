@@ -33,7 +33,7 @@ fun NavHost(
             )
         }
         composable("add_project") {
-            AddProjectScreen(viewModel = viewModel, onComplete = {
+            AddProjectScreen(onComplete = {
                 navController.navigateUp()
             })
         }

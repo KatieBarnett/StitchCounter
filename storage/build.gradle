@@ -1,0 +1,71 @@
+plugins {
+    id 'com.android.library'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+    id 'dagger.hilt.android.plugin'
+    id 'com.google.protobuf'
+}
+
+android {
+    compileSdk rootProject.ext.compileSdk
+
+    defaultConfig {
+        namespace 'dev.katiebarnett.stitchcounter.storage'
+        minSdk rootProject.ext.minSdk
+        targetSdk rootProject.ext.targetSdk
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {        
+        debug {
+
+        }
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+    kapt {
+        correctErrorTypes true
+    }
+}
+
+dependencies {
+    api project(':data')
+
+    implementation libs.datastore
+    implementation libs.protobuf
+
+    implementation libs.hilt.android
+    kapt libs.hilt.compiler
+}
+
+protobuf {
+    // Configures the Protobuf compilation and the protoc executable
+    protoc {
+        // Downloads from the repositories
+        artifact = "com.google.protobuf:protoc:3.21.9"
+    }
+
+    // Generates the java Protobuf-lite code for the Protobufs in this project
+    generateProtoTasks {
+        all().each { task ->
+            task.builtins {
+                // Configures the task output type
+                java {
+                    // Java Lite has smaller code size and is recommended for Android
+                    option 'lite'
+                }
+            }
+        }
+    }
+}

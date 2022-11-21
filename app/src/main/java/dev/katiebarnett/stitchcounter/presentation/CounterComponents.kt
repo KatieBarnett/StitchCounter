@@ -18,7 +18,7 @@ import androidx.wear.compose.material.ButtonDefaults
 import androidx.wear.compose.material.Icon
 import androidx.wear.compose.material.Text
 import dev.katiebarnett.stitchcounter.R
-import dev.katiebarnett.stitchcounter.models.Counter
+import dev.katiebarnett.stitchcounter.data.models.Counter
 import dev.katiebarnett.stitchcounter.presentation.theme.Dimen
 
 @Composable

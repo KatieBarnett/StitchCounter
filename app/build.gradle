@@ -6,12 +6,12 @@ plugins {
 }
 
 android {
-    compileSdk 33
+    compileSdk rootProject.ext.compileSdk
 
     defaultConfig {
         applicationId "dev.katiebarnett.stitchcounter"
-        minSdk 26
-        targetSdk 30
+        minSdk rootProject.ext.minSdk
+        targetSdk rootProject.ext.targetSdk
         versionCode 1
         versionName "1.0"
     }
@@ -50,6 +50,8 @@ android {
 }
 
 dependencies {
+    implementation project(':data')
+    implementation project(':storage')
     // General compose dependencies
     implementation libs.androidx.activity.compose
     implementation libs.compose.ui.tooling.preview
@@ -70,7 +72,7 @@ dependencies {
     // If you are using Compose Navigation, use the Wear OS version (NOT the
     // androidx.navigation:navigation-compose version), that is, uncomment the line below.
     implementation libs.wear.compose.navigation
-
+    implementation libs.hilt.navigation.compose
 
     implementation libs.wear.input
 

@@ -1,60 +1,29 @@
 package dev.katiebarnett.stitchcounter.presentation
 
-import android.app.RemoteInput
-import android.content.Intent
-import android.os.Bundle
-import android.view.inputmethod.EditorInfo
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.selectableGroup
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.wear.compose.material.AutoCenteringParams
-import androidx.wear.compose.material.Button
-import androidx.wear.compose.material.ButtonDefaults
-import androidx.wear.compose.material.Chip
-import androidx.wear.compose.material.Icon
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.ScalingLazyColumn
 import androidx.wear.compose.material.ScalingLazyListState
-import androidx.wear.compose.material.Text
 import androidx.wear.compose.material.items
 import androidx.wear.compose.material.rememberScalingLazyListState
-import androidx.wear.input.RemoteInputIntentHelper
-import androidx.wear.input.wearableExtender
-import dev.katiebarnett.stitchcounter.R
 import dev.katiebarnett.stitchcounter.MainViewModel
-import dev.katiebarnett.stitchcounter.models.Counter
-import dev.katiebarnett.stitchcounter.models.Project
-import dev.katiebarnett.stitchcounter.presentation.theme.Dimen
+import dev.katiebarnett.stitchcounter.data.models.Counter
+import dev.katiebarnett.stitchcounter.data.models.Project
 
 @Composable
 fun ProjectScreen(id: Int, viewModel: MainViewModel, listState: ScalingLazyListState, modifier: Modifier = Modifier) {
-    val project = viewModel.getProject(id)
-    if (project != null) {
+    val project = viewModel.getProject(id).collectAsState(initial = listOf())
+    if (project.value.isNotEmpty()) {
         ProjectContent(
-            project = project,
+            project = project.value.first(),
             listState = listState,
             onCounterUpdate = { viewModel.updateCounter(it)},
             modifier = modifier

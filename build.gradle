@@ -8,6 +8,13 @@ plugins {
     alias(libs.plugins.com.diffplug.spotless) apply(false)
     alias(libs.plugins.com.android.application) apply(false)
     alias(libs.plugins.com.google.dagger.hilt.android) apply(false)
+    alias(libs.plugins.com.google.protobuf) apply(false)
+}
+
+ext {
+    compileSdk = 33
+    targetSdk = 33
+    minSdk = 26
 }
 
 subprojects {

@@ -7,8 +7,9 @@ import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.wear.compose.material.items
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -21,9 +22,10 @@ import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.ScalingLazyColumn
 import androidx.wear.compose.material.ScalingLazyListState
 import androidx.wear.compose.material.Text
-import dev.katiebarnett.stitchcounter.R
+import androidx.wear.compose.material.items
 import dev.katiebarnett.stitchcounter.MainViewModel
-import dev.katiebarnett.stitchcounter.models.Project
+import dev.katiebarnett.stitchcounter.R
+import dev.katiebarnett.stitchcounter.data.models.Project
 
 @Composable
 fun ProjectListScreen(
@@ -33,7 +35,8 @@ fun ProjectListScreen(
     onAddProjectClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    ProjectList(viewModel.projects, listState,  onProjectClick, onAddProjectClick, modifier)
+    val projects: List<Project> by viewModel.projects.collectAsState(initial = emptyList())
+    ProjectList(projects, listState,  onProjectClick, onAddProjectClick, modifier)
 }
 
 @Composable

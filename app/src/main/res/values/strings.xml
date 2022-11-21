@@ -8,5 +8,5 @@
     <string name="save_new_project">Save</string>
     <string name="cancel_new_project">Cancel</string>
 
-    <string name="project_name_default">Project %d</string>
+    <string name="project_name_default">New Project</string>
 </resources>
