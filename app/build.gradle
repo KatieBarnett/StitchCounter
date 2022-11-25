@@ -53,8 +53,10 @@ dependencies {
     implementation project(':data')
     implementation project(':storage')
     // General compose dependencies
+
+    implementation platform(libs.androidx.compose.bom)
     implementation libs.androidx.activity.compose
-    implementation libs.compose.ui.tooling.preview
+    implementation libs.androidx.compose.ui.tooling.preview
 
     // Compose for Wear OS Dependencies
     // NOTE: DO NOT INCLUDE a dependency on androidx.compose.material:material.
@@ -76,13 +78,12 @@ dependencies {
 
     implementation libs.wear.input
 
+
+    implementation libs.androidx.compose.runtime.livedata
+    
     implementation libs.hilt.android
     kapt libs.hilt.compiler
 
     // Testing
-    testImplementation libs.junit
-    androidTestImplementation libs.test.ext.junit
-    androidTestImplementation libs.test.espresso.core
-    androidTestImplementation libs.compose.ui.test.junit4
-    debugImplementation libs.compose.ui.tooling
+    debugImplementation libs.androidx.compose.ui.tooling
 }

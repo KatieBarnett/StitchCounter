@@ -1,8 +1,8 @@
 package dev.katiebarnett.stitchcounter.storage
 
 import androidx.datastore.core.DataStore
+import dev.katiebarnett.stitchcounter.data.models.Project
 import dev.katiebarnett.stitchcounter.storage.models.Projects
-import dev.katiebarnett.stitchcounter.storage.models.SavedProject
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -13,19 +13,23 @@ class ProjectsDataSource @Inject constructor(
     companion object {
         internal const val PROTO_FILE_NAME = "projects.pb"
     }
-
+    
     val projectsFlow = projectsStore.data
-        .map { it ->
-            it.projectList.sortedByDescending { it.lastModified }
-        }
+        .map { it.projectList.sortedByDescending { it.lastModified } }
 
-    suspend fun saveProject(project: SavedProject) {
-        projectsStore.updateData { currentProjects ->
-            val currentIndex = currentProjects.projectList.indexOfFirst { it.id == project.id }
-            if (currentIndex != -1) {
-                currentProjects.toBuilder().setProject(currentIndex, project).build()
+    suspend fun saveProject(project: Project) {
+        projectsStore.updateData { data ->
+            val nextId = (data.projectList.maxByOrNull { it.id }?.id ?: -1) + 1
+            val updatedProject = if (project.id == null) {
+                project.copy(id = nextId)
             } else {
-                currentProjects.toBuilder().addProject(project).build()
+                project
+            }
+            val currentIndex = data.projectList.indexOfFirst { it.id == updatedProject.id }
+            if (currentIndex != -1) {
+                data.toBuilder().setProject(currentIndex, updatedProject.toSavedProject()).build()
+            } else {
+                data.toBuilder().addProject(updatedProject.toSavedProject()).build()
             }
         }
     }

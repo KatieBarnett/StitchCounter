@@ -19,16 +19,17 @@ fun SavedCounter.fromSavedCounter(): Counter {
     return Counter(
         id = id,
         name = name,
-        currentCount = currentCount
+        currentCount = currentCount,
+        maxCount = maxCount
     )
 }
 
 fun Project.toSavedProject(): SavedProject {
     val projectBuilder = SavedProject.newBuilder()
-    projectBuilder.id = id
+    projectBuilder.id = id ?: -1
     projectBuilder.name = name
     projectBuilder.elapsedTime = elapsedTime.toDouble()
-    projectBuilder.countersList.addAll(counters.map { it.toSavedCounter() })
+    projectBuilder.addAllCounters(counters.map { it.toSavedCounter() })
     projectBuilder.lastModified = lastModified.toDouble()
     return projectBuilder.build()
 }
@@ -38,6 +39,7 @@ fun Counter.toSavedCounter(): SavedCounter {
     counterBuilder.id = id
     counterBuilder.name = name
     counterBuilder.currentCount = currentCount
+    counterBuilder.maxCount = maxCount
     return counterBuilder.build()
 }
 

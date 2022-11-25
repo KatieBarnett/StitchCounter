@@ -2,11 +2,13 @@ package dev.katiebarnett.stitchcounter.presentation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import androidx.wear.compose.material.ScalingLazyListState
 import androidx.wear.compose.navigation.SwipeDismissableNavHost
 import androidx.wear.compose.navigation.composable
 import dev.katiebarnett.stitchcounter.MainViewModel
+import dev.katiebarnett.stitchcounter.R
 
 @Composable
 fun NavHost(
@@ -21,26 +23,131 @@ fun NavHost(
         modifier = modifier
     ) {
         composable("project_list") {
+            viewModel.updatePageContext(stringResource(id = R.string.app_name))
             ProjectListScreen(
                 viewModel = viewModel,
                 listState = listState,
-                onProjectClick = { id ->
-                    navController.navigate("project/$id")
+                onProjectClick = { projectId ->
+                    navController.navigate("project/$projectId")
                 },
                 onAddProjectClick = {
-                    navController.navigate("add_project")
+                    navController.navigate("edit_project")
                 }
             )
         }
-        composable("add_project") {
-            AddProjectScreen(onComplete = {
-                navController.navigateUp()
-            })
+        composable("edit_project") {
+            viewModel.updatePageContext(stringResource(id = R.string.add_project))
+            EditProjectScreen(
+                onSave = { projectName ->
+                    viewModel.saveProject(projectName)
+                    navController.navigateUp()
+                },
+                onDelete = {
+                    navController.navigateUp()
+                },
+                onCancel = {
+                    navController.navigateUp()
+                }
+            )
+        }
+        composable("edit_project/{id}/{name}") {
+            val projectId = it.arguments?.getString("id")?.toIntOrNull()
+            val projectName = it.arguments?.getString("name")
+            if (projectId != null && projectName != null) {
+                viewModel.updatePageContext(stringResource(id = R.string.edit_project))
+                EditProjectScreen(
+                    onSave = { project ->
+                        viewModel.saveProject(projectId, projectName)
+                        navController.navigateUp()
+                    },
+                    onDelete = {
+                        viewModel.deleteProject(projectId)
+                        navController.navigateUp()
+                    },
+                    onCancel = {
+                        navController.navigateUp()
+                    }
+                )
+            }
         }
         composable("project/{id}") {
-            it.arguments?.getInt("id")?.let {
-                ProjectScreen(viewModel = viewModel, id = it, listState = listState)
+            it.arguments?.getString("id")?.toIntOrNull()?.let { projectId ->
+                viewModel.updatePageContext(stringResource(id = R.string.project_title))
+                ProjectScreen(
+                    viewModel = viewModel,
+                    id = projectId,
+                    listState = listState,
+                    onCounterClick = { counter ->
+                        navController.navigate("counter/$projectId/${counter.id}")
+                    },
+                    onCounterAdd = { newCounterId ->
+                        navController.navigate("edit_counter/$projectId/$newCounterId")
+                    },
+                    onProjectEdit = { id, name ->
+                        navController.navigate("edit_project/$id/$name")
+                    }
+                )
             }
+        }
+        composable("counter/{project_id}/{counter_id}") {
+            val projectId = it.arguments?.getString("project_id")?.toIntOrNull()
+            val counterId = it.arguments?.getString("counter_id")?.toIntOrNull()
+            if (projectId != null && counterId != null) {
+                viewModel.updatePageContext(stringResource(id = R.string.counter_title))
+                CounterScreen(
+                    viewModel = viewModel,
+                    projectId = projectId,
+                    counterId = counterId,
+                    onCounterEdit = {
+                        navController.navigate("edit_counter/$projectId/$counterId")
+                    }
+                )
+            }
+        }
+        composable("edit_counter/{project_id}/{counter_id}") {
+            val projectId = it.arguments?.getString("project_id")?.toIntOrNull()
+            val counterId = it.arguments?.getString("counter_id")?.toIntOrNull()
+            if (projectId != null && counterId != null) {
+                viewModel.updatePageContext(stringResource(id = R.string.add_counter))
+                EditCounterScreen(
+                    counterId = counterId,
+                    initialName = null,
+                    onSave = { counterName, counterMax ->
+                        viewModel.saveCounter(projectId, counterId, counterName, counterMax)
+                        navController.navigateUp()
+                    },
+                    onDelete = {
+                        viewModel.deleteProject(projectId)
+                        navController.navigateUp()
+                    },
+                    onCancel = {
+                        navController.navigateUp()
+                    }
+                )
+            }
+        }
+        composable("edit_counter/{project_id}/{counter_id}/{counter_name}") {
+            val projectId = it.arguments?.getString("project_id")?.toIntOrNull()
+            val counterId = it.arguments?.getString("counter_id")?.toIntOrNull()
+            val counterName = it.arguments?.getString("counter_name")
+            if (projectId != null && counterId != null) {
+                viewModel.updatePageContext(stringResource(id = R.string.edit_counter))
+                EditCounterScreen(
+                    counterId = counterId,
+                    initialName = counterName,
+                    onSave = { counterName, counterMax ->
+                        viewModel.saveCounter(projectId, counterId, counterName, counterMax)
+                        navController.navigateUp()
+                    },
+                    onDelete = {
+                        viewModel.deleteProject(projectId)
+                        navController.navigateUp()
+                    },
+                    onCancel = {
+                        navController.navigateUp()
+                    }
+                )
+            } 
         }
     }
 }

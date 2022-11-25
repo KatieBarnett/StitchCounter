@@ -3,19 +3,21 @@ package dev.katiebarnett.stitchcounter.presentation.theme
 import androidx.compose.ui.graphics.Color
 import androidx.wear.compose.material.Colors
 
-val Purple200 = Color(0xFFBB86FC)
-val Purple500 = Color(0xFF6200EE)
-val Purple700 = Color(0xFF3700B3)
-val Teal200 = Color(0xFF03DAC5)
-val Red400 = Color(0xFFCF6679)
+val Charcoal = Color(0xff404e5c)
+val BlackCoral = Color(0xff4f6272)
+val LavenderBlue = Color(0xFFb7c3f3)
+val ChinaPink = Color(0xFFdd7596)
+val RubineRed = Color(0xFFcf1259)
 
-internal val wearColorPalette: Colors = Colors(
-    primary = Purple200,
-    primaryVariant = Purple700,
-    secondary = Teal200,
-    secondaryVariant = Teal200,
-    error = Red400,
-    onPrimary = Color.Black,
-    onSecondary = Color.Black,
-    onError = Color.Black
+
+internal val stitchCounterColorPalette: Colors = Colors(
+    primary = RubineRed,
+    primaryVariant = ChinaPink,
+    secondary = BlackCoral,
+    secondaryVariant = Charcoal,
+    error = RubineRed,
+    onPrimary = Color.White,
+    onSecondary = LavenderBlue,
+    onError = Color.White,
+    background = Color.Black
 )

@@ -1,7 +1,10 @@
 package dev.katiebarnett.stitchcounter.storage
 
+import dev.katiebarnett.stitchcounter.data.models.Counter
 import dev.katiebarnett.stitchcounter.data.models.Project
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -15,18 +18,31 @@ class ProjectsRepository @Inject constructor(
         return projectsDataSource.projectsFlow.map { it.map { it.fromSavedProject() } }
     }
 
-    fun getProject(id: Int): Flow<List<Project>> {
-        return getProjects().map { it.filter { it.id == id } }
+    fun getProject(id: Int): Flow<Project?> {
+        return getProjects().map { it.firstOrNull { it.id == id } }
     }
 
     suspend fun saveProject(project: Project) {
-        projectsDataSource.saveProject(project.copy(lastModified = System.currentTimeMillis()).toSavedProject())
+        projectsDataSource.saveProject(project.copy(lastModified = System.currentTimeMillis()))
     }
 
-    suspend fun deleteProjectGame(id: Int) {
-        projectsDataSource.deleteProject(id)
+    suspend fun saveCounter(projectId: Int, counter: Counter) {
+        getProject(projectId).filterNotNull().collectLatest { project ->
+            val counters = project.counters.toMutableList()
+            val index = counters.indexOfFirst { it.id == counter.id }
+            if (index != -1) {
+                counters[index] = counters[index].copy(name = counter.name, maxCount = counter.maxCount)
+            } else {
+                counters.add(counter)
+            }
+            projectsDataSource.saveProject(project.copy(counters = counters, lastModified = System.currentTimeMillis()))
+        }
     }
 
+    suspend fun deleteProject(projectId: Int) {
+        projectsDataSource.deleteProject(projectId)
+    }
+    
     suspend fun deleteAllProjects() {
         projectsDataSource.clearProjects()
     }

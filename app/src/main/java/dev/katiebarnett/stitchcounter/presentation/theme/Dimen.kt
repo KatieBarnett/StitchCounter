@@ -4,5 +4,10 @@ import androidx.compose.ui.unit.dp
 
 object Dimen {
 
-    val spacing = 8.dp
+    val spacingHalf = 2.dp
+    val spacing = 4.dp
+    
+    val progressIndicatorWidth = 5.dp
+    val progressIndicatorPadding = 1.dp
+    val withinProgressIndicatorPadding = 7.dp
 }

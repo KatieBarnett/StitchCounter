@@ -19,4 +19,5 @@ message SavedCounter {
   int32 id = 1;
   string name = 2;
   int32 currentCount = 3;
+  int32 maxCount = 4;
 }
