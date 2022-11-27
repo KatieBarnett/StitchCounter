@@ -17,7 +17,6 @@ import androidx.compose.material.icons.filled.Remove
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
@@ -38,8 +37,8 @@ import dev.katiebarnett.stitchcounter.R.string
 import dev.katiebarnett.stitchcounter.data.models.Counter
 import dev.katiebarnett.stitchcounter.getCounterProgress
 import dev.katiebarnett.stitchcounter.presentation.theme.Charcoal
-import dev.katiebarnett.stitchcounter.presentation.theme.ChinaPink
 import dev.katiebarnett.stitchcounter.presentation.theme.Dimen
+import dev.katiebarnett.stitchcounter.presentation.theme.Pink
 import dev.katiebarnett.stitchcounter.presentation.theme.StitchCounterTheme
 
 @Composable
@@ -47,7 +46,7 @@ fun CounterScreen(
     projectId: Int,
     counterId: Int,
     viewModel: MainViewModel,
-    onCounterEdit: () -> Unit,
+    onCounterEdit: (counterName: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val projectState = viewModel.getProject(projectId).collectAsState(initial = null)
@@ -62,7 +61,7 @@ fun CounterScreen(
                 onCounterReset = {
                     viewModel.resetCounter(project, counter)
                 },
-                onCounterEdit = onCounterEdit,
+                onCounterEdit = { onCounterEdit.invoke(counter.name) },
                 modifier = modifier
             )
         } // TODO - else display error
@@ -83,7 +82,7 @@ fun CounterContent(counter: Counter,
                     .fillMaxSize()
                     .padding(all = Dimen.progressIndicatorPadding),
                 progress = progress,
-                indicatorColor = ChinaPink,
+                indicatorColor = Pink,
                 trackColor = Charcoal,
                 strokeWidth = Dimen.progressIndicatorWidth,
                 startAngle = 315f,
@@ -97,13 +96,16 @@ fun CounterContent(counter: Counter,
                 .padding(Dimen.withinProgressIndicatorPadding)) {
             Row(horizontalArrangement = Arrangement.spacedBy(Dimen.spacing),
                 verticalAlignment = Alignment.Bottom,
-                modifier = Modifier.fillMaxWidth(0.75f).weight(1f)) {
+                modifier = Modifier
+                    .fillMaxWidth(0.75f)
+                    .weight(1f)) {
                 Text(
                     text = pluralStringResource(plurals.counter_label_fraction, counter.maxCount, counter.name, counter.currentCount, counter.maxCount),
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.body2,
                     modifier = Modifier
-                        .fillMaxWidth().padding(vertical = Dimen.spacing)
+                        .fillMaxWidth()
+                        .padding(vertical = Dimen.spacing)
                 )
             }
             Row(horizontalArrangement = Arrangement.spacedBy(Dimen.spacing),
@@ -141,7 +143,9 @@ fun CounterContent(counter: Counter,
             }
             Row(horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.Top,
-                modifier = Modifier.fillMaxWidth(0.75f).weight(1f)) {
+                modifier = Modifier
+                    .fillMaxWidth(0.75f)
+                    .weight(1f)) {
                 CompactButton(
                     onClick = { onCounterEdit.invoke() },
                     colors = ButtonDefaults.secondaryButtonColors()
@@ -169,6 +173,30 @@ fun CounterContent(counter: Counter,
 @Preview(device = Devices.WEAR_OS_SMALL_ROUND, showSystemUi = true)
 @Composable
 fun CounterContentPreview() {
+    StitchCounterTheme {
+        CounterContent(Counter(id = 3, name = "pattern", currentCount = 400, maxCount = 500), {}, {}, {})
+    }
+}
+
+@Preview(device = Devices.WEAR_OS_LARGE_ROUND, showSystemUi = true)
+@Composable
+fun CounterContentPreviewLarge() {
+    StitchCounterTheme {
+        CounterContent(Counter(id = 3, name = "pattern", currentCount = 400, maxCount = 500), {}, {}, {})
+    }
+}
+
+@Preview(device = Devices.WEAR_OS_RECT, showSystemUi = true)
+@Composable
+fun CounterContentPreviewRect() {
+    StitchCounterTheme {
+        CounterContent(Counter(id = 3, name = "pattern", currentCount = 400, maxCount = 500), {}, {}, {})
+    }
+}
+
+@Preview(device = Devices.WEAR_OS_SQUARE, showSystemUi = true)
+@Composable
+fun CounterContentPreviewSquare() {
     StitchCounterTheme {
         CounterContent(Counter(id = 3, name = "pattern", currentCount = 400, maxCount = 500), {}, {}, {})
     }

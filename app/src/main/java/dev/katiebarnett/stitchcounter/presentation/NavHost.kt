@@ -45,7 +45,7 @@ fun NavHost(
                 onDelete = {
                     navController.navigateUp()
                 },
-                onCancel = {
+                onClose = {
                     navController.navigateUp()
                 }
             )
@@ -56,6 +56,7 @@ fun NavHost(
             if (projectId != null && projectName != null) {
                 viewModel.updatePageContext(stringResource(id = R.string.edit_project))
                 EditProjectScreen(
+                    initialName = projectName, 
                     onSave = { project ->
                         viewModel.saveProject(projectId, projectName)
                         navController.navigateUp()
@@ -64,7 +65,7 @@ fun NavHost(
                         viewModel.deleteProject(projectId)
                         navController.navigateUp()
                     },
-                    onCancel = {
+                    onClose = {
                         navController.navigateUp()
                     }
                 )
@@ -98,8 +99,8 @@ fun NavHost(
                     viewModel = viewModel,
                     projectId = projectId,
                     counterId = counterId,
-                    onCounterEdit = {
-                        navController.navigate("edit_counter/$projectId/$counterId")
+                    onCounterEdit = { counterName ->
+                        navController.navigate("edit_counter/$projectId/$counterId/$counterName")
                     }
                 )
             }
@@ -120,7 +121,7 @@ fun NavHost(
                         viewModel.deleteProject(projectId)
                         navController.navigateUp()
                     },
-                    onCancel = {
+                    onClose = {
                         navController.navigateUp()
                     }
                 )
@@ -143,7 +144,7 @@ fun NavHost(
                         viewModel.deleteProject(projectId)
                         navController.navigateUp()
                     },
-                    onCancel = {
+                    onClose = {
                         navController.navigateUp()
                     }
                 )

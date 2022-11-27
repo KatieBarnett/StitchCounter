@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.Icons.Filled
 import androidx.compose.material.icons.filled.Check
@@ -29,14 +30,19 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.wear.compose.material.Button
 import androidx.wear.compose.material.ButtonDefaults
 import androidx.wear.compose.material.CompactButton
 import androidx.wear.compose.material.Icon
+import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
+import androidx.wear.compose.material.dialog.Alert
+import androidx.wear.compose.material.dialog.Confirmation
 import androidx.wear.input.RemoteInputIntentHelper
 import androidx.wear.input.wearableExtender
 import dev.katiebarnett.stitchcounter.R
 import dev.katiebarnett.stitchcounter.R.string
+import dev.katiebarnett.stitchcounter.presentation.theme.Dimen
 import dev.katiebarnett.stitchcounter.presentation.theme.StitchCounterTheme
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -46,13 +52,15 @@ fun EditCounterScreen(
     initialName: String?,
     onSave: (counterName: String, counterMax: Int) -> Unit,
     onDelete: () -> Unit,
-    onCancel: () -> Unit,
+    onClose: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val counterDefaultName = initialName ?: stringResource(R.string.counter_name_default, counterId)
     var counterName by remember { mutableStateOf(counterDefaultName) }
     var counterMax by remember { mutableStateOf(0) }
     var showEditCounterMaxDialog by remember { mutableStateOf(false) }
+    var showDeleteCounterDialog by remember { mutableStateOf(false) }
+    var showDeleteCounterConfirmation by remember { mutableStateOf(false) }
 
     val inputTextKey = "input_text"
     val intent: Intent = RemoteInputIntentHelper.createActionRemoteInputIntent()
@@ -110,7 +118,7 @@ fun EditCounterScreen(
         Row(horizontalArrangement = Arrangement.SpaceBetween, 
             modifier = Modifier.fillMaxWidth(0.75f)) {
             CompactButton(
-                onClick = { onCancel.invoke() },
+                onClick = { onClose.invoke() },
                 colors = ButtonDefaults.secondaryButtonColors()
             ) {
                 Icon(
@@ -118,14 +126,16 @@ fun EditCounterScreen(
                     contentDescription = stringResource(id = string.cancel_edit_project)
                 )
             }
-            CompactButton(
-                onClick = { onDelete.invoke() },
-                colors = ButtonDefaults.secondaryButtonColors()
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Delete,
-                    contentDescription = stringResource(id = R.string.delete_counter)
-                )
+            if (initialName != null) {
+                CompactButton(
+                    onClick = { showDeleteCounterDialog = true },
+                    colors = ButtonDefaults.secondaryButtonColors()
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Delete,
+                        contentDescription = stringResource(id = R.string.delete_counter)
+                    )
+                }
             }
             CompactButton(
                 onClick = { 
@@ -147,6 +157,76 @@ fun EditCounterScreen(
         onDone = { 
             counterMax = it
             showEditCounterMaxDialog = false
+        }
+    )
+    if (showDeleteCounterDialog) {
+        DeleteCounterAlert(
+            counterName = counterName,
+            onConfirm = {
+                showDeleteCounterDialog = false
+                showDeleteCounterConfirmation = true
+            },
+            onCancel = {
+                showDeleteCounterDialog = false
+            }
+        )
+    }
+    if (showDeleteCounterConfirmation) {
+        DeleteCounterConfirmation(
+            counterName = counterName,
+            onTimeout = {
+                onDelete.invoke()
+                onClose.invoke()
+            }
+        )
+    }
+}
+
+@Composable
+fun DeleteCounterAlert(counterName: String, onConfirm: () -> Unit, onCancel: () -> Unit) {
+    Alert(
+        title = {
+            Text(stringResource(string.delete_project_message, counterName))
+        },
+        negativeButton = {
+            Button(
+                onClick = onCancel,
+                colors = ButtonDefaults.secondaryButtonColors()
+            ) {
+                Icon(
+                    imageVector = Filled.Close,
+                    contentDescription = stringResource(string.delete_counter_negative)
+                )
+            }
+        },
+        positiveButton = {
+            Button(
+                onClick = onConfirm,
+                colors = ButtonDefaults.primaryButtonColors()
+            ) {
+                Icon(
+                    imageVector = Filled.Check,
+                    contentDescription = stringResource(string.delete_counter_positive)
+                )
+            }
+        }
+    )
+}
+
+@Composable
+fun DeleteCounterConfirmation(counterName: String, onTimeout: () -> Unit) {
+    Confirmation(
+        onTimeout = onTimeout,
+        icon = {
+            Icon(
+                imageVector = Filled.Check,
+                contentDescription = stringResource(string.delete_counter_positive),
+                tint = MaterialTheme.colors.primary,
+                modifier = Modifier.size(Dimen.confirmationIconSize)
+            )
+        },
+        content = {
+            Text(stringResource(string.delete_counter_success, counterName))
         }
     )
 }

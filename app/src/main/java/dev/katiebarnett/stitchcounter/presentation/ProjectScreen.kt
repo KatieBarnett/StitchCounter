@@ -18,7 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.wear.compose.material.AutoCenteringParams
 import androidx.wear.compose.material.ButtonDefaults
 import androidx.wear.compose.material.CompactButton
 import androidx.wear.compose.material.Icon
@@ -77,14 +76,13 @@ fun ProjectContent(
             .fillMaxSize()
             .background(MaterialTheme.colors.background)
             .selectableGroup(),
-        state = listState,
-        autoCentering = AutoCenteringParams(itemIndex = 0),
+        state = listState
     ) {
         item {
             ListHeader {
                 ListTitle(project.name)
             }
-        }
+        }   
         items(project.counters) { counter ->
             CounterListItemComponent(
                 counter = counter,

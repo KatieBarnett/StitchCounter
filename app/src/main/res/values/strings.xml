@@ -37,6 +37,16 @@
         <item quantity="zero" formatted="true">%1$s: %2$d</item>
         <item quantity="other" formatted="true">%1$s: %2$d/%3$d</item>
     </plurals>
+    
+    <string name="delete_project_message">Delete %s?</string>
+    <string name="delete_project_positive">Delete project</string>
+    <string name="delete_project_negative">Cancel</string>
+    <string name="delete_project_success">%s Deleted</string>
+
+    <string name="delete_counter_message">Delete %s?</string>
+    <string name="delete_counter_positive">Delete counter</string>
+    <string name="delete_counter_negative">Cancel</string>
+    <string name="delete_counter_success">%s Deleted</string>
 
 
     

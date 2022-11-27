@@ -12,7 +12,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.wear.compose.material.AutoCenteringParams
 import androidx.wear.compose.material.ButtonDefaults
 import androidx.wear.compose.material.Chip
 import androidx.wear.compose.material.ChipDefaults
@@ -55,7 +54,6 @@ fun ProjectList(
             .background(MaterialTheme.colors.background)
             .selectableGroup(),
         state = listState,
-        autoCentering = AutoCenteringParams(itemIndex = 0),
     ) {
         item {
             ListHeader() {
