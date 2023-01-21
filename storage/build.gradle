@@ -37,6 +37,7 @@ android {
     kapt {
         correctErrorTypes true
     }
+    namespace 'dev.veryniche.stitchcounter.storage'
 }
 
 dependencies {
