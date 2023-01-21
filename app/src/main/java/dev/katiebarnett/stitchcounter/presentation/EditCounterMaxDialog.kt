@@ -1,4 +1,4 @@
-package dev.katiebarnett.stitchcounter.presentation
+package dev.veryniche.stitchcounter.presentation
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,9 +22,9 @@ import androidx.wear.compose.material.Picker
 import androidx.wear.compose.material.Text
 import androidx.wear.compose.material.dialog.Dialog
 import androidx.wear.compose.material.rememberPickerState
-import dev.katiebarnett.stitchcounter.R.string
-import dev.katiebarnett.stitchcounter.presentation.theme.Dimen
-import dev.katiebarnett.stitchcounter.presentation.theme.StitchCounterTheme
+import dev.veryniche.stitchcounter.R.string
+import dev.veryniche.stitchcounter.presentation.theme.Dimen
+import dev.veryniche.stitchcounter.presentation.theme.StitchCounterTheme
 
 @Composable
 fun EditCounterMaxDialog(showDialog: Boolean, initialValue: Int = 0, onDismissRequest: () -> Unit, onDone: (maxCount: Int) -> Unit) {

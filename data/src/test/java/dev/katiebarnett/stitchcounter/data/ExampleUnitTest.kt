@@ -1,4 +1,4 @@
-package dev.katiebarnett.stitchcounter.data
+package dev.veryniche.stitchcounter.data
 
 import org.junit.Assert.*
 import org.junit.Test

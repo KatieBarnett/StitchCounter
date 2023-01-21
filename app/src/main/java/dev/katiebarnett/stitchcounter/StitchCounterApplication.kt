@@ -1,4 +1,4 @@
-package dev.katiebarnett.stitchcounter
+package dev.veryniche.stitchcounter
 
 import android.app.Application
 import dagger.hilt.android.HiltAndroidApp

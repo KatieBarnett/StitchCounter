@@ -1,4 +1,4 @@
-package dev.katiebarnett.stitchcounter.data
+package dev.veryniche.stitchcounter.data
 
 import javax.inject.Qualifier
 import kotlin.annotation.AnnotationRetention.RUNTIME

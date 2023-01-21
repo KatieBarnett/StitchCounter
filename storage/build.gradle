@@ -10,7 +10,7 @@ android {
     compileSdk rootProject.ext.compileSdk
 
     defaultConfig {
-        namespace 'dev.katiebarnett.stitchcounter.storage'
+        namespace 'dev.veryniche.stitchcounter.storage'
         minSdk rootProject.ext.minSdk
         targetSdk rootProject.ext.targetSdk
 

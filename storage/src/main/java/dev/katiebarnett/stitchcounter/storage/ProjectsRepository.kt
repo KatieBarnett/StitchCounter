@@ -1,7 +1,7 @@
-package dev.katiebarnett.stitchcounter.storage
+package dev.veryniche.stitchcounter.storage
 
-import dev.katiebarnett.stitchcounter.data.models.Counter
-import dev.katiebarnett.stitchcounter.data.models.Project
+import dev.veryniche.stitchcounter.data.models.Counter
+import dev.veryniche.stitchcounter.data.models.Project
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull

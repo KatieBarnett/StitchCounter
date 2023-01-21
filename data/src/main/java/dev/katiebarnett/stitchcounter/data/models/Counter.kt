@@ -1,4 +1,4 @@
-package dev.katiebarnett.stitchcounter.data.models
+package dev.veryniche.stitchcounter.data.models
 
 data class Counter(
     val id: Int,

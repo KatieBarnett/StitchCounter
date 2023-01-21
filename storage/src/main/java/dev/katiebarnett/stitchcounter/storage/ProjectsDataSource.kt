@@ -1,8 +1,8 @@
-package dev.katiebarnett.stitchcounter.storage
+package dev.veryniche.stitchcounter.storage
 
 import androidx.datastore.core.DataStore
-import dev.katiebarnett.stitchcounter.data.models.Project
-import dev.katiebarnett.stitchcounter.storage.models.Projects
+import dev.veryniche.stitchcounter.data.models.Project
+import dev.veryniche.stitchcounter.storage.models.Projects
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 

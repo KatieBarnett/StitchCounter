@@ -1,4 +1,4 @@
-package dev.katiebarnett.stitchcounter.presentation
+package dev.veryniche.stitchcounter.presentation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -27,12 +27,12 @@ import androidx.wear.compose.material.ScalingLazyColumn
 import androidx.wear.compose.material.ScalingLazyListState
 import androidx.wear.compose.material.items
 import androidx.wear.compose.material.rememberScalingLazyListState
-import dev.katiebarnett.stitchcounter.MainViewModel
-import dev.katiebarnett.stitchcounter.R.string
-import dev.katiebarnett.stitchcounter.data.models.Counter
-import dev.katiebarnett.stitchcounter.data.models.Project
-import dev.katiebarnett.stitchcounter.getNextCounterId
-import dev.katiebarnett.stitchcounter.presentation.theme.Dimen
+import dev.veryniche.stitchcounter.MainViewModel
+import dev.veryniche.stitchcounter.R.string
+import dev.veryniche.stitchcounter.data.models.Counter
+import dev.veryniche.stitchcounter.data.models.Project
+import dev.veryniche.stitchcounter.getNextCounterId
+import dev.veryniche.stitchcounter.presentation.theme.Dimen
 
 @Composable
 fun ProjectScreen(

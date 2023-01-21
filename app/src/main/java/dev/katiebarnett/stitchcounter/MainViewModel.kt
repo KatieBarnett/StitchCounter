@@ -1,13 +1,13 @@
-package dev.katiebarnett.stitchcounter
+package dev.veryniche.stitchcounter
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.katiebarnett.stitchcounter.data.models.Counter
-import dev.katiebarnett.stitchcounter.data.models.Project
-import dev.katiebarnett.stitchcounter.storage.ProjectsRepository
+import dev.veryniche.stitchcounter.data.models.Counter
+import dev.veryniche.stitchcounter.data.models.Project
+import dev.veryniche.stitchcounter.storage.ProjectsRepository
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch

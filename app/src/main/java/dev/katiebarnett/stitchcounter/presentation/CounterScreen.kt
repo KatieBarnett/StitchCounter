@@ -1,4 +1,4 @@
-package dev.katiebarnett.stitchcounter.presentation
+package dev.veryniche.stitchcounter.presentation
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -31,15 +31,15 @@ import androidx.wear.compose.material.CompactButton
 import androidx.wear.compose.material.Icon
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
-import dev.katiebarnett.stitchcounter.MainViewModel
-import dev.katiebarnett.stitchcounter.R.plurals
-import dev.katiebarnett.stitchcounter.R.string
-import dev.katiebarnett.stitchcounter.data.models.Counter
-import dev.katiebarnett.stitchcounter.getCounterProgress
-import dev.katiebarnett.stitchcounter.presentation.theme.Charcoal
-import dev.katiebarnett.stitchcounter.presentation.theme.Dimen
-import dev.katiebarnett.stitchcounter.presentation.theme.Pink
-import dev.katiebarnett.stitchcounter.presentation.theme.StitchCounterTheme
+import dev.veryniche.stitchcounter.MainViewModel
+import dev.veryniche.stitchcounter.R.plurals
+import dev.veryniche.stitchcounter.R.string
+import dev.veryniche.stitchcounter.data.models.Counter
+import dev.veryniche.stitchcounter.getCounterProgress
+import dev.veryniche.stitchcounter.presentation.theme.Charcoal
+import dev.veryniche.stitchcounter.presentation.theme.Dimen
+import dev.veryniche.stitchcounter.presentation.theme.Pink
+import dev.veryniche.stitchcounter.presentation.theme.StitchCounterTheme
 
 @Composable
 fun CounterScreen(

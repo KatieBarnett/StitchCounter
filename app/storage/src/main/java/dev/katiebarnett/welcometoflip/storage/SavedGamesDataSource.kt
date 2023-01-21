@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package dev.katiebarnett.stitchcounter.storage
+package dev.veryniche.stitchcounter.storage
 
 import androidx.datastore.core.DataStore
-import dev.katiebarnett.stitchcounter.core.models.SavedGame
-import dev.katiebarnett.stitchcounter.core.models.mapToGameType
-import dev.katiebarnett.stitchcounter.storage.models.Game
-import dev.katiebarnett.stitchcounter.storage.models.Projects
+import dev.veryniche.stitchcounter.core.models.SavedGame
+import dev.veryniche.stitchcounter.core.models.mapToGameType
+import dev.veryniche.stitchcounter.storage.models.Game
+import dev.veryniche.stitchcounter.storage.models.Projects
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 

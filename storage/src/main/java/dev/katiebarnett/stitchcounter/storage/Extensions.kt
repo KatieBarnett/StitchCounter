@@ -1,9 +1,9 @@
-package dev.katiebarnett.stitchcounter.storage
+package dev.veryniche.stitchcounter.storage
 
-import dev.katiebarnett.stitchcounter.data.models.Counter
-import dev.katiebarnett.stitchcounter.data.models.Project
-import dev.katiebarnett.stitchcounter.storage.models.SavedCounter
-import dev.katiebarnett.stitchcounter.storage.models.SavedProject
+import dev.veryniche.stitchcounter.data.models.Counter
+import dev.veryniche.stitchcounter.data.models.Project
+import dev.veryniche.stitchcounter.storage.models.SavedCounter
+import dev.veryniche.stitchcounter.storage.models.SavedProject
 
 fun SavedProject.fromSavedProject(): Project {
     return Project(

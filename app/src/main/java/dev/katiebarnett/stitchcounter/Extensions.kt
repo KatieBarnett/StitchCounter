@@ -1,7 +1,7 @@
-package dev.katiebarnett.stitchcounter
+package dev.veryniche.stitchcounter
 
-import dev.katiebarnett.stitchcounter.data.models.Counter
-import dev.katiebarnett.stitchcounter.data.models.Project
+import dev.veryniche.stitchcounter.data.models.Counter
+import dev.veryniche.stitchcounter.data.models.Project
 
 fun Counter.getCounterProgress(): Float? {
     return if (maxCount > 0) {

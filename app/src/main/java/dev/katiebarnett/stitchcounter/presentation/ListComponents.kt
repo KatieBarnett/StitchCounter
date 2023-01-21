@@ -1,4 +1,4 @@
-package dev.katiebarnett.stitchcounter.presentation
+package dev.veryniche.stitchcounter.presentation
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable

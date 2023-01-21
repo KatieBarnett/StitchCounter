@@ -1,9 +1,9 @@
-package dev.katiebarnett.stitchcounter.storage
+package dev.veryniche.stitchcounter.storage
 
 import androidx.datastore.core.CorruptionException
 import androidx.datastore.core.Serializer
 import com.google.protobuf.InvalidProtocolBufferException
-import dev.katiebarnett.stitchcounter.storage.models.Projects
+import dev.veryniche.stitchcounter.storage.models.Projects
 import java.io.InputStream
 import java.io.OutputStream
 import javax.inject.Inject

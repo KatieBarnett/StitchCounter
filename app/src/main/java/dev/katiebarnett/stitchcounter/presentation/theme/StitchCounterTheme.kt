@@ -1,4 +1,4 @@
-package dev.katiebarnett.stitchcounter.presentation.theme
+package dev.veryniche.stitchcounter.presentation.theme
 
 import androidx.compose.runtime.Composable
 import androidx.wear.compose.material.MaterialTheme

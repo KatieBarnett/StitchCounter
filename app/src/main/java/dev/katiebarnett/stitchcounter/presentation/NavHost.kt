@@ -1,4 +1,4 @@
-package dev.katiebarnett.stitchcounter.presentation
+package dev.veryniche.stitchcounter.presentation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -7,8 +7,8 @@ import androidx.navigation.NavHostController
 import androidx.wear.compose.material.ScalingLazyListState
 import androidx.wear.compose.navigation.SwipeDismissableNavHost
 import androidx.wear.compose.navigation.composable
-import dev.katiebarnett.stitchcounter.MainViewModel
-import dev.katiebarnett.stitchcounter.R
+import dev.veryniche.stitchcounter.MainViewModel
+import dev.veryniche.stitchcounter.R
 
 @Composable
 fun NavHost(

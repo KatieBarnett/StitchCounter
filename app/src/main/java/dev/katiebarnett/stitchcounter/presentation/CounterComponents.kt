@@ -1,4 +1,4 @@
-package dev.katiebarnett.stitchcounter.presentation
+package dev.veryniche.stitchcounter.presentation
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -20,11 +20,11 @@ import androidx.wear.compose.material.Button
 import androidx.wear.compose.material.ButtonDefaults
 import androidx.wear.compose.material.Icon
 import androidx.wear.compose.material.Text
-import dev.katiebarnett.stitchcounter.R
-import dev.katiebarnett.stitchcounter.R.plurals
-import dev.katiebarnett.stitchcounter.data.models.Counter
-import dev.katiebarnett.stitchcounter.presentation.theme.Dimen
-import dev.katiebarnett.stitchcounter.presentation.theme.StitchCounterTheme
+import dev.veryniche.stitchcounter.R
+import dev.veryniche.stitchcounter.R.plurals
+import dev.veryniche.stitchcounter.data.models.Counter
+import dev.veryniche.stitchcounter.presentation.theme.Dimen
+import dev.veryniche.stitchcounter.presentation.theme.StitchCounterTheme
 
 
 @OptIn(ExperimentalComposeUiApi::class)

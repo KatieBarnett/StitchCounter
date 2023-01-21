@@ -1,4 +1,4 @@
-package dev.katiebarnett.stitchcounter.presentation
+package dev.veryniche.stitchcounter.presentation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,10 +23,10 @@ import androidx.wear.compose.material.ScalingLazyColumn
 import androidx.wear.compose.material.ScalingLazyListState
 import androidx.wear.compose.material.Text
 import androidx.wear.compose.material.items
-import dev.katiebarnett.stitchcounter.MainViewModel
-import dev.katiebarnett.stitchcounter.R
-import dev.katiebarnett.stitchcounter.R.string
-import dev.katiebarnett.stitchcounter.data.models.Project
+import dev.veryniche.stitchcounter.MainViewModel
+import dev.veryniche.stitchcounter.R
+import dev.veryniche.stitchcounter.R.string
+import dev.veryniche.stitchcounter.data.models.Project
 
 @Composable
 fun ProjectListScreen(

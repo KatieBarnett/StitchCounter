@@ -1,7 +1,7 @@
-package dev.katiebarnett.stitchcounter.storage
+package dev.veryniche.stitchcounter.storage
 
-import dev.katiebarnett.stitchcounter.core.models.GameType
-import dev.katiebarnett.stitchcounter.core.models.SavedGame
+import dev.veryniche.stitchcounter.core.models.GameType
+import dev.veryniche.stitchcounter.core.models.SavedGame
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject

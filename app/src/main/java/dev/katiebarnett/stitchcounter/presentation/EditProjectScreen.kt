@@ -1,4 +1,4 @@
-package dev.katiebarnett.stitchcounter.presentation
+package dev.veryniche.stitchcounter.presentation
 
 import android.app.RemoteInput
 import android.content.Intent
@@ -37,9 +37,9 @@ import androidx.wear.compose.material.dialog.Alert
 import androidx.wear.compose.material.dialog.Confirmation
 import androidx.wear.input.RemoteInputIntentHelper
 import androidx.wear.input.wearableExtender
-import dev.katiebarnett.stitchcounter.R
-import dev.katiebarnett.stitchcounter.presentation.theme.Dimen
-import dev.katiebarnett.stitchcounter.presentation.theme.StitchCounterTheme
+import dev.veryniche.stitchcounter.R
+import dev.veryniche.stitchcounter.presentation.theme.Dimen
+import dev.veryniche.stitchcounter.presentation.theme.StitchCounterTheme
 
 @Composable
 fun EditProjectScreen(

@@ -1,4 +1,4 @@
-package dev.katiebarnett.stitchcounter.data.models
+package dev.veryniche.stitchcounter.data.models
 
 data class Project(
     val id: Int? = null,

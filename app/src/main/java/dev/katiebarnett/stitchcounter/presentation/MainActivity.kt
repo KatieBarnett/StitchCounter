@@ -1,4 +1,4 @@
-package dev.katiebarnett.stitchcounter.presentation
+package dev.veryniche.stitchcounter.presentation
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -23,9 +23,9 @@ import androidx.wear.compose.material.curvedText
 import androidx.wear.compose.material.rememberScalingLazyListState
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import dagger.hilt.android.AndroidEntryPoint
-import dev.katiebarnett.stitchcounter.MainViewModel
-import dev.katiebarnett.stitchcounter.R
-import dev.katiebarnett.stitchcounter.presentation.theme.StitchCounterTheme
+import dev.veryniche.stitchcounter.MainViewModel
+import dev.veryniche.stitchcounter.R
+import dev.veryniche.stitchcounter.presentation.theme.StitchCounterTheme
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
