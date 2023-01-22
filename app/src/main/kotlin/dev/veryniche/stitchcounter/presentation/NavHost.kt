@@ -24,6 +24,10 @@ fun NavHost(
         startDestination = "project_list",
         modifier = modifier
     ) {
+        composable("about") {
+            viewModel.updatePageContext(stringResource(id = R.string.app_name))
+            AboutScreen(listState = listState)
+        }
         composable("project_list") {
             viewModel.updatePageContext(stringResource(id = R.string.app_name))
             ProjectListScreen(
@@ -34,6 +38,9 @@ fun NavHost(
                 },
                 onAddProjectClick = {
                     navController.navigate("edit_project")
+                },
+                onAboutClick = {
+                    navController.navigate("about")
                 }
             )
         }

@@ -8,9 +8,9 @@ import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
 
 @Composable
-fun ListTitle(text: String) {
+fun ListTitle(text: String, modifier: Modifier = Modifier) {
     Text(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         textAlign = TextAlign.Center,
         color = MaterialTheme.colors.primaryVariant,
         text = text

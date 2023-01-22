@@ -1,15 +1,21 @@
 package dev.veryniche.stitchcounter.presentation
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.wear.compose.material.ButtonDefaults
@@ -30,6 +36,7 @@ import dev.veryniche.stitchcounter.MainViewModel
 import dev.veryniche.stitchcounter.R
 import dev.veryniche.stitchcounter.R.string
 import dev.veryniche.stitchcounter.data.models.Project
+import dev.veryniche.stitchcounter.presentation.theme.Dimen
 
 @Composable
 fun ProjectListScreen(
@@ -37,10 +44,11 @@ fun ProjectListScreen(
     listState: ScalingLazyListState,
     onProjectClick: (Int) -> Unit,
     onAddProjectClick: () -> Unit,
+    onAboutClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val projects: List<Project> by viewModel.projects.collectAsState(initial = emptyList())
-    ProjectList(projects, listState,  onProjectClick, onAddProjectClick, modifier)
+    ProjectList(projects, listState,  onProjectClick, onAddProjectClick, onAboutClick, modifier)
 }
 
 @Composable
@@ -49,6 +57,7 @@ fun ProjectList(
     listState: ScalingLazyListState,
     onProjectClick: (Int) -> Unit,
     onAddProjectClick: () -> Unit,
+    onAboutClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     TrackedScreen {
@@ -63,18 +72,23 @@ fun ProjectList(
     ) {
         item {
             ListHeader() {
-                ListTitle(stringResource(string.title))
+                ListTitle(stringResource(string.title), modifier = Modifier.padding(top = Dimen.spacingQuad))
             }
         }
         items (projectList) { project ->
             ProjectChip(project, onProjectClick)
         }
         item {
-            AddProjectButton(onAddProjectClick)
+            Row(horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxWidth(0.75f)) {
+                AddProjectButton(onAddProjectClick)
+                AboutButton(onAboutClick)
+            }
         }
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun ProjectChip(project: Project, onProjectClick: (Int) -> Unit, modifier: Modifier = Modifier) {
     Chip(colors = ChipDefaults.primaryChipColors(),
@@ -88,15 +102,15 @@ fun ProjectChip(project: Project, onProjectClick: (Int) -> Unit, modifier: Modif
         },
         secondaryLabel = {
             Text(
-                text = "${project.counters.size} counters",
+                text = pluralStringResource(R.plurals.counters_label, project.counters.size, project.counters.size),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
         },
-        onClick = { 
+        onClick = {
             project.id?.let {
                 onProjectClick.invoke(it)
-            } 
+            }
         }
     )
 }
@@ -105,13 +119,26 @@ fun ProjectChip(project: Project, onProjectClick: (Int) -> Unit, modifier: Modif
 
 @Composable
 fun AddProjectButton(onAddProjectClick: () -> Unit, modifier: Modifier = Modifier) {
-    CompactButton(onClick = { onAddProjectClick.invoke() },
+    CompactButton(onClick = onAddProjectClick,
         colors = ButtonDefaults.secondaryButtonColors(),
         modifier = modifier
     ) {
         Icon(
             imageVector = Icons.Filled.Add,
             contentDescription = stringResource(id = R.string.add_project)
+        )
+    }
+}
+
+@Composable
+fun AboutButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
+    CompactButton(onClick = onClick,
+        colors = ButtonDefaults.secondaryButtonColors(),
+        modifier = modifier
+    ) {
+        Icon(
+            imageVector = Icons.Filled.Info,
+            contentDescription = stringResource(id = R.string.about_title)
         )
     }
 }

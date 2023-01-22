@@ -95,6 +95,9 @@ dependencies {
     implementation libs.hilt.navigation.compose
 
     implementation libs.wear.input
+    implementation libs.wear.interactions
+
+    implementation libs.playservices.wearable
 
     implementation libs.androidx.compose.runtime.livedata
     
@@ -104,6 +107,9 @@ dependencies {
     implementation platform(libs.firebase.bom)
     implementation libs.firebase.analytics
     implementation libs.firebase.crashlytics
+    debugImplementation platform(libs.firebase.bom)
+    debugImplementation libs.firebase.analytics
+    debugImplementation libs.firebase.crashlytics
 
     // Testing
     debugImplementation libs.androidx.compose.ui.tooling

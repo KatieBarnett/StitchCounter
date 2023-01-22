@@ -122,7 +122,7 @@ fun EditCounterScreen(
                 )
             }
         }
-        Row(horizontalArrangement = Arrangement.SpaceBetween, 
+        Row(horizontalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxWidth(0.75f)) {
             CompactButton(
                 onClick = { onClose.invoke() },

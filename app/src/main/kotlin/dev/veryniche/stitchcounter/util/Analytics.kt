@@ -24,6 +24,7 @@ object Analytics {
         const val Counter = "Counter"
         const val EditCounter = "Edit Counter"
         const val EditCounterMax = "Edit Counter Max"
+        const val About = "About"
     }
 
     object Action {
