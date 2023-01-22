@@ -40,6 +40,9 @@ import dev.veryniche.stitchcounter.presentation.theme.Charcoal
 import dev.veryniche.stitchcounter.presentation.theme.Dimen
 import dev.veryniche.stitchcounter.presentation.theme.Pink
 import dev.veryniche.stitchcounter.presentation.theme.StitchCounterTheme
+import dev.veryniche.stitchcounter.util.Analytics
+import dev.veryniche.stitchcounter.util.TrackedScreen
+import dev.veryniche.stitchcounter.util.trackScreenView
 
 @Composable
 fun CounterScreen(
@@ -53,6 +56,11 @@ fun CounterScreen(
     projectState.value?.let { project ->
         val counter = project.counters.firstOrNull { it.id == counterId }
         counter?.let {
+
+            TrackedScreen {
+                trackScreenView(name = Analytics.Screen.Counter)
+            }
+
             CounterContent(
                 counter = it,
                 onCounterUpdate = { updatedCounter ->

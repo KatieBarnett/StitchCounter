@@ -25,9 +25,17 @@ import androidx.wear.compose.material.rememberPickerState
 import dev.veryniche.stitchcounter.R.string
 import dev.veryniche.stitchcounter.presentation.theme.Dimen
 import dev.veryniche.stitchcounter.presentation.theme.StitchCounterTheme
+import dev.veryniche.stitchcounter.util.Analytics
+import dev.veryniche.stitchcounter.util.TrackedScreen
+import dev.veryniche.stitchcounter.util.trackScreenView
 
 @Composable
 fun EditCounterMaxDialog(showDialog: Boolean, initialValue: Int = 0, onDismissRequest: () -> Unit, onDone: (maxCount: Int) -> Unit) {
+
+    TrackedScreen {
+        trackScreenView(name = Analytics.Screen.EditCounterMax)
+    }
+
     Dialog(
         showDialog = showDialog,
         onDismissRequest = onDismissRequest,

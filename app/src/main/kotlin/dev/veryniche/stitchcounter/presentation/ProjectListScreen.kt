@@ -23,6 +23,9 @@ import androidx.wear.compose.material.ScalingLazyColumn
 import androidx.wear.compose.material.ScalingLazyListState
 import androidx.wear.compose.material.Text
 import androidx.wear.compose.material.items
+import dev.veryniche.stitchcounter.util.Analytics
+import dev.veryniche.stitchcounter.util.TrackedScreen
+import dev.veryniche.stitchcounter.util.trackScreenView
 import dev.veryniche.stitchcounter.MainViewModel
 import dev.veryniche.stitchcounter.R
 import dev.veryniche.stitchcounter.R.string
@@ -48,6 +51,9 @@ fun ProjectList(
     onAddProjectClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    TrackedScreen {
+        trackScreenView(name = Analytics.Screen.ProjectList)
+    }
     ScalingLazyColumn (
         modifier = modifier
             .fillMaxSize()

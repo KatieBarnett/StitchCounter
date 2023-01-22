@@ -27,6 +27,11 @@ import androidx.wear.compose.material.ScalingLazyColumn
 import androidx.wear.compose.material.ScalingLazyListState
 import androidx.wear.compose.material.items
 import androidx.wear.compose.material.rememberScalingLazyListState
+import dev.veryniche.stitchcounter.util.Analytics
+import dev.veryniche.stitchcounter.util.TrackedScreen
+import dev.veryniche.stitchcounter.util.trackEvent
+import dev.veryniche.stitchcounter.util.trackProjectScreenView
+import dev.veryniche.stitchcounter.util.trackScreenView
 import dev.veryniche.stitchcounter.MainViewModel
 import dev.veryniche.stitchcounter.R.string
 import dev.veryniche.stitchcounter.data.models.Counter
@@ -46,6 +51,9 @@ fun ProjectScreen(
 ) {
     val project = viewModel.getProject(id).collectAsState(initial = null)
     project.value?.let { project ->
+        TrackedScreen {
+            trackProjectScreenView(project.counters.size)
+        }
         val nextCounterId = project.getNextCounterId()
         ProjectContent(
             project = project,
@@ -115,7 +123,10 @@ fun ProjectContent(
                 }
                 Spacer(modifier = Modifier.width(Dimen.spacing))
                 CompactButton(
-                    onClick = { onProjectReset.invoke() },
+                    onClick = {
+                        trackEvent(Analytics.Action.ResetProject)
+                        onProjectReset.invoke()
+                              },
                     colors = ButtonDefaults.secondaryButtonColors()
                 ) {
                     Icon(

@@ -16,8 +16,11 @@ org-jetbrains-kotlinx = "1.6.0"
 hilt = "2.44"
 hilt_androidx_version = '1.0.0'
 protobuf = '3.21.9'
-protobuf_plugin = '0.9.1'
+protobuf-plugin = '0.9.1'
 datastore = '1.0.0'
+google-services = '4.3.15'
+firebase-bom = '31.0.2'
+firebase-crashlytics-plugin = '2.9.2'
 
 [libraries]
 android-lint-gradle = "com.android.tools.lint:lint-gradle:30.3.1"
@@ -42,6 +45,10 @@ hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt"
 hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hilt" }
 hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hilt_androidx_version" }
 
+firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebase-bom" }
+firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics-ktx" }
+firebase-crashlytics= { group = "com.google.firebase", name = "firebase-crashlytics-ktx" }
+
 # Storage
 datastore = { module = "androidx.datastore:datastore", version.ref = "datastore" }
 protobuf = { module = "com.google.protobuf:protobuf-javalite", version.ref = "protobuf" }
@@ -53,4 +60,6 @@ com-diffplug-spotless = "com.diffplug.spotless:6.11.0"
 org-jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "org-jetbrains-kotlin" }
 org-jetbrains-kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "org-jetbrains-kotlin" }
 com-google-dagger-hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
-com-google-protobuf = { id = "com.google.protobuf", version.ref = "protobuf_plugin" }
+com-google-protobuf = { id = "com.google.protobuf", version.ref = "protobuf-plugin" }
+com-google-firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebase-crashlytics-plugin" }
+com-google-services = { id = "com.google.gms.google-services", version.ref = "google-services" }

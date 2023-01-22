@@ -7,6 +7,8 @@ import androidx.navigation.NavHostController
 import androidx.wear.compose.material.ScalingLazyListState
 import androidx.wear.compose.navigation.SwipeDismissableNavHost
 import androidx.wear.compose.navigation.composable
+import dev.veryniche.stitchcounter.util.Analytics
+import dev.veryniche.stitchcounter.util.trackEvent
 import dev.veryniche.stitchcounter.MainViewModel
 import dev.veryniche.stitchcounter.R
 
@@ -35,42 +37,6 @@ fun NavHost(
                 }
             )
         }
-        composable("edit_project") {
-            viewModel.updatePageContext(stringResource(id = R.string.add_project))
-            EditProjectScreen(
-                onSave = { projectName ->
-                    viewModel.saveProject(projectName)
-                    navController.navigateUp()
-                },
-                onDelete = {
-                    navController.navigateUp()
-                },
-                onClose = {
-                    navController.navigateUp()
-                }
-            )
-        }
-        composable("edit_project/{id}/{name}") {
-            val projectId = it.arguments?.getString("id")?.toIntOrNull()
-            val projectName = it.arguments?.getString("name")
-            if (projectId != null && projectName != null) {
-                viewModel.updatePageContext(stringResource(id = R.string.edit_project))
-                EditProjectScreen(
-                    initialName = projectName, 
-                    onSave = { project ->
-                        viewModel.saveProject(projectId, projectName)
-                        navController.navigateUp()
-                    },
-                    onDelete = {
-                        viewModel.deleteProject(projectId)
-                        navController.navigateUp()
-                    },
-                    onClose = {
-                        navController.navigateUp()
-                    }
-                )
-            }
-        }
         composable("project/{id}") {
             it.arguments?.getString("id")?.toIntOrNull()?.let { projectId ->
                 viewModel.updatePageContext(stringResource(id = R.string.project_title))
@@ -87,6 +53,28 @@ fun NavHost(
                     onProjectEdit = { id, name ->
                         navController.navigate("edit_project/$id/$name")
                     }
+                )
+            }
+        }
+        composable("edit_project") {
+            viewModel.updatePageContext(stringResource(id = R.string.add_project))
+            LoadEditProjectScreen(
+                navController = navController,
+                viewModel = viewModel,
+                projectId = null,
+                projectName = null
+            )
+        }
+        composable("edit_project/{id}/{name}") {
+            val projectId = it.arguments?.getString("id")?.toIntOrNull()
+            val projectName = it.arguments?.getString("name")
+            if (projectId != null && projectName != null) {
+                viewModel.updatePageContext(stringResource(id = R.string.edit_project))
+                LoadEditProjectScreen(
+                    navController = navController,
+                    viewModel = viewModel,
+                    projectId = projectId,
+                    projectName = projectName
                 )
             }
         }
@@ -110,20 +98,12 @@ fun NavHost(
             val counterId = it.arguments?.getString("counter_id")?.toIntOrNull()
             if (projectId != null && counterId != null) {
                 viewModel.updatePageContext(stringResource(id = R.string.add_counter))
-                EditCounterScreen(
+                LoadEditCounterScreen(
+                    navController = navController,
+                    viewModel = viewModel,
+                    projectId = projectId,
                     counterId = counterId,
-                    initialName = null,
-                    onSave = { counterName, counterMax ->
-                        viewModel.saveCounter(projectId, counterId, counterName, counterMax)
-                        navController.navigateUp()
-                    },
-                    onDelete = {
-                        viewModel.deleteProject(projectId)
-                        navController.navigateUp()
-                    },
-                    onClose = {
-                        navController.navigateUp()
-                    }
+                    counterName = null
                 )
             }
         }
@@ -133,22 +113,66 @@ fun NavHost(
             val counterName = it.arguments?.getString("counter_name")
             if (projectId != null && counterId != null) {
                 viewModel.updatePageContext(stringResource(id = R.string.edit_counter))
-                EditCounterScreen(
+                LoadEditCounterScreen(
+                    navController = navController,
+                    viewModel = viewModel,
+                    projectId = projectId,
                     counterId = counterId,
-                    initialName = counterName,
-                    onSave = { counterName, counterMax ->
-                        viewModel.saveCounter(projectId, counterId, counterName, counterMax)
-                        navController.navigateUp()
-                    },
-                    onDelete = {
-                        viewModel.deleteProject(projectId)
-                        navController.navigateUp()
-                    },
-                    onClose = {
-                        navController.navigateUp()
-                    }
+                    counterName = counterName
                 )
             } 
         }
     }
+}
+
+@Composable
+fun LoadEditProjectScreen(
+    navController: NavHostController,
+    viewModel: MainViewModel,
+    projectId: Int?,
+    projectName: String?
+) {
+    EditProjectScreen(
+        initialName = projectName,
+        onSave = { projectName ->
+            viewModel.saveProject(projectId, projectName)
+            navController.navigateUp()
+        },
+        onDelete = {
+            projectId?.let {
+                trackEvent(Analytics.Action.DeleteProject)
+                viewModel.deleteProject(projectId)
+            }
+            navController.navigateUp()
+        },
+        onClose = {
+            navController.navigateUp()
+        }
+    )
+}
+
+@Composable
+fun LoadEditCounterScreen(
+    navController: NavHostController,
+    viewModel: MainViewModel,
+    projectId: Int,
+    counterId: Int,
+    counterName: String?
+) {
+    EditCounterScreen(
+        counterId = counterId,
+        initialName = counterName,
+        onSave = { counterName, counterMax ->
+            viewModel.saveCounter(projectId, counterId, counterName, counterMax)
+            navController.navigateUp()
+        },
+        onDelete = {
+            trackEvent(Analytics.Action.DeleteCounter)
+            viewModel.deleteCounter(projectId, counterId)
+            navController.navigateUp()
+        },
+        onClose = {
+            navController.navigateUp()
+        }
+    )
 }

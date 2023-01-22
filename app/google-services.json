@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "821619055085",
+    "project_id": "stitch-counter-7e21e",
+    "storage_bucket": "stitch-counter-7e21e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:821619055085:android:7e4eed845e564ea864efe4",
+        "android_client_info": {
+          "package_name": "dev.veryniche.stitchcounter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "821619055085-o3okbkabrpn024i4h69jo2ctr9qmhogn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyATPIVcilWIW-e91Mn0qt_P2qwVBAHIeAo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "821619055085-o3okbkabrpn024i4h69jo2ctr9qmhogn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:821619055085:android:554070e56c7c619d64efe4",
+        "android_client_info": {
+          "package_name": "dev.veryniche.stitchcounter.dev"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "821619055085-o3okbkabrpn024i4h69jo2ctr9qmhogn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyATPIVcilWIW-e91Mn0qt_P2qwVBAHIeAo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "821619055085-o3okbkabrpn024i4h69jo2ctr9qmhogn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

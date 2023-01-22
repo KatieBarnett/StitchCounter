@@ -40,6 +40,9 @@ import androidx.wear.input.wearableExtender
 import dev.veryniche.stitchcounter.R
 import dev.veryniche.stitchcounter.presentation.theme.Dimen
 import dev.veryniche.stitchcounter.presentation.theme.StitchCounterTheme
+import dev.veryniche.stitchcounter.util.Analytics
+import dev.veryniche.stitchcounter.util.TrackedScreen
+import dev.veryniche.stitchcounter.util.trackScreenView
 
 @Composable
 fun EditProjectScreen(
@@ -53,6 +56,10 @@ fun EditProjectScreen(
     var projectName by remember { mutableStateOf(initialName ?: projectNameHint) }
     var showDeleteProjectDialog by remember { mutableStateOf(false) }
     var showDeleteProjectConfirmation by remember { mutableStateOf(false) }
+
+    TrackedScreen {
+        trackScreenView(name = Analytics.Screen.EditProject)
+    }
 
     val inputTextKey = "input_text"
     val intent: Intent = RemoteInputIntentHelper.createActionRemoteInputIntent()

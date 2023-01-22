@@ -44,6 +44,9 @@ import dev.veryniche.stitchcounter.R
 import dev.veryniche.stitchcounter.R.string
 import dev.veryniche.stitchcounter.presentation.theme.Dimen
 import dev.veryniche.stitchcounter.presentation.theme.StitchCounterTheme
+import dev.veryniche.stitchcounter.util.Analytics
+import dev.veryniche.stitchcounter.util.TrackedScreen
+import dev.veryniche.stitchcounter.util.trackScreenView
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -61,6 +64,10 @@ fun EditCounterScreen(
     var showEditCounterMaxDialog by remember { mutableStateOf(false) }
     var showDeleteCounterDialog by remember { mutableStateOf(false) }
     var showDeleteCounterConfirmation by remember { mutableStateOf(false) }
+
+    TrackedScreen {
+        trackScreenView(name = Analytics.Screen.EditCounter)
+    }
 
     val inputTextKey = "input_text"
     val intent: Intent = RemoteInputIntentHelper.createActionRemoteInputIntent()
