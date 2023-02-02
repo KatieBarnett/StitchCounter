@@ -9,8 +9,10 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.Icons.Filled
@@ -30,6 +32,7 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.wear.compose.material.Button
 import androidx.wear.compose.material.ButtonDefaults
 import androidx.wear.compose.material.CompactButton
@@ -53,6 +56,7 @@ import dev.veryniche.stitchcounter.util.trackScreenView
 fun EditCounterScreen(
     counterId: Int,
     initialName: String?,
+    initialMax: Int,// = 0,
     onSave: (counterName: String, counterMax: Int) -> Unit,
     onDelete: () -> Unit,
     onClose: () -> Unit,
@@ -60,7 +64,7 @@ fun EditCounterScreen(
 ) {
     val counterDefaultName = initialName ?: stringResource(R.string.counter_name_default, counterId)
     var counterName by remember { mutableStateOf(counterDefaultName) }
-    var counterMax by remember { mutableStateOf(0) }
+    var counterMax by remember { mutableStateOf(initialMax) }
     var showEditCounterMaxDialog by remember { mutableStateOf(false) }
     var showDeleteCounterDialog by remember { mutableStateOf(false) }
     var showDeleteCounterConfirmation by remember { mutableStateOf(false) }
@@ -73,7 +77,7 @@ fun EditCounterScreen(
     val intent: Intent = RemoteInputIntentHelper.createActionRemoteInputIntent()
     val remoteInputs: List<RemoteInput> = listOf(
         RemoteInput.Builder(inputTextKey)
-            .setLabel(stringResource(R.string.counter_name_default, counterId))
+            .setLabel(stringResource(R.string.edit_counter_name))
             .wearableExtender {
                 setEmojisAllowed(true)
                 setInputActionType(EditorInfo.IME_ACTION_DONE)
@@ -96,6 +100,7 @@ fun EditCounterScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier.fillMaxSize()
     ) {
+        Spacer(Modifier.height(Dimen.spacingHuge))
         Row(verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth(0.75f)) {
             Text(text = counterName, Modifier.weight(1f))
@@ -111,7 +116,11 @@ fun EditCounterScreen(
         }
         Row(verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth(0.95f)) {
-            Text(pluralStringResource(R.plurals.counter_max_label, counterMax, counterMax), Modifier.weight(1f))
+            Text(if (counterMax == 0) {
+                stringResource(R.string.counter_max_label_zero)
+            } else {
+                stringResource(R.string.counter_max_label_many, counterMax)
+            }, Modifier.weight(1f))
             CompactButton(
                 onClick = { showEditCounterMaxDialog = true },
                 colors = ButtonDefaults.secondaryButtonColors()
@@ -156,6 +165,7 @@ fun EditCounterScreen(
                 )
             }
         }
+        Spacer(Modifier.height(Dimen.spacingHuge))
     }
     EditCounterMaxDialog(
         showDialog = showEditCounterMaxDialog,
@@ -242,6 +252,6 @@ fun DeleteCounterConfirmation(counterName: String, onTimeout: () -> Unit) {
 @Composable
 fun EditCounterScreenPreview() {
     StitchCounterTheme {
-        EditCounterScreen(1, "initial name", {_, _ -> }, {}, {})
+        EditCounterScreen(1, "initial name", 45, {_, _ -> }, {}, {})
     }
 }

@@ -94,8 +94,8 @@ fun NavHost(
                     viewModel = viewModel,
                     projectId = projectId,
                     counterId = counterId,
-                    onCounterEdit = { counterName ->
-                        navController.navigate("edit_counter/$projectId/$counterId/$counterName")
+                    onCounterEdit = { counterName, counterMax ->
+                        navController.navigate("edit_counter/$projectId/$counterId/$counterName/$counterMax")
                     }
                 )
             }
@@ -110,14 +110,16 @@ fun NavHost(
                     viewModel = viewModel,
                     projectId = projectId,
                     counterId = counterId,
-                    counterName = null
+                    counterName = null,
+                    counterMax = 0
                 )
             }
         }
-        composable("edit_counter/{project_id}/{counter_id}/{counter_name}") {
+        composable("edit_counter/{project_id}/{counter_id}/{counter_name}/{counter_max}") {
             val projectId = it.arguments?.getString("project_id")?.toIntOrNull()
             val counterId = it.arguments?.getString("counter_id")?.toIntOrNull()
             val counterName = it.arguments?.getString("counter_name")
+            val counterMax = it.arguments?.getString("counter_max")?.toIntOrNull() ?: 0
             if (projectId != null && counterId != null) {
                 viewModel.updatePageContext(stringResource(id = R.string.edit_counter))
                 LoadEditCounterScreen(
@@ -125,7 +127,8 @@ fun NavHost(
                     viewModel = viewModel,
                     projectId = projectId,
                     counterId = counterId,
-                    counterName = counterName
+                    counterName = counterName,
+                    counterMax = counterMax
                 )
             } 
         }
@@ -164,11 +167,13 @@ fun LoadEditCounterScreen(
     viewModel: MainViewModel,
     projectId: Int,
     counterId: Int,
-    counterName: String?
+    counterName: String?,
+    counterMax: Int,
 ) {
     EditCounterScreen(
         counterId = counterId,
         initialName = counterName,
+        initialMax = counterMax,
         onSave = { counterName, counterMax ->
             viewModel.saveCounter(projectId, counterId, counterName, counterMax)
             navController.navigateUp()

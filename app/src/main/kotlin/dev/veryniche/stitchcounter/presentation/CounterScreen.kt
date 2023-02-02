@@ -32,6 +32,7 @@ import androidx.wear.compose.material.Icon
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
 import dev.veryniche.stitchcounter.MainViewModel
+import dev.veryniche.stitchcounter.R
 import dev.veryniche.stitchcounter.R.plurals
 import dev.veryniche.stitchcounter.R.string
 import dev.veryniche.stitchcounter.data.models.Counter
@@ -49,18 +50,16 @@ fun CounterScreen(
     projectId: Int,
     counterId: Int,
     viewModel: MainViewModel,
-    onCounterEdit: (counterName: String) -> Unit,
+    onCounterEdit: (counterName: String, counterMax: Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val projectState = viewModel.getProject(projectId).collectAsState(initial = null)
     projectState.value?.let { project ->
         val counter = project.counters.firstOrNull { it.id == counterId }
         counter?.let {
-
             TrackedScreen {
                 trackScreenView(name = Analytics.Screen.Counter)
             }
-
             CounterContent(
                 counter = it,
                 onCounterUpdate = { updatedCounter ->
@@ -69,7 +68,7 @@ fun CounterScreen(
                 onCounterReset = {
                     viewModel.resetCounter(project, counter)
                 },
-                onCounterEdit = { onCounterEdit.invoke(counter.name) },
+                onCounterEdit = { onCounterEdit.invoke(counter.name, counter.maxCount) },
                 modifier = modifier
             )
         } // TODO - else display error
@@ -108,7 +107,11 @@ fun CounterContent(counter: Counter,
                     .fillMaxWidth(0.75f)
                     .weight(1f)) {
                 Text(
-                    text = pluralStringResource(plurals.counter_label_fraction, counter.maxCount, counter.name, counter.currentCount, counter.maxCount),
+                    text = if (counter.maxCount == 0) {
+                        stringResource(R.string.counter_label_fraction_zero, counter.name)
+                    } else {
+                        stringResource(R.string.counter_label_fraction_many, counter.name,counter.currentCount, counter.maxCount)
+                    },
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.body2,
                     modifier = Modifier

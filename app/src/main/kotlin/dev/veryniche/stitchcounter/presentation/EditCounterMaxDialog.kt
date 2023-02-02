@@ -42,7 +42,7 @@ fun EditCounterMaxDialog(showDialog: Boolean, initialValue: Int = 0, onDismissRe
         modifier = Modifier.padding(Dimen.spacing)
     ) {
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxSize()) {
-            val items = (1..1000).toList()
+            val items = (0..1000).toList()
             val initialIndex = items.indexOf(initialValue).run { 
                 if (this == -1) { 0 } else { this }
             }

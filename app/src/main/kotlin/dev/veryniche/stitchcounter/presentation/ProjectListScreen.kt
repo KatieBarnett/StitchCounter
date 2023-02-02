@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -71,7 +72,7 @@ fun ProjectList(
         state = listState,
     ) {
         item {
-            ListHeader() {
+            ListHeader(Modifier) {
                 ListTitle(stringResource(string.title), modifier = Modifier.padding(top = Dimen.spacingQuad))
             }
         }
@@ -102,7 +103,11 @@ fun ProjectChip(project: Project, onProjectClick: (Int) -> Unit, modifier: Modif
         },
         secondaryLabel = {
             Text(
-                text = pluralStringResource(R.plurals.counters_label, project.counters.size, project.counters.size),
+                text = if (project.counters.isEmpty()) {
+                    stringResource(R.string.counters_label_zero)
+                } else {
+                    pluralStringResource(R.plurals.counters_label, project.counters.size, project.counters.size)
+                },
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )

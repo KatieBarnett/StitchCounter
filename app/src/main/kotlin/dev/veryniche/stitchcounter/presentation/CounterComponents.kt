@@ -50,7 +50,11 @@ fun CounterListItemComponent(counter: Counter,
         }
         CounterCentre(
             name = counter.name,
-            displayedCount = pluralStringResource(plurals.counter_fraction, counter.maxCount, counter.currentCount, counter.maxCount),
+            displayedCount = if (counter.maxCount == 0) {
+                stringResource(R.string.counter_fraction_zero, counter.currentCount)
+            } else {
+                stringResource(R.string.counter_fraction_many, counter.currentCount, counter.maxCount)
+            },
             modifier = Modifier
                 .weight(1f)
                 .clickable { onCounterClick.invoke(counter) },
