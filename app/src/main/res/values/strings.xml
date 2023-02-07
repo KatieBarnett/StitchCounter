@@ -59,7 +59,7 @@
     <string name="about_email_subject">Feedback: Stitch Counter</string>
     <string name="about_privacy_policy">Want to view the privacy policy?\nPlease click here:</string>
     <string name="about_privacy_policy_link_text">Privacy policy</string>
-    <string name="about_privacy_policy_link">http://veryniche.dev</string>
+    <string name="about_privacy_policy_link">https://veryniche.dev/docs/stitchcounterprivacypolicy/</string>
     <string name="about_developer">Thank-you for using this app.</string>
     <string name="about_developer_link_text">Katie Barnett</string>
     <string name="about_developer_link">http://katiebarnett.dev</string>
