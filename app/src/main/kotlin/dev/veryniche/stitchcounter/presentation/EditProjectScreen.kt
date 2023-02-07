@@ -79,7 +79,7 @@ fun EditProjectScreen(
             it.data?.let { data ->
                 val results: Bundle = RemoteInput.getResultsFromIntent(data)
                 val newInputText: CharSequence? = results.getCharSequence(inputTextKey)
-                projectName = newInputText as String
+                projectName = newInputText.toString()
             }
         }
 

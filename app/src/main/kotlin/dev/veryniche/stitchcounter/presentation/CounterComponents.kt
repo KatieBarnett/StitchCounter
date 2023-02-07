@@ -14,6 +14,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.wear.compose.material.Button
@@ -27,13 +28,13 @@ import dev.veryniche.stitchcounter.presentation.theme.Dimen
 import dev.veryniche.stitchcounter.presentation.theme.StitchCounterTheme
 
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun CounterListItemComponent(counter: Counter,
                              onCounterUpdate: (counter: Counter) -> Unit,
                              onCounterClick: (counter: Counter) -> Unit,
                              modifier: Modifier = Modifier) {
-    Row(horizontalArrangement = Arrangement.spacedBy(Dimen.spacing),
+    Row(verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(Dimen.spacing),
         modifier = modifier) {
         Button(
             onClick = { 
@@ -76,8 +77,8 @@ fun CounterCentre(displayedCount: String,
                   name: String,
                   modifier: Modifier = Modifier) {
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = modifier) {
-        Text(text = displayedCount)
-        Text(text = name)
+        Text(text = displayedCount, textAlign = TextAlign.Center)
+        Text(text = name, textAlign = TextAlign.Center)
     }
 }
 

@@ -51,7 +51,6 @@ import dev.veryniche.stitchcounter.util.Analytics
 import dev.veryniche.stitchcounter.util.TrackedScreen
 import dev.veryniche.stitchcounter.util.trackScreenView
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun EditCounterScreen(
     counterId: Int,
@@ -90,7 +89,7 @@ fun EditCounterScreen(
             it.data?.let { data ->
                 val results: Bundle = RemoteInput.getResultsFromIntent(data)
                 val newInputText: CharSequence? = results.getCharSequence(inputTextKey)
-                counterName = newInputText as String
+                counterName = newInputText.toString()
             }
         }
 
