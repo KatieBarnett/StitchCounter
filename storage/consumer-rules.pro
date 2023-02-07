@@ -1,4 +1,4 @@
 
--keepclassmembers class * extends androidx.datastore.preferences.protobuf.GeneratedMessageLite {
+-keepclassmembers class * extends com.google.protobuf.GeneratedMessageLitee {
     <fields>;
 }
