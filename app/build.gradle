@@ -14,7 +14,15 @@ android {
         applicationId "dev.veryniche.stitchcounter"
         minSdk rootProject.ext.minSdk
         targetSdk rootProject.ext.targetSdk
-        versionCode 1
+
+        //Set the first two digits of the version code to the targetSdkVersion, such as 28.
+        //Set the next three digits to the product version, such as 152 for a product version of 1.5.2.
+        //Set the next two digits to build or release number, such as 01.
+        //Reserve the last two digits for a multi-APK variant, such as 00.
+
+        //33.001.02.00
+
+        versionCode 330010500
         versionName "1.0"
     }
 
