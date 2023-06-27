@@ -5,9 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import androidx.wear.remote.interactions.RemoteActivityHelper
 import com.google.android.gms.wearable.Wearable
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
 
 suspend fun openUrlOnPhone(context: Context, url: String) {
     val remoteActivityHelper = RemoteActivityHelper(context)

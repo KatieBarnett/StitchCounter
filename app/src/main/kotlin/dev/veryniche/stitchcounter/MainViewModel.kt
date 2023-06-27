@@ -3,14 +3,11 @@ package dev.veryniche.stitchcounter
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.veryniche.stitchcounter.data.models.Counter
 import dev.veryniche.stitchcounter.data.models.Project
 import dev.veryniche.stitchcounter.storage.ProjectsRepository
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.firstOrNull
 import javax.inject.Inject
 
 @HiltViewModel
@@ -23,30 +20,26 @@ class MainViewModel @Inject constructor(
     
     val projects = savedProjectsRepository.getProjects()
 
-    fun getProject(id: Int) = savedProjectsRepository.getProject(id).filterNotNull()
+    fun getProject(id: Int) = savedProjectsRepository.getProject(id)
 
-    fun saveProject(projectName: String) {
+    suspend fun saveProject(projectName: String) {
         saveProject(null, projectName)
     }
 
-    fun saveProject(projectId: Int?, projectName: String) {
-        viewModelScope.launch {
-            savedProjectsRepository.saveProject(
-                Project(
-                    id = projectId, 
-                    name = projectName
-                )
+    suspend fun saveProject(projectId: Int?, projectName: String) {
+        savedProjectsRepository.saveProject(
+            Project(
+                id = projectId,
+                name = projectName
             )
-        }
+        )
     }
 
-    fun saveProject(project: Project) {
-        viewModelScope.launch {
-            savedProjectsRepository.saveProject(project)
-        }
+    suspend fun saveProject(project: Project) {
+        savedProjectsRepository.saveProject(project)
     }
 
-    fun saveCounter(projectId: Int, counterId: Int, counterName: String, counterMax: Int) {
+    suspend fun saveCounter(projectId: Int, counterId: Int, counterName: String, counterMax: Int) {
         saveCounter(projectId, Counter(
             id = counterId,
             name = counterName,
@@ -54,13 +47,11 @@ class MainViewModel @Inject constructor(
         ))
     }
 
-    fun saveCounter(projectId: Int, counter: Counter) {
-        viewModelScope.launch {
-            savedProjectsRepository.saveCounter(projectId, counter)
-        }
+    suspend fun saveCounter(projectId: Int, counter: Counter) {
+        savedProjectsRepository.saveCounter(projectId, counter)
     }
     
-    fun updateCounter(project: Project, counter: Counter) {
+    suspend fun updateCounter(project: Project, counter: Counter) {
         val counterIndex = project.counters.indexOfFirst { it.id == counter.id }
         if (counterIndex != -1) {
             val updatedList = project.counters.toMutableList()
@@ -69,32 +60,28 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun resetProject(project: Project) {
+    suspend fun resetProject(project: Project) {
         val updatedList = project.counters.map { 
             it.copy(currentCount = 0)
         }
         saveProject(project.copy(counters = updatedList))
     }
     
-    fun resetCounter(project: Project, counter: Counter) {
+    suspend fun resetCounter(project: Project, counter: Counter) {
         updateCounter(project, counter.copy(currentCount = 0))
     }
 
-    fun deleteProject(projectId: Int) {
-        viewModelScope.launch {
-            savedProjectsRepository.deleteProject(projectId)
-        }
+    suspend fun deleteProject(projectId: Int) {
+        savedProjectsRepository.deleteProject(projectId)
     }
 
-    fun deleteCounter(projectId: Int, counterId: Int) {
-        viewModelScope.launch {
-            getProject(projectId).collectLatest { project ->
-                val counterIndex = project.counters.indexOfFirst { it.id == counterId }
-                if (counterIndex != -1) {
-                    val updatedList = project.counters.toMutableList()
-                    updatedList.removeAt(counterIndex)
-                    saveProject(project.copy(counters = updatedList))
-                }
+    suspend fun deleteCounter(projectId: Int, counterId: Int) {
+        getProject(projectId).firstOrNull()?.let { project ->
+            val counterIndex = project.counters.indexOfFirst { it.id == counterId }
+            if (counterIndex != -1) {
+                val updatedList = project.counters.toMutableList()
+                updatedList.removeAt(counterIndex)
+                saveProject(project.copy(counters = updatedList))
             }
         }
     }

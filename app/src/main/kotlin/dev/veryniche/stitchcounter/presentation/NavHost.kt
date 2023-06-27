@@ -1,16 +1,18 @@
 package dev.veryniche.stitchcounter.presentation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import androidx.wear.compose.material.ScalingLazyListState
 import androidx.wear.compose.navigation.SwipeDismissableNavHost
 import androidx.wear.compose.navigation.composable
-import dev.veryniche.stitchcounter.util.Analytics
-import dev.veryniche.stitchcounter.util.trackEvent
 import dev.veryniche.stitchcounter.MainViewModel
 import dev.veryniche.stitchcounter.R
+import dev.veryniche.stitchcounter.util.Analytics
+import dev.veryniche.stitchcounter.util.trackEvent
+import kotlinx.coroutines.launch
 
 @Composable
 fun NavHost(
@@ -142,18 +144,23 @@ fun LoadEditProjectScreen(
     projectId: Int?,
     projectName: String?
 ) {
+    val composableScope = rememberCoroutineScope()
     EditProjectScreen(
         initialName = projectName,
         onSave = { projectName ->
-            viewModel.saveProject(projectId, projectName)
-            navController.navigateUp()
+            composableScope.launch {
+                viewModel.saveProject(projectId, projectName)
+                navController.navigateUp()
+            }
         },
         onDelete = {
-            projectId?.let {
-                trackEvent(Analytics.Action.DeleteProject)
-                viewModel.deleteProject(projectId)
+            composableScope.launch {
+                projectId?.let {
+                    trackEvent(Analytics.Action.DeleteProject)
+                    viewModel.deleteProject(projectId)
+                }
+                navController.navigateUp()
             }
-            navController.navigateUp()
         },
         onClose = {
             navController.navigateUp()
@@ -170,18 +177,23 @@ fun LoadEditCounterScreen(
     counterName: String?,
     counterMax: Int,
 ) {
+    val composableScope = rememberCoroutineScope()
     EditCounterScreen(
         counterId = counterId,
         initialName = counterName,
         initialMax = counterMax,
         onSave = { counterName, counterMax ->
-            viewModel.saveCounter(projectId, counterId, counterName, counterMax)
-            navController.navigateUp()
+            composableScope.launch {
+                viewModel.saveCounter(projectId, counterId, counterName, counterMax)
+                navController.navigateUp()
+            }
         },
         onDelete = {
-            trackEvent(Analytics.Action.DeleteCounter)
-            viewModel.deleteCounter(projectId, counterId)
-            navController.navigateUp()
+            composableScope.launch {
+                trackEvent(Analytics.Action.DeleteCounter)
+                viewModel.deleteCounter(projectId, counterId)
+                navController.navigateUp()
+            }
         },
         onClose = {
             navController.navigateUp()

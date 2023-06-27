@@ -14,6 +14,7 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Devices
@@ -27,17 +28,17 @@ import androidx.wear.compose.material.ScalingLazyColumn
 import androidx.wear.compose.material.ScalingLazyListState
 import androidx.wear.compose.material.items
 import androidx.wear.compose.material.rememberScalingLazyListState
-import dev.veryniche.stitchcounter.util.Analytics
-import dev.veryniche.stitchcounter.util.TrackedScreen
-import dev.veryniche.stitchcounter.util.trackEvent
-import dev.veryniche.stitchcounter.util.trackProjectScreenView
-import dev.veryniche.stitchcounter.util.trackScreenView
 import dev.veryniche.stitchcounter.MainViewModel
 import dev.veryniche.stitchcounter.R.string
 import dev.veryniche.stitchcounter.data.models.Counter
 import dev.veryniche.stitchcounter.data.models.Project
 import dev.veryniche.stitchcounter.getNextCounterId
 import dev.veryniche.stitchcounter.presentation.theme.Dimen
+import dev.veryniche.stitchcounter.util.Analytics
+import dev.veryniche.stitchcounter.util.TrackedScreen
+import dev.veryniche.stitchcounter.util.trackEvent
+import dev.veryniche.stitchcounter.util.trackProjectScreenView
+import kotlinx.coroutines.launch
 
 @Composable
 fun ProjectScreen(
@@ -49,6 +50,7 @@ fun ProjectScreen(
     onCounterAdd: (counterId: Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val composableScope = rememberCoroutineScope()
     val project = viewModel.getProject(id).collectAsState(initial = null)
     project.value?.let { project ->
         TrackedScreen {
@@ -58,9 +60,17 @@ fun ProjectScreen(
         ProjectContent(
             project = project,
             listState = listState,
-            onCounterUpdate = { counter -> viewModel.updateCounter(project, counter) },
+            onCounterUpdate = { counter ->
+                composableScope.launch {
+                    viewModel.updateCounter(project, counter)
+                }
+            },
             onCounterAdd = { onCounterAdd.invoke(nextCounterId)},
-            onProjectReset = { viewModel.resetProject(project) },
+            onProjectReset = {
+                composableScope.launch {
+                    viewModel.resetProject(project)
+                }
+            },
             onProjectEdit = { onProjectEdit.invoke(id, project.name) },
             onCounterClick = onCounterClick,
             modifier = modifier

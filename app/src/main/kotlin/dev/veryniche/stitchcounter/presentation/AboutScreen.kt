@@ -1,14 +1,9 @@
 package dev.veryniche.stitchcounter.presentation
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.OpenInBrowser
 import androidx.compose.runtime.Composable
@@ -34,13 +29,11 @@ import androidx.wear.compose.material.ScalingLazyListState
 import androidx.wear.compose.material.Text
 import androidx.wear.compose.material.dialog.Confirmation
 import androidx.wear.compose.material.rememberScalingLazyListState
-import com.google.firebase.analytics.FirebaseAnalytics
 import dev.veryniche.stitchcounter.R
 import dev.veryniche.stitchcounter.presentation.theme.Dimen
 import dev.veryniche.stitchcounter.presentation.theme.StitchCounterTheme
 import dev.veryniche.stitchcounter.util.Analytics
 import dev.veryniche.stitchcounter.util.TrackedScreen
-import dev.veryniche.stitchcounter.util.emailOnPhone
 import dev.veryniche.stitchcounter.util.openUrlOnPhone
 import dev.veryniche.stitchcounter.util.trackScreenView
 import kotlinx.coroutines.launch
