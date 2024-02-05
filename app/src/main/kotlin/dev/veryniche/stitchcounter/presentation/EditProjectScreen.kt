@@ -25,6 +25,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.wear.compose.material.Button
@@ -162,7 +163,10 @@ fun EditProjectScreen(
 fun DeleteProjectAlert(projectName: String, onConfirm: () -> Unit, onCancel: () -> Unit) {
         Alert(
             title = {
-                Text(stringResource(R.string.delete_project_message, projectName))
+                Text(
+                    text = stringResource(R.string.delete_project_message, projectName),
+                    textAlign = TextAlign.Center
+                )
             },
             negativeButton = {
                 Button(
@@ -202,7 +206,10 @@ fun DeleteProjectConfirmation(projectName: String, onTimeout: () -> Unit) {
             )
         },
         content = {
-            Text(stringResource(R.string.delete_project_success, projectName))
+            Text(
+                text = stringResource(R.string.delete_project_success, projectName),
+                textAlign = TextAlign.Center
+            )
         }
     )
 }

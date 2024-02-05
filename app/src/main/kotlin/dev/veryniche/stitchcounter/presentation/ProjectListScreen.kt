@@ -2,10 +2,13 @@ package dev.veryniche.stitchcounter.presentation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -15,9 +18,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
 import androidx.wear.compose.material.ButtonDefaults
 import androidx.wear.compose.material.Chip
 import androidx.wear.compose.material.ChipDefaults
@@ -94,7 +99,7 @@ fun ProjectList(
 @Composable
 fun ProjectChip(project: Project, onProjectClick: (Int) -> Unit, modifier: Modifier = Modifier) {
     Chip(colors = ChipDefaults.primaryChipColors(),
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth().height(IntrinsicSize.Min),
         label = {
             Text(
                 text = project.name,
@@ -103,15 +108,21 @@ fun ProjectChip(project: Project, onProjectClick: (Int) -> Unit, modifier: Modif
             )
         },
         secondaryLabel = {
-            Text(
-                text = if (project.counters.isEmpty()) {
-                    stringResource(R.string.counters_label_zero)
-                } else {
-                    pluralStringResource(R.plurals.counters_label, project.counters.size, project.counters.size)
-                },
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
+            if (LocalDensity.current.fontScale < 1.3f) {
+                Text(
+                    text = if (project.counters.isEmpty()) {
+                        stringResource(R.string.counters_label_zero)
+                    } else {
+                        pluralStringResource(
+                            R.plurals.counters_label,
+                            project.counters.size,
+                            project.counters.size
+                        )
+                    },
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
         },
         onClick = {
             project.id?.let {

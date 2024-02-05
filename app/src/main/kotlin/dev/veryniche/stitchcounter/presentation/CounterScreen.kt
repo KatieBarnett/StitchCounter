@@ -16,12 +16,17 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Remove
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.wear.compose.material.Button
@@ -45,6 +50,7 @@ import dev.veryniche.stitchcounter.util.Analytics
 import dev.veryniche.stitchcounter.util.TrackedScreen
 import dev.veryniche.stitchcounter.util.trackScreenView
 import kotlinx.coroutines.launch
+import kotlin.math.max
 
 @Composable
 fun CounterScreen(
@@ -88,6 +94,9 @@ fun CounterContent(counter: Counter,
                    onCounterReset: () -> Unit,
                    onCounterEdit: () -> Unit,
                    modifier: Modifier = Modifier) {
+
+    var useCompactButton by remember { mutableStateOf(false) }
+
     Box(modifier = modifier.fillMaxSize()) {
         counter.getCounterProgress()?.let { progress ->
             CircularProgressIndicator(
@@ -118,6 +127,8 @@ fun CounterContent(counter: Counter,
                     } else {
                         stringResource(R.string.counter_label_fraction_many, counter.name,counter.currentCount, counter.maxCount)
                     },
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.body2,
                     modifier = Modifier
@@ -129,33 +140,66 @@ fun CounterContent(counter: Counter,
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth(0.95f)
             ) {
-                Button(
-                    onClick = {
-                        if (counter.currentCount > 0) {
-                            onCounterUpdate.invoke(counter.copy(currentCount = counter.currentCount - 1))
-                        }
-                    },
-                    colors = ButtonDefaults.secondaryButtonColors()
-                ) {
-                    Icon(
-                        imageVector = Filled.Remove,
-                        contentDescription = stringResource(id = string.counter_subtract)
-                    )
+                if (useCompactButton) {
+                    CompactButton(
+                        onClick = {
+                            if (counter.currentCount > 0) {
+                                onCounterUpdate.invoke(counter.copy(currentCount = counter.currentCount - 1))
+                            }
+                        },
+                        colors = ButtonDefaults.secondaryButtonColors()
+                    ) {
+                        Icon(
+                            imageVector = Filled.Remove,
+                            contentDescription = stringResource(id = string.counter_subtract)
+                        )
+                    }
+                } else {
+                    Button(
+                        onClick = {
+                            if (counter.currentCount > 0) {
+                                onCounterUpdate.invoke(counter.copy(currentCount = counter.currentCount - 1))
+                            }
+                        },
+                        colors = ButtonDefaults.secondaryButtonColors()
+                    ) {
+                        Icon(
+                            imageVector = Filled.Remove,
+                            contentDescription = stringResource(id = string.counter_subtract)
+                        )
+                    }
                 }
                 Text(
                     text = counter.currentCount.toString(),
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.display3,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
+                    onTextLayout = { textLayoutResult ->
+                        if (!useCompactButton) {
+                            useCompactButton = textLayoutResult.lineCount > 1
+                        }
+                    }
                 )
-                Button(
-                    onClick = { onCounterUpdate.invoke(counter.copy(currentCount = counter.currentCount + 1)) },
-                    colors = ButtonDefaults.primaryButtonColors()
-                ) {
-                    Icon(
-                        imageVector = Filled.Add,
-                        contentDescription = stringResource(id = string.counter_add)
-                    )
+                if (useCompactButton) {
+                    CompactButton(
+                        onClick = { onCounterUpdate.invoke(counter.copy(currentCount = counter.currentCount + 1)) },
+                        colors = ButtonDefaults.primaryButtonColors()
+                    ) {
+                        Icon(
+                            imageVector = Filled.Add,
+                            contentDescription = stringResource(id = string.counter_add)
+                        )
+                    }
+                } else {
+                    Button(
+                        onClick = { onCounterUpdate.invoke(counter.copy(currentCount = counter.currentCount + 1)) },
+                        colors = ButtonDefaults.primaryButtonColors()
+                    ) {
+                        Icon(
+                            imageVector = Filled.Add,
+                            contentDescription = stringResource(id = string.counter_add)
+                        )
+                    }
                 }
             }
             Row(horizontalArrangement = Arrangement.Center,

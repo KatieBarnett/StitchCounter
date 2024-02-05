@@ -14,7 +14,11 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Devices
@@ -166,6 +170,11 @@ fun ProjectContentPreview() {
                 ),
                 Counter(
                     id = 2,
+                    name = "pattern that is very long",
+                    currentCount = 700
+                ),
+                Counter(
+                    id = 3,
                     name = "plain",
                     currentCount = 8
                 )
