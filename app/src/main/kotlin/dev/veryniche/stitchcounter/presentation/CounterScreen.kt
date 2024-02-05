@@ -40,6 +40,7 @@ import dev.veryniche.stitchcounter.presentation.theme.Charcoal
 import dev.veryniche.stitchcounter.presentation.theme.Dimen
 import dev.veryniche.stitchcounter.presentation.theme.Pink
 import dev.veryniche.stitchcounter.presentation.theme.StitchCounterTheme
+import dev.veryniche.stitchcounter.previews.PreviewScreen
 import dev.veryniche.stitchcounter.util.Analytics
 import dev.veryniche.stitchcounter.util.TrackedScreen
 import dev.veryniche.stitchcounter.util.trackScreenView
@@ -186,33 +187,9 @@ fun CounterContent(counter: Counter,
     }
 }
 
-@Preview(device = Devices.WEAR_OS_SMALL_ROUND, showSystemUi = true)
+@PreviewScreen
 @Composable
 fun CounterContentPreview() {
-    StitchCounterTheme {
-        CounterContent(Counter(id = 3, name = "pattern", currentCount = 400, maxCount = 500), {}, {}, {})
-    }
-}
-
-@Preview(device = Devices.WEAR_OS_LARGE_ROUND, showSystemUi = true)
-@Composable
-fun CounterContentPreviewLarge() {
-    StitchCounterTheme {
-        CounterContent(Counter(id = 3, name = "pattern", currentCount = 400, maxCount = 500), {}, {}, {})
-    }
-}
-
-@Preview(device = Devices.WEAR_OS_RECT, showSystemUi = true)
-@Composable
-fun CounterContentPreviewRect() {
-    StitchCounterTheme {
-        CounterContent(Counter(id = 3, name = "pattern", currentCount = 400, maxCount = 500), {}, {}, {})
-    }
-}
-
-@Preview(device = Devices.WEAR_OS_SQUARE, showSystemUi = true)
-@Composable
-fun CounterContentPreviewSquare() {
     StitchCounterTheme {
         CounterContent(Counter(id = 3, name = "pattern", currentCount = 400, maxCount = 500), {}, {}, {})
     }

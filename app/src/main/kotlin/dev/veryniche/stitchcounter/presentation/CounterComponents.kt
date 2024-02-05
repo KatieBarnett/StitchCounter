@@ -23,6 +23,8 @@ import dev.veryniche.stitchcounter.R
 import dev.veryniche.stitchcounter.data.models.Counter
 import dev.veryniche.stitchcounter.presentation.theme.Dimen
 import dev.veryniche.stitchcounter.presentation.theme.StitchCounterTheme
+import dev.veryniche.stitchcounter.previews.PreviewComponent
+import dev.veryniche.stitchcounter.previews.PreviewScreen
 
 
 @Composable
@@ -79,7 +81,7 @@ fun CounterCentre(displayedCount: String,
     }
 }
 
-@Preview(device = Devices.WEAR_OS_SMALL_ROUND, showSystemUi = true)
+@PreviewComponent
 @Composable
 fun CounterCentrePreview() {
     StitchCounterTheme {
@@ -91,7 +93,7 @@ fun CounterCentrePreview() {
     }
 }
 
-@Preview(device = Devices.WEAR_OS_SMALL_ROUND, showSystemUi = true)
+@PreviewComponent
 @Composable
 fun CounterCentreWithMaxPreview() {
     StitchCounterTheme {
@@ -103,7 +105,7 @@ fun CounterCentreWithMaxPreview() {
     }
 }
 
-@Preview(device = Devices.WEAR_OS_SMALL_ROUND, showSystemUi = true)
+@PreviewScreen
 @Composable
 fun CounterPreview() {
     StitchCounterTheme {

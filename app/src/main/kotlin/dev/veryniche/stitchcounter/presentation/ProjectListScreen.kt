@@ -34,6 +34,8 @@ import dev.veryniche.stitchcounter.R
 import dev.veryniche.stitchcounter.R.string
 import dev.veryniche.stitchcounter.data.models.Project
 import dev.veryniche.stitchcounter.presentation.theme.Dimen
+import dev.veryniche.stitchcounter.presentation.theme.StitchCounterTheme
+import dev.veryniche.stitchcounter.previews.PreviewComponent
 import dev.veryniche.stitchcounter.util.Analytics
 import dev.veryniche.stitchcounter.util.TrackedScreen
 import dev.veryniche.stitchcounter.util.trackScreenView
@@ -144,6 +146,31 @@ fun AboutButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
             imageVector = Icons.Filled.Info,
             contentDescription = stringResource(id = R.string.about_title)
         )
+    }
+}
+
+@PreviewComponent
+@Composable
+fun ProjectChipPreview() {
+    StitchCounterTheme {
+        ProjectChip(Project(name = "Project name"), {}, Modifier)
+    }
+}
+
+
+@PreviewComponent
+@Composable
+fun AddProjectButtonPreview() {
+    StitchCounterTheme {
+        AddProjectButton({}, Modifier)
+    }
+}
+
+@PreviewComponent
+@Composable
+fun AboutButtonPreview() {
+    StitchCounterTheme {
+        AboutButton({}, Modifier)
     }
 }
 

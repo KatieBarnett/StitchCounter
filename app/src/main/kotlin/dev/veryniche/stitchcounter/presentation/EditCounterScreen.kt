@@ -44,6 +44,7 @@ import dev.veryniche.stitchcounter.R
 import dev.veryniche.stitchcounter.R.string
 import dev.veryniche.stitchcounter.presentation.theme.Dimen
 import dev.veryniche.stitchcounter.presentation.theme.StitchCounterTheme
+import dev.veryniche.stitchcounter.previews.PreviewScreen
 import dev.veryniche.stitchcounter.util.Analytics
 import dev.veryniche.stitchcounter.util.TrackedScreen
 import dev.veryniche.stitchcounter.util.trackScreenView
@@ -244,7 +245,7 @@ fun DeleteCounterConfirmation(counterName: String, onTimeout: () -> Unit) {
     )
 }
 
-@Preview(device = Devices.WEAR_OS_SMALL_ROUND, showSystemUi = true)
+@PreviewScreen
 @Composable
 fun EditCounterScreenPreview() {
     StitchCounterTheme {

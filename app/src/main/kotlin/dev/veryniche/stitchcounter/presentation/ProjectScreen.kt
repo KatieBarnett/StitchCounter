@@ -34,6 +34,7 @@ import dev.veryniche.stitchcounter.data.models.Counter
 import dev.veryniche.stitchcounter.data.models.Project
 import dev.veryniche.stitchcounter.getNextCounterId
 import dev.veryniche.stitchcounter.presentation.theme.Dimen
+import dev.veryniche.stitchcounter.previews.PreviewScreen
 import dev.veryniche.stitchcounter.util.Analytics
 import dev.veryniche.stitchcounter.util.TrackedScreen
 import dev.veryniche.stitchcounter.util.trackEvent
@@ -150,7 +151,7 @@ fun ProjectContent(
     }
 }
 
-@Preview(device = Devices.WEAR_OS_SMALL_ROUND, showSystemUi = true)
+@PreviewScreen
 @Composable
 fun ProjectContentPreview() {
     ProjectContent(

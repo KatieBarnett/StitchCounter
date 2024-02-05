@@ -32,6 +32,8 @@ import androidx.wear.compose.material.rememberScalingLazyListState
 import dev.veryniche.stitchcounter.R
 import dev.veryniche.stitchcounter.presentation.theme.Dimen
 import dev.veryniche.stitchcounter.presentation.theme.StitchCounterTheme
+import dev.veryniche.stitchcounter.previews.PreviewComponent
+import dev.veryniche.stitchcounter.previews.PreviewScreen
 import dev.veryniche.stitchcounter.util.Analytics
 import dev.veryniche.stitchcounter.util.TrackedScreen
 import dev.veryniche.stitchcounter.util.openUrlOnPhone
@@ -209,17 +211,9 @@ fun EmailOpenedConfirmation(onTimeout: () -> Unit) {
     )
 }
 
-@Preview
+@PreviewScreen
 @Composable
 fun AboutScreenPreview() {
-    StitchCounterTheme {
-        AboutScreen(enableAnalytics = false, listState = rememberScalingLazyListState())
-    }
-}
-
-@Preview(device = Devices.WEAR_OS_SMALL_ROUND, showSystemUi = true)
-@Composable
-fun AboutScreenRoundPreview() {
     StitchCounterTheme {
         AboutScreen(enableAnalytics = false, listState = rememberScalingLazyListState())
     }
