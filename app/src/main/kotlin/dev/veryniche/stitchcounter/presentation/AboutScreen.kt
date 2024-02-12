@@ -62,7 +62,7 @@ fun AboutScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(Dimen.spacingDouble),
         state = listState,
-        modifier = Modifier.onRotaryScrollEvent {
+        modifier = modifier.onRotaryScrollEvent {
             coroutineScope.launch {
                 listState.scrollBy(it.verticalScrollPixels)
                 listState.animateScrollBy(0f)
