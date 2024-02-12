@@ -1,5 +1,8 @@
 package dev.veryniche.stitchcounter.presentation
 
+import androidx.compose.foundation.focusable
+import androidx.compose.foundation.gestures.animateScrollBy
+import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
@@ -14,25 +17,26 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.input.rotary.onRotaryScrollEvent
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Devices
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.wear.compose.foundation.ExperimentalWearFoundationApi
+import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
+import androidx.wear.compose.foundation.lazy.ScalingLazyListState
+import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
+import androidx.wear.compose.foundation.rememberActiveFocusRequester
 import androidx.wear.compose.material.Chip
 import androidx.wear.compose.material.ChipDefaults
 import androidx.wear.compose.material.Icon
 import androidx.wear.compose.material.ListHeader
 import androidx.wear.compose.material.MaterialTheme
-import androidx.wear.compose.material.ScalingLazyColumn
-import androidx.wear.compose.material.ScalingLazyListState
 import androidx.wear.compose.material.Text
 import androidx.wear.compose.material.dialog.Confirmation
-import androidx.wear.compose.material.rememberScalingLazyListState
 import dev.veryniche.stitchcounter.R
 import dev.veryniche.stitchcounter.presentation.theme.Dimen
 import dev.veryniche.stitchcounter.presentation.theme.StitchCounterTheme
-import dev.veryniche.stitchcounter.previews.PreviewComponent
 import dev.veryniche.stitchcounter.previews.PreviewScreen
 import dev.veryniche.stitchcounter.util.Analytics
 import dev.veryniche.stitchcounter.util.TrackedScreen
@@ -40,21 +44,34 @@ import dev.veryniche.stitchcounter.util.openUrlOnPhone
 import dev.veryniche.stitchcounter.util.trackScreenView
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalWearFoundationApi::class)
 @Composable
-fun AboutScreen(listState: ScalingLazyListState,
-    enableAnalytics: Boolean = true) {
-    if (enableAnalytics) {
-        TrackedScreen {
-            trackScreenView(name = Analytics.Screen.About)
-        }
+fun AboutScreen(
+    listState: ScalingLazyListState,
+    modifier: Modifier = Modifier
+) {
+    TrackedScreen {
+        trackScreenView(name = Analytics.Screen.About)
     }
     val context = LocalContext.current
-    val coroutineContext = rememberCoroutineScope()
+    val coroutineScope = rememberCoroutineScope()
     var showLinkOpenedConfirmation by remember { mutableStateOf(false) }
     var showEmailOpenedConfirmation by remember { mutableStateOf(false) }
-    ScalingLazyColumn(horizontalAlignment = Alignment.CenterHorizontally,
+    val focusRequester = rememberActiveFocusRequester()
+    ScalingLazyColumn(
+        horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(Dimen.spacingDouble),
-        state = listState) {
+        state = listState,
+        modifier = Modifier.onRotaryScrollEvent {
+            coroutineScope.launch {
+                listState.scrollBy(it.verticalScrollPixels)
+                listState.animateScrollBy(0f)
+            }
+            true
+        }
+            .focusRequester(focusRequester)
+            .focusable(),
+        ) {
             item {
                 ListHeader() {
                     Text(
@@ -88,7 +105,7 @@ fun AboutScreen(listState: ScalingLazyListState,
 //                Text(email)
 //            },
 //            onClick = {
-//                coroutineContext.launch {
+//                coroutineScope.launch {
 //                    emailOnPhone(context, email, emailSubject)
 //                    showEmailOpenedConfirmation = true
 //                }
@@ -109,7 +126,7 @@ fun AboutScreen(listState: ScalingLazyListState,
                     Text(stringResource(id = R.string.about_privacy_policy_link_text))
                 },
                 onClick = {
-                    coroutineContext.launch {
+                    coroutineScope.launch {
                         openUrlOnPhone(context, privacyPolicyLink)
                         showLinkOpenedConfirmation = true
                     }
@@ -132,7 +149,7 @@ fun AboutScreen(listState: ScalingLazyListState,
                     Text(devLink)
                 },
                 onClick = {
-                    coroutineContext.launch {
+                    coroutineScope.launch {
                         openUrlOnPhone(context, devLink)
                         showLinkOpenedConfirmation = true
                     }
@@ -150,7 +167,7 @@ fun AboutScreen(listState: ScalingLazyListState,
                     Text(companyLink)
                 },
                 onClick = {
-                    coroutineContext.launch {
+                    coroutineScope.launch {
                         openUrlOnPhone(context, companyLink)
                         showLinkOpenedConfirmation = true
                     }
@@ -215,6 +232,6 @@ fun EmailOpenedConfirmation(onTimeout: () -> Unit) {
 @Composable
 fun AboutScreenPreview() {
     StitchCounterTheme {
-        AboutScreen(enableAnalytics = false, listState = rememberScalingLazyListState())
+        AboutScreen(listState = rememberScalingLazyListState())
     }
 }

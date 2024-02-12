@@ -5,7 +5,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
-import androidx.wear.compose.material.ScalingLazyListState
+import androidx.wear.compose.foundation.lazy.ScalingLazyListState
 import androidx.wear.compose.navigation.SwipeDismissableNavHost
 import androidx.wear.compose.navigation.composable
 import dev.veryniche.stitchcounter.MainViewModel
