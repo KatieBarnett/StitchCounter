@@ -29,8 +29,18 @@ class ProjectsRepository @Inject constructor(
         return getProjects().map { it.firstOrNull { it.id == id } }
     }
 
-    suspend fun saveProject(project: Project) {
-        projectsDataSource.saveProject(project.copy(lastModified = System.currentTimeMillis()))
+    suspend fun saveProject(updatedProject: Project) {
+        updatedProject.id?.let {
+            getProject(it).firstOrNull()?.let { project ->
+                projectsDataSource.saveProject(
+                    project.copy(name = updatedProject.name, lastModified = System.currentTimeMillis())
+                )
+            } ?: projectsDataSource.saveProject(
+                updatedProject.copy(name = updatedProject.name, lastModified = System.currentTimeMillis())
+            )
+        } ?: projectsDataSource.saveProject(
+            updatedProject.copy(name = updatedProject.name, lastModified = System.currentTimeMillis())
+        )
     }
 
     suspend fun saveCounter(projectId: Int, counter: Counter) {
