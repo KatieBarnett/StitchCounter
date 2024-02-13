@@ -80,6 +80,9 @@ dependencies {
     implementation(libs.wear.compose.navigation)
     implementation(libs.hilt.navigation.compose)
 
+
+    implementation(libs.splashscreen)
+
     implementation(libs.wear.input)
     implementation(libs.wear.interactions)
 
