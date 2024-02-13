@@ -112,3 +112,13 @@ fun CounterPreview() {
         }
     }
 }
+
+@PreviewScreen
+@Composable
+fun CounterLongTextPreview() {
+    StitchCounterTheme {
+        Column(verticalArrangement = Arrangement.Center, modifier = Modifier.fillMaxSize()) {
+            CounterListItemComponent(Counter(id = 3, name = "pattern that is something super long", currentCount = 4000, maxCount = 1000), {}, {})
+        }
+    }
+}

@@ -217,7 +217,7 @@ fun DeleteProjectConfirmation(projectName: String, onTimeout: () -> Unit) {
 @Composable
 fun DeleteProjectAlertPreview() {
     StitchCounterTheme {
-        DeleteProjectAlert("Project Name", {}, {})
+        DeleteProjectAlert("Project Name that is really long", {}, {})
     }
 }
 
@@ -225,7 +225,7 @@ fun DeleteProjectAlertPreview() {
 @Composable
 fun DeleteProjectConfirmationPreview() {
     StitchCounterTheme {
-        DeleteProjectConfirmation("Project Name", {})
+        DeleteProjectConfirmation("Project Name that is really long", {})
     }
 }
 

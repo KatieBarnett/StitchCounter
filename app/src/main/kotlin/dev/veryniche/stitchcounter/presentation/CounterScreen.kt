@@ -232,6 +232,6 @@ fun CounterContent(counter: Counter,
 @Composable
 fun CounterContentPreview() {
     StitchCounterTheme {
-        CounterContent(Counter(id = 3, name = "pattern", currentCount = 400, maxCount = 500), {}, {}, {})
+        CounterContent(Counter(id = 3, name = "pattern", currentCount = 40000, maxCount = 50000), {}, {}, {})
     }
 }

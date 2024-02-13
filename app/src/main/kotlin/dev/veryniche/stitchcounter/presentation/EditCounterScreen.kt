@@ -247,6 +247,6 @@ fun DeleteCounterConfirmation(counterName: String, onTimeout: () -> Unit) {
 @Composable
 fun EditCounterScreenPreview() {
     StitchCounterTheme {
-        EditCounterScreen(1, "initial name", 45, {_, _ -> }, {}, {})
+        EditCounterScreen(1, "initial name that is really long", 450000, {_, _ -> }, {}, {})
     }
 }
