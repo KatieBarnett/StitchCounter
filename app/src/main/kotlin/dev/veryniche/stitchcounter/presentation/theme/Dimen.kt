@@ -10,7 +10,7 @@ object Dimen {
     val spacingQuad = 16.dp
 
     val spacingHuge = 30.dp
-    val spacingExtraHuge = 60.dp
+    val spacingExtraHuge = 40.dp
     
     val progressIndicatorWidth = 5.dp
     val progressIndicatorPadding = 1.dp

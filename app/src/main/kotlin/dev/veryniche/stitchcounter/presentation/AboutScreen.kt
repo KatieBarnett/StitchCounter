@@ -4,7 +4,9 @@ import androidx.compose.foundation.focusable
 import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
@@ -58,11 +60,14 @@ fun AboutScreen(
     var showLinkOpenedConfirmation by remember { mutableStateOf(false) }
     var showEmailOpenedConfirmation by remember { mutableStateOf(false) }
     val focusRequester = rememberActiveFocusRequester()
+
     ScalingLazyColumn(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(Dimen.spacingDouble),
         state = listState,
-        modifier = modifier.onRotaryScrollEvent {
+        modifier = modifier
+            .fillMaxSize()
+            .onRotaryScrollEvent {
             coroutineScope.launch {
                 listState.scrollBy(it.verticalScrollPixels)
                 listState.animateScrollBy(0f)
@@ -73,11 +78,9 @@ fun AboutScreen(
             .focusable(),
         ) {
             item {
-                ListHeader() {
-                    Text(
-                        color = MaterialTheme.colors.primaryVariant,
-                        text = stringResource(id = R.string.about_title)
-                    )
+                ListHeader(Modifier) {
+                    ListTitle(stringResource(R.string.about_title),
+                        modifier = Modifier.padding(top = Dimen.spacingQuad))
                 }
             }
             listOf(R.string.about_content, R.string.about_feedback).forEach {

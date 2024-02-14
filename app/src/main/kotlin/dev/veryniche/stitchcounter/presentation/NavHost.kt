@@ -21,6 +21,7 @@ fun NavHost(
     modifier: Modifier = Modifier,
     listState: ScalingLazyListState
 ) {
+    val coroutineScope = rememberCoroutineScope()
     SwipeDismissableNavHost(
         navController = navController,
         startDestination = "project_list",
@@ -42,13 +43,16 @@ fun NavHost(
                     navController.navigate("edit_project")
                 },
                 onAboutClick = {
+                    coroutineScope.launch {
+                        listState.scrollToItem(index = 0)
+                    }
                     navController.navigate("about")
                 }
             )
         }
         composable("project/{id}") {
             it.arguments?.getString("id")?.toIntOrNull()?.let { projectId ->
-                viewModel.updatePageContext(stringResource(id = R.string.project_title))
+                viewModel.updatePageContext(null)
                 ProjectScreen(
                     viewModel = viewModel,
                     id = projectId,
@@ -66,7 +70,7 @@ fun NavHost(
             }
         }
         composable("edit_project") {
-            viewModel.updatePageContext(stringResource(id = R.string.add_project))
+            viewModel.updatePageContext(stringResource(id = R.string.context_project))
             LoadEditProjectScreen(
                 navController = navController,
                 viewModel = viewModel,
@@ -78,7 +82,7 @@ fun NavHost(
             val projectId = it.arguments?.getString("id")?.toIntOrNull()
             val projectName = it.arguments?.getString("name")
             if (projectId != null && projectName != null) {
-                viewModel.updatePageContext(stringResource(id = R.string.edit_project))
+                viewModel.updatePageContext(stringResource(id = R.string.context_project))
                 LoadEditProjectScreen(
                     navController = navController,
                     viewModel = viewModel,
@@ -91,7 +95,7 @@ fun NavHost(
             val projectId = it.arguments?.getString("project_id")?.toIntOrNull()
             val counterId = it.arguments?.getString("counter_id")?.toIntOrNull()
             if (projectId != null && counterId != null) {
-                viewModel.updatePageContext(stringResource(id = R.string.counter_title))
+                viewModel.updatePageContext(stringResource(id = R.string.context_counter))
                 CounterScreen(
                     viewModel = viewModel,
                     projectId = projectId,
@@ -106,7 +110,7 @@ fun NavHost(
             val projectId = it.arguments?.getString("project_id")?.toIntOrNull()
             val counterId = it.arguments?.getString("counter_id")?.toIntOrNull()
             if (projectId != null && counterId != null) {
-                viewModel.updatePageContext(stringResource(id = R.string.add_counter))
+                viewModel.updatePageContext(stringResource(id = R.string.context_counter))
                 LoadEditCounterScreen(
                     navController = navController,
                     viewModel = viewModel,
@@ -123,7 +127,7 @@ fun NavHost(
             val counterName = it.arguments?.getString("counter_name")
             val counterMax = it.arguments?.getString("counter_max")?.toIntOrNull() ?: 0
             if (projectId != null && counterId != null) {
-                viewModel.updatePageContext(stringResource(id = R.string.edit_counter))
+                viewModel.updatePageContext(stringResource(id = R.string.context_counter))
                 LoadEditCounterScreen(
                     navController = navController,
                     viewModel = viewModel,

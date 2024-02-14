@@ -54,22 +54,25 @@ fun StitchCounterWearApp(modifier: Modifier = Modifier) {
         
         Scaffold(
             timeText = {
-                if (!listState.isScrollInProgress) {
+                if (!listState.isScrollInProgress && !listState.canScrollBackward) {
                     val leadingTextStyle = TimeTextDefaults.timeTextStyle(color = MaterialTheme.colors.primary)
-                    TimeText(
-                        startLinearContent = {
-                            Text(
-                                text = pageContextState,
-                                style = leadingTextStyle
-                            )
-                        },
-                        startCurvedContent = {
-                            curvedText(
-                                text = pageContextState,
-                                style = CurvedTextStyle(leadingTextStyle)
-                            )
-                        },
-                    )
+                    pageContextState?.let {
+                        TimeText(
+                            startLinearContent = {
+                                Text(
+                                    text = it,
+                                    style = leadingTextStyle
+                                )
+                            },
+                            startCurvedContent = {
+                                curvedText(
+                                    text = it,
+                                    style = CurvedTextStyle(leadingTextStyle)
+                                )
+
+                            },
+                        )
+                    }
                 }
             },
             vignette = {

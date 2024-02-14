@@ -15,8 +15,8 @@ class MainViewModel @Inject constructor(
     private val savedProjectsRepository: ProjectsRepository
 ) : ViewModel() {
 
-    private val _pageContext = MutableLiveData("")
-    val pageContext: LiveData<String> = _pageContext
+    private val _pageContext = MutableLiveData<String?>(null)
+    val pageContext: LiveData<String?> = _pageContext
     
     val projects = savedProjectsRepository.getProjects()
 
@@ -86,7 +86,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun updatePageContext(text: String) {
+    fun updatePageContext(text: String?) {
         _pageContext.postValue(text)
     }
 }

@@ -95,7 +95,7 @@ fun EditCounterScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier.fillMaxSize()
     ) {
-        Spacer(Modifier.height(Dimen.spacingHuge))
+        Spacer(Modifier.height(Dimen.spacingExtraHuge))
         Row(verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth(0.75f)) {
             Text(text = counterName, Modifier.weight(1f))
