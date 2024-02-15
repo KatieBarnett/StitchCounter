@@ -36,6 +36,7 @@ import androidx.wear.compose.material.ListHeader
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
 import androidx.wear.compose.material.dialog.Confirmation
+import dev.veryniche.stitchcounter.BuildConfig
 import dev.veryniche.stitchcounter.R
 import dev.veryniche.stitchcounter.presentation.theme.Dimen
 import dev.veryniche.stitchcounter.presentation.theme.StitchCounterTheme
@@ -175,6 +176,14 @@ fun AboutScreen(
                         showLinkOpenedConfirmation = true
                     }
                 }
+            )
+        }
+        item {
+            Text(
+                text = stringResource(id = R.string.about_version, BuildConfig.VERSION_NAME),
+                color = MaterialTheme.colors.primaryVariant,
+                textAlign = TextAlign.Center,
+                modifier = modifier.fillMaxWidth()
             )
         }
     }

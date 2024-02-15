@@ -3,6 +3,8 @@
     <string name="app_name">Stitch Counter</string>
     <string name="title">Projects</string>
 
+    <string name="about_version">App version: %s</string>
+
 
     <string name="context_project">Project</string>
     <string name="context_counter">Counter</string>
