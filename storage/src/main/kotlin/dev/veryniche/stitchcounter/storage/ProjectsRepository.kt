@@ -29,7 +29,7 @@ class ProjectsRepository @Inject constructor(
         return getProjects().map { it.firstOrNull { it.id == id } }
     }
 
-    suspend fun saveProject(updatedProject: Project) {
+    suspend fun saveProjectName(updatedProject: Project) {
         updatedProject.id?.let {
             getProject(it).firstOrNull()?.let { project ->
                 projectsDataSource.saveProject(
@@ -40,6 +40,20 @@ class ProjectsRepository @Inject constructor(
             )
         } ?: projectsDataSource.saveProject(
             updatedProject.copy(name = updatedProject.name, lastModified = System.currentTimeMillis())
+        )
+    }
+
+    suspend fun saveProject(updatedProject: Project) {
+        updatedProject.id?.let {
+            getProject(it).firstOrNull()?.let { project ->
+                projectsDataSource.saveProject(
+                    updatedProject.copy(lastModified = System.currentTimeMillis())
+                )
+            } ?: projectsDataSource.saveProject(
+                updatedProject.copy(lastModified = System.currentTimeMillis())
+            )
+        } ?: projectsDataSource.saveProject(
+            updatedProject.copy(lastModified = System.currentTimeMillis())
         )
     }
 

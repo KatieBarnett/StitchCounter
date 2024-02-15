@@ -35,6 +35,15 @@ class MainViewModel @Inject constructor(
         )
     }
 
+    suspend fun saveProjectName(projectId: Int?, projectName: String) {
+        savedProjectsRepository.saveProjectName(
+            Project(
+                id = projectId,
+                name = projectName
+            )
+        )
+    }
+
     suspend fun saveProject(project: Project) {
         savedProjectsRepository.saveProject(project)
     }

@@ -153,7 +153,7 @@ fun LoadEditProjectScreen(
         initialName = projectName,
         onSave = { projectName ->
             composableScope.launch {
-                viewModel.saveProject(projectId, projectName)
+                viewModel.saveProjectName(projectId, projectName)
                 navController.navigateUp()
             }
         },
