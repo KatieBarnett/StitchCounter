@@ -5,7 +5,7 @@ import dev.veryniche.stitchcounter.data.models.Project
 
 fun Counter.getCounterProgress(): Float? {
     return if (maxCount > 0) {
-        currentCount.toFloat() / maxCount
+        (currentCount.toFloat() / maxCount).coerceAtLeast(0f).coerceAtMost(1f)
     } else {
         null
     }

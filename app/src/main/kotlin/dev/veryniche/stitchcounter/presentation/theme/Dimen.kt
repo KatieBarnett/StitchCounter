@@ -14,6 +14,7 @@ object Dimen {
     
     val progressIndicatorWidth = 5.dp
     val progressIndicatorPadding = 1.dp
+    val progressIndicatorSquareTop = 18.dp
     val withinProgressIndicatorPadding = 7.dp
 
     val confirmationIconSize = 60.dp

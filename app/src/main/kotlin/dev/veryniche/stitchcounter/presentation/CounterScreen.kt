@@ -24,6 +24,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -34,6 +36,9 @@ import androidx.wear.compose.material.CompactButton
 import androidx.wear.compose.material.Icon
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
+import com.google.android.horologist.annotations.ExperimentalHorologistApi
+import com.google.android.horologist.composables.ProgressIndicatorSegment
+import com.google.android.horologist.composables.SquareSegmentedProgressIndicator
 import dev.veryniche.stitchcounter.MainViewModel
 import dev.veryniche.stitchcounter.R
 import dev.veryniche.stitchcounter.R.string
@@ -84,7 +89,7 @@ fun CounterScreen(
     } // TODO - else display error
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalHorologistApi::class)
 @Composable
 fun CounterContent(counter: Counter,
                    onCounterUpdate: (counter: Counter) -> Unit,
@@ -93,20 +98,43 @@ fun CounterContent(counter: Counter,
                    modifier: Modifier = Modifier) {
 
     var useCompactButton by remember { mutableStateOf(false) }
+    val isRound = LocalConfiguration.current.isScreenRound
 
     Box(modifier = modifier.fillMaxSize()) {
         counter.getCounterProgress()?.let { progress ->
-            CircularProgressIndicator(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(all = Dimen.progressIndicatorPadding),
-                progress = progress,
-                indicatorColor = Pink,
-                trackColor = Charcoal,
-                strokeWidth = Dimen.progressIndicatorWidth,
-                startAngle = 315f,
-                endAngle = 225f
-            )
+            if (isRound) {
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(all = Dimen.progressIndicatorPadding),
+                    progress = progress,
+                    indicatorColor = Pink,
+                    trackColor = Charcoal,
+                    strokeWidth = Dimen.progressIndicatorWidth,
+                    startAngle = 315f,
+                    endAngle = 225f
+                )
+            } else {
+                SquareSegmentedProgressIndicator(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(
+                            top = Dimen.progressIndicatorSquareTop,
+                            start = Dimen.progressIndicatorPadding,
+                            end = Dimen.progressIndicatorPadding,
+                            bottom = Dimen.progressIndicatorPadding
+                        ),
+                    progress = progress,
+                    trackSegments = listOf(
+                        ProgressIndicatorSegment(
+                            indicatorBrush = Brush.horizontalGradient(colors = listOf(Pink, Pink)),
+                            weight = 1f
+                        )
+                    ),
+                    trackColor = Charcoal,
+                    strokeWidth = Dimen.progressIndicatorWidth,
+                )
+            }
         }
         Column(horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
