@@ -33,6 +33,6 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "StitchCounter"
-include ":app", ':data', ":storage"
+include ':wear', ':data', ":storage"
 include ':mobile'
 include ':core'
