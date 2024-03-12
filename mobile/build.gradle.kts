@@ -57,6 +57,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":core"))
 
     implementation(libs.core.ktx)
     implementation(libs.lifecycle.runtime.ktx)
@@ -66,6 +67,8 @@ dependencies {
     implementation(libs.ui.graphics)
     implementation(libs.compose.ui.tooling.preview)
     implementation(libs.material3)
+    implementation(libs.splashscreen)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
