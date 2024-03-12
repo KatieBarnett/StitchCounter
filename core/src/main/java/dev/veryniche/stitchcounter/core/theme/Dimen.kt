@@ -1,4 +1,4 @@
-package dev.veryniche.stitchcounter.presentation.theme
+package dev.veryniche.stitchcounter.core.theme
 
 import androidx.compose.ui.unit.dp
 

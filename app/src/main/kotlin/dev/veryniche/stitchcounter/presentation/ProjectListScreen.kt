@@ -44,7 +44,7 @@ import dev.veryniche.stitchcounter.MainViewModel
 import dev.veryniche.stitchcounter.R
 import dev.veryniche.stitchcounter.R.string
 import dev.veryniche.stitchcounter.data.models.Project
-import dev.veryniche.stitchcounter.presentation.theme.Dimen
+import dev.veryniche.stitchcounter.core.theme.Dimen
 import dev.veryniche.stitchcounter.presentation.theme.StitchCounterTheme
 import dev.veryniche.stitchcounter.previews.PreviewComponent
 import dev.veryniche.stitchcounter.util.Analytics

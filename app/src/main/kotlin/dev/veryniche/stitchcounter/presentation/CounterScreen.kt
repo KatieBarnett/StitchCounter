@@ -44,9 +44,9 @@ import dev.veryniche.stitchcounter.R
 import dev.veryniche.stitchcounter.R.string
 import dev.veryniche.stitchcounter.data.models.Counter
 import dev.veryniche.stitchcounter.getCounterProgress
-import dev.veryniche.stitchcounter.presentation.theme.Charcoal
-import dev.veryniche.stitchcounter.presentation.theme.Dimen
-import dev.veryniche.stitchcounter.presentation.theme.Pink
+import dev.veryniche.stitchcounter.core.theme.Charcoal
+import dev.veryniche.stitchcounter.core.theme.Dimen
+import dev.veryniche.stitchcounter.core.theme.Pink
 import dev.veryniche.stitchcounter.presentation.theme.StitchCounterTheme
 import dev.veryniche.stitchcounter.previews.PreviewScreen
 import dev.veryniche.stitchcounter.util.Analytics
