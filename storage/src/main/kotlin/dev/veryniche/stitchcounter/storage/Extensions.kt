@@ -2,8 +2,8 @@ package dev.veryniche.stitchcounter.storage
 
 import dev.veryniche.stitchcounter.data.models.Counter
 import dev.veryniche.stitchcounter.data.models.Project
-import dev.veryniche.mobile.storage.models.SavedCounter
-import dev.veryniche.mobile.storage.models.SavedProject
+import dev.veryniche.stitchcounter.storage.models.SavedCounter
+import dev.veryniche.stitchcounter.storage.models.SavedProject
 
 fun SavedProject.fromSavedProject(): Project {
     return Project(

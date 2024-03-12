@@ -11,9 +11,9 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import dev.veryniche.stitchcounter.data.AppDispatchers
 import dev.veryniche.stitchcounter.data.Dispatcher
-import dev.veryniche.mobile.storage.ProjectsDataSource.Companion.PROTO_FILE_NAME
+import dev.veryniche.stitchcounter.storage.ProjectsDataSource.Companion.PROTO_FILE_NAME
 import dev.veryniche.stitchcounter.storage.ProjectsSerializer
-import dev.veryniche.mobile.storage.models.Projects
+import dev.veryniche.stitchcounter.storage.models.Projects
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob

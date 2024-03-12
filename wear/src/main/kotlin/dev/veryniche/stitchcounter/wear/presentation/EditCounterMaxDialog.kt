@@ -21,9 +21,9 @@ import androidx.wear.compose.material.Text
 import androidx.wear.compose.material.dialog.Dialog
 import androidx.wear.compose.material.rememberPickerState
 import dev.veryniche.stitchcounter.core.theme.Dimen
-import dev.veryniche.stitchcounter.R
+import dev.veryniche.stitchcounter.core.R
 import dev.veryniche.stitchcounter.wear.presentation.theme.StitchCounterTheme
-import dev.veryniche.stitchcounter.previews.PreviewScreen
+import dev.veryniche.stitchcounter.wear.previews.PreviewScreen
 import dev.veryniche.stitchcounter.wear.util.Analytics
 import dev.veryniche.stitchcounter.wear.util.TrackedScreen
 import dev.veryniche.stitchcounter.wear.util.trackScreenView

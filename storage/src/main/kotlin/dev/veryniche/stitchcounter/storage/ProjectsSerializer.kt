@@ -3,7 +3,7 @@ package dev.veryniche.stitchcounter.storage
 import androidx.datastore.core.CorruptionException
 import androidx.datastore.core.Serializer
 import com.google.protobuf.InvalidProtocolBufferException
-import dev.veryniche.mobile.storage.models.Projects
+import dev.veryniche.stitchcounter.storage.models.Projects
 import java.io.InputStream
 import java.io.OutputStream
 import javax.inject.Inject

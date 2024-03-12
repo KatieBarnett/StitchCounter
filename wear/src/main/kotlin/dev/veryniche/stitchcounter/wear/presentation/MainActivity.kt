@@ -25,7 +25,7 @@ import androidx.wear.compose.material.curvedText
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import dagger.hilt.android.AndroidEntryPoint
 import dev.veryniche.stitchcounter.wear.MainViewModel
-import dev.veryniche.mobile.R
+import dev.veryniche.stitchcounter.core.R
 import dev.veryniche.stitchcounter.wear.presentation.theme.StitchCounterTheme
 
 @AndroidEntryPoint

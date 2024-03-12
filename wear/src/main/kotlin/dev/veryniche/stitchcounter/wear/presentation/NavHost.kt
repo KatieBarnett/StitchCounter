@@ -9,7 +9,7 @@ import androidx.wear.compose.foundation.lazy.ScalingLazyListState
 import androidx.wear.compose.navigation.SwipeDismissableNavHost
 import androidx.wear.compose.navigation.composable
 import dev.veryniche.stitchcounter.wear.MainViewModel
-import dev.veryniche.mobile.R
+import dev.veryniche.stitchcounter.core.R
 import dev.veryniche.stitchcounter.wear.util.Analytics
 import dev.veryniche.stitchcounter.wear.util.trackEvent
 import kotlinx.coroutines.launch

@@ -9,7 +9,7 @@ plugins {
 }
 
 android {
-    namespace = "dev.veryniche.stitchcounter"
+    namespace = "dev.veryniche.stitchcounter.wear"
     compileSdk = rootProject.extra["compileSdk"] as Int
 
     defaultConfig {

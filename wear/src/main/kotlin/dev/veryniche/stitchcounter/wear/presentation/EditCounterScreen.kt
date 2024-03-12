@@ -38,11 +38,10 @@ import androidx.wear.compose.material.dialog.Alert
 import androidx.wear.compose.material.dialog.Confirmation
 import androidx.wear.input.RemoteInputIntentHelper
 import androidx.wear.input.wearableExtender
-import dev.veryniche.mobile.R
-import dev.veryniche.mobile.R.string
+import dev.veryniche.stitchcounter.core.R
 import dev.veryniche.stitchcounter.core.theme.Dimen
 import dev.veryniche.stitchcounter.wear.presentation.theme.StitchCounterTheme
-import dev.veryniche.stitchcounter.previews.PreviewScreen
+import dev.veryniche.stitchcounter.wear.previews.PreviewScreen
 import dev.veryniche.stitchcounter.wear.util.Analytics
 import dev.veryniche.stitchcounter.wear.util.TrackedScreen
 import dev.veryniche.stitchcounter.wear.util.trackScreenView
@@ -134,7 +133,7 @@ fun EditCounterScreen(
             ) {
                 Icon(
                     imageVector = Filled.Close,
-                    contentDescription = stringResource(id = string.cancel_edit_project)
+                    contentDescription = stringResource(id = R.string.cancel_edit_project)
                 )
             }
             if (initialName != null) {
@@ -156,7 +155,7 @@ fun EditCounterScreen(
             ) {
                 Icon(
                     imageVector = Filled.Check,
-                    contentDescription = stringResource(id = string.save_project)
+                    contentDescription = stringResource(id = R.string.save_project)
                 )
             }
         }
@@ -198,7 +197,7 @@ fun EditCounterScreen(
 fun DeleteCounterAlert(counterName: String, onConfirm: () -> Unit, onCancel: () -> Unit) {
     Alert(
         title = {
-            Text(stringResource(string.delete_project_message, counterName))
+            Text(stringResource(R.string.delete_project_message, counterName))
         },
         negativeButton = {
             Button(
@@ -207,7 +206,7 @@ fun DeleteCounterAlert(counterName: String, onConfirm: () -> Unit, onCancel: () 
             ) {
                 Icon(
                     imageVector = Filled.Close,
-                    contentDescription = stringResource(string.delete_counter_negative)
+                    contentDescription = stringResource(R.string.delete_counter_negative)
                 )
             }
         },
@@ -218,7 +217,7 @@ fun DeleteCounterAlert(counterName: String, onConfirm: () -> Unit, onCancel: () 
             ) {
                 Icon(
                     imageVector = Filled.Check,
-                    contentDescription = stringResource(string.delete_counter_positive)
+                    contentDescription = stringResource(R.string.delete_counter_positive)
                 )
             }
         }
@@ -232,13 +231,13 @@ fun DeleteCounterConfirmation(counterName: String, onTimeout: () -> Unit) {
         icon = {
             Icon(
                 imageVector = Filled.Check,
-                contentDescription = stringResource(string.delete_counter_positive),
+                contentDescription = stringResource(R.string.delete_counter_positive),
                 tint = MaterialTheme.colors.primary,
                 modifier = Modifier.size(Dimen.confirmationIconSize)
             )
         },
         content = {
-            Text(stringResource(string.delete_counter_success, counterName))
+            Text(stringResource(R.string.delete_counter_success, counterName))
         }
     )
 }

@@ -19,7 +19,7 @@ import androidx.wear.compose.material.Icon
 import androidx.wear.compose.material.Text
 import dev.veryniche.stitchcounter.data.models.Counter
 import dev.veryniche.stitchcounter.core.theme.Dimen
-import dev.veryniche.stitchcounter.wear.R
+import dev.veryniche.stitchcounter.core.R
 import dev.veryniche.stitchcounter.wear.presentation.theme.StitchCounterTheme
 import dev.veryniche.stitchcounter.wear.previews.PreviewComponent
 import dev.veryniche.stitchcounter.wear.previews.PreviewScreen

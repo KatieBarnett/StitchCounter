@@ -1,5 +1,5 @@
 syntax = "proto3";
-option java_package = ".models";
+option java_package = "dev.veryniche.stitchcounter.storage.models";
 option java_multiple_files = true;
 
 
