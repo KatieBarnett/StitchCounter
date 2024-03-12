@@ -17,12 +17,13 @@ ext {
     //Set the next two digits to build or release number, such as 01.
     //Reserve the last two digits for a multi-APK variant, such as 00.
 
-    //34.112.00.00
+    //34.200.00.00
 
-    extra["appVersionName"] = "1.1.2"
-    extra["appVersionCode"] = 341120000
+    extra["appVersionName"] = "2.0.0"
+    extra["appVersionCode"] = 342000000
     extra["compileSdk"] = 34
-    extra["targetSdk"] = 33
+    extra["targetSdkWear"] = 33
+    extra["targetSdkMobile"] = 34
     extra["minSdk"] = 26
 }
 

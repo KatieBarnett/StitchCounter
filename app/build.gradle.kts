@@ -15,7 +15,7 @@ android {
     defaultConfig {
         applicationId = "dev.veryniche.stitchcounter"
         minSdk = rootProject.extra["minSdk"] as Int
-        targetSdk = rootProject.extra["targetSdk"] as Int
+        targetSdk = rootProject.extra["targetSdkWear"] as Int
         versionCode = rootProject.extra["appVersionCode"] as Int
         versionName = rootProject.extra["appVersionName"] as String
     }
