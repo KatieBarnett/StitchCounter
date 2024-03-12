@@ -4,9 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.veryniche.mobile.data.models.Counter
-import dev.veryniche.mobile.data.models.Project
-import dev.veryniche.mobile.storage.ProjectsRepository
+import dev.veryniche.stitchcounter.data.models.Counter
+import dev.veryniche.stitchcounter.data.models.Project
+import dev.veryniche.stitchcounter.storage.ProjectsRepository
 import kotlinx.coroutines.flow.firstOrNull
 import javax.inject.Inject
 

@@ -1,14 +1,14 @@
-package dev.veryniche.stitchcounter.presentation.theme
+package dev.veryniche.stitchcounter.wear.presentation.theme
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.wear.compose.material.Colors
 import androidx.wear.compose.material.MaterialTheme
-import dev.veryniche.mobile.core.theme.BlackCoral
-import dev.veryniche.mobile.core.theme.Charcoal
-import dev.veryniche.mobile.core.theme.LavenderBlue
-import dev.veryniche.mobile.core.theme.Pink
-import dev.veryniche.mobile.core.theme.RubineRed
+import dev.veryniche.stitchcounter.core.theme.BlackCoral
+import dev.veryniche.stitchcounter.core.theme.Charcoal
+import dev.veryniche.stitchcounter.core.theme.LavenderBlue
+import dev.veryniche.stitchcounter.core.theme.Pink
+import dev.veryniche.stitchcounter.core.theme.RubineRed
 
 private val stitchCounterColorPalette: Colors = Colors(
     primary = RubineRed,

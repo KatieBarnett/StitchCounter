@@ -17,12 +17,12 @@ import androidx.wear.compose.material.Button
 import androidx.wear.compose.material.ButtonDefaults
 import androidx.wear.compose.material.Icon
 import androidx.wear.compose.material.Text
-import dev.veryniche.mobile.R
-import dev.veryniche.mobile.data.models.Counter
-import dev.veryniche.mobile.core.theme.Dimen
-import dev.veryniche.stitchcounter.presentation.theme.StitchCounterTheme
-import dev.veryniche.stitchcounter.previews.PreviewComponent
-import dev.veryniche.stitchcounter.previews.PreviewScreen
+import dev.veryniche.stitchcounter.data.models.Counter
+import dev.veryniche.stitchcounter.core.theme.Dimen
+import dev.veryniche.stitchcounter.wear.R
+import dev.veryniche.stitchcounter.wear.presentation.theme.StitchCounterTheme
+import dev.veryniche.stitchcounter.wear.previews.PreviewComponent
+import dev.veryniche.stitchcounter.wear.previews.PreviewScreen
 
 
 @Composable

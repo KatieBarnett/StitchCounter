@@ -35,10 +35,10 @@ import androidx.wear.compose.material.ListHeader
 import androidx.wear.compose.material.MaterialTheme
 import dev.veryniche.stitchcounter.wear.MainViewModel
 import dev.veryniche.mobile.R.string
-import dev.veryniche.mobile.data.models.Counter
-import dev.veryniche.mobile.data.models.Project
+import dev.veryniche.stitchcounter.data.models.Counter
+import dev.veryniche.stitchcounter.data.models.Project
 import dev.veryniche.stitchcounter.wear.getNextCounterId
-import dev.veryniche.mobile.core.theme.Dimen
+import dev.veryniche.stitchcounter.core.theme.Dimen
 import dev.veryniche.stitchcounter.previews.PreviewScreen
 import dev.veryniche.stitchcounter.wear.util.Analytics
 import dev.veryniche.stitchcounter.wear.util.TrackedScreen

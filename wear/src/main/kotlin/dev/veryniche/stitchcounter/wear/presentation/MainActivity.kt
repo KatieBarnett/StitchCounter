@@ -26,7 +26,7 @@ import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import dagger.hilt.android.AndroidEntryPoint
 import dev.veryniche.stitchcounter.wear.MainViewModel
 import dev.veryniche.mobile.R
-import dev.veryniche.stitchcounter.presentation.theme.StitchCounterTheme
+import dev.veryniche.stitchcounter.wear.presentation.theme.StitchCounterTheme
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {

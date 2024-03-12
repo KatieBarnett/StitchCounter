@@ -1,7 +1,7 @@
 package dev.veryniche.stitchcounter.wear
 
-import dev.veryniche.mobile.data.models.Counter
-import dev.veryniche.mobile.data.models.Project
+import dev.veryniche.stitchcounter.data.models.Counter
+import dev.veryniche.stitchcounter.data.models.Project
 
 fun Counter.getCounterProgress(): Float? {
     return if (maxCount > 0) {
