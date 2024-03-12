@@ -22,7 +22,7 @@
         />
 
     <application
-        android:name=".StitchCounterApplication"
+        android:name=".wear.StitchCounterApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -41,7 +41,7 @@
             android:value="true" />
 
         <activity
-            android:name=".presentation.MainActivity"
+            android:name=".wear.presentation.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.App.Starting"
             android:label="@string/app_name">

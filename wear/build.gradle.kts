@@ -91,13 +91,13 @@ dependencies {
 
     implementation(libs.wear.input)
     implementation(libs.wear.interactions)
+    implementation(libs.wear.tooling.preview)
 
     implementation(libs.playservices.wearable)
 
     implementation(libs.compose.runtime.livedata)
     
     implementation(libs.hilt.android)
-    implementation(libs.wear.tooling.preview)
     ksp(libs.hilt.compiler)
 
     implementation(platform(libs.firebase.bom))

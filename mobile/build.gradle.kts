@@ -58,6 +58,8 @@ android {
 
 dependencies {
     implementation(project(":core"))
+    implementation(project(":data"))
+    implementation(project(":storage"))
 
     implementation(libs.core.ktx)
     implementation(libs.lifecycle.runtime.ktx)
@@ -68,6 +70,16 @@ dependencies {
     implementation(libs.compose.ui.tooling.preview)
     implementation(libs.material3)
     implementation(libs.splashscreen)
+
+    implementation(libs.compose.material.iconscore)
+    implementation(libs.compose.material.iconsext)
+
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
+
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.crashlytics)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
