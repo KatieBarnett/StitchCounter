@@ -89,6 +89,8 @@ dependencies {
 
     implementation(libs.splashscreen)
 
+    implementation(libs.timber)
+
     implementation(libs.wear.input)
     implementation(libs.wear.interactions)
     implementation(libs.wear.tooling.preview)

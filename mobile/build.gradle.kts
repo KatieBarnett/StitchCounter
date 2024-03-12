@@ -76,6 +76,9 @@ dependencies {
     implementation(libs.compose.material.iconscore)
     implementation(libs.compose.material.iconsext)
 
+
+    implementation(libs.timber)
+
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
 

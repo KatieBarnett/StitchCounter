@@ -8,8 +8,8 @@ plugins {
 }
 
 android {
-    compileSdk = rootProject.extra["compileSdk"] as Int
     namespace = "dev.veryniche.stitchcounter.storage"
+    compileSdk = rootProject.extra["compileSdk"] as Int
 
     defaultConfig {
         minSdk = rootProject.extra["minSdk"] as Int
@@ -39,6 +39,8 @@ dependencies {
 
     implementation(libs.datastore)
     implementation(libs.protobuf.kotlin.lite)
+
+    implementation(libs.timber)
 
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)

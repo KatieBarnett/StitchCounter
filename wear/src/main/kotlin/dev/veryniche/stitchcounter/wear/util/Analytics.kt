@@ -14,6 +14,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.analytics.ktx.logEvent
 import com.google.firebase.ktx.Firebase
+import timber.log.Timber
 
 private const val ANALYTICS_LOG_TAG = "Analytics"
 
@@ -68,20 +69,20 @@ fun TrackedScreen(
 }
 
 fun trackScreenView(name: String) {
-    Log.d(ANALYTICS_LOG_TAG, "Track screen: $name")
+    Timber.d(ANALYTICS_LOG_TAG, "Track screen: $name")
     Firebase.analytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW) {
         param(FirebaseAnalytics.Param.SCREEN_NAME, name ?: "Unknown")
     }
 }
 
 fun trackEvent(name: String) {
-    Log.d(ANALYTICS_LOG_TAG, "Track action: $name")
+    Timber.d(ANALYTICS_LOG_TAG, "Track action: $name")
     Firebase.analytics.logEvent(name) {
     }
 }
 
 fun trackProjectScreenView(counterCount: Int) {
-    Log.d(ANALYTICS_LOG_TAG, "Track screen: ${Analytics.Screen.Project}")
+    Timber.d(ANALYTICS_LOG_TAG, "Track screen: ${Analytics.Screen.Project}")
     Firebase.analytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW) {
         param(FirebaseAnalytics.Param.SCREEN_NAME, Analytics.Screen.Project)
         param(FirebaseAnalytics.Param.ITEMS, counterCount.toDouble())
