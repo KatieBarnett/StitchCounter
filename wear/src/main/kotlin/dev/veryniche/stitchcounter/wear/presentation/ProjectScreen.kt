@@ -33,12 +33,12 @@ import androidx.wear.compose.material.CompactButton
 import androidx.wear.compose.material.Icon
 import androidx.wear.compose.material.ListHeader
 import androidx.wear.compose.material.MaterialTheme
-import dev.veryniche.stitchcounter.wear.MainViewModel
 import dev.veryniche.stitchcounter.core.R.string
+import dev.veryniche.stitchcounter.core.theme.Dimen
 import dev.veryniche.stitchcounter.data.models.Counter
 import dev.veryniche.stitchcounter.data.models.Project
+import dev.veryniche.stitchcounter.wear.MainViewModel
 import dev.veryniche.stitchcounter.wear.getNextCounterId
-import dev.veryniche.stitchcounter.core.theme.Dimen
 import dev.veryniche.stitchcounter.wear.previews.PreviewScreen
 import dev.veryniche.stitchcounter.wear.util.Analytics
 import dev.veryniche.stitchcounter.wear.util.TrackedScreen

@@ -40,11 +40,11 @@ import androidx.wear.compose.material.Icon
 import androidx.wear.compose.material.ListHeader
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
-import dev.veryniche.stitchcounter.wear.MainViewModel
 import dev.veryniche.stitchcounter.core.R
 import dev.veryniche.stitchcounter.core.R.string
-import dev.veryniche.stitchcounter.data.models.Project
 import dev.veryniche.stitchcounter.core.theme.Dimen
+import dev.veryniche.stitchcounter.data.models.Project
+import dev.veryniche.stitchcounter.wear.MainViewModel
 import dev.veryniche.stitchcounter.wear.presentation.theme.StitchCounterTheme
 import dev.veryniche.stitchcounter.wear.previews.PreviewComponent
 import dev.veryniche.stitchcounter.wear.util.Analytics

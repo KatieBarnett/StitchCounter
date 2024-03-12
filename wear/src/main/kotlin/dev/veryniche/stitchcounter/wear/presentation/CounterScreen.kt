@@ -39,14 +39,14 @@ import androidx.wear.compose.material.Text
 import com.google.android.horologist.annotations.ExperimentalHorologistApi
 import com.google.android.horologist.composables.ProgressIndicatorSegment
 import com.google.android.horologist.composables.SquareSegmentedProgressIndicator
-import dev.veryniche.stitchcounter.wear.MainViewModel
 import dev.veryniche.stitchcounter.core.R
 import dev.veryniche.stitchcounter.core.R.string
-import dev.veryniche.stitchcounter.data.models.Counter
-import dev.veryniche.stitchcounter.wear.getCounterProgress
 import dev.veryniche.stitchcounter.core.theme.Charcoal
 import dev.veryniche.stitchcounter.core.theme.Dimen
 import dev.veryniche.stitchcounter.core.theme.Pink
+import dev.veryniche.stitchcounter.data.models.Counter
+import dev.veryniche.stitchcounter.wear.MainViewModel
+import dev.veryniche.stitchcounter.wear.getCounterProgress
 import dev.veryniche.stitchcounter.wear.presentation.theme.StitchCounterTheme
 import dev.veryniche.stitchcounter.wear.previews.PreviewScreen
 import dev.veryniche.stitchcounter.wear.util.Analytics

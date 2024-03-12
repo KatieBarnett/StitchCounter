@@ -5,7 +5,6 @@ import android.util.Log
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.HiltAndroidApp
-import dev.veryniche.stitchcounter.BuildConfig
 import timber.log.Timber
 
 @HiltAndroidApp

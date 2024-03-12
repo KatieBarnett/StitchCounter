@@ -11,9 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import dev.veryniche.stitchcounter.core.theme.BlackCoral
-import dev.veryniche.stitchcounter.core.theme.Charcoal
 import dev.veryniche.stitchcounter.core.theme.LavenderBlue
-import dev.veryniche.stitchcounter.core.theme.Pink
 import dev.veryniche.stitchcounter.core.theme.RubineRed
 
 private val DarkColorScheme = darkColorScheme(
