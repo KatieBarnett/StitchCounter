@@ -27,6 +27,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import dev.veryniche.stitchcounter.MainViewModel
 import dev.veryniche.stitchcounter.R
 import dev.veryniche.stitchcounter.presentation.theme.StitchCounterTheme
+import dev.veryniche.stitchcounter.sync.AuthenticationManager
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -37,14 +38,19 @@ class MainActivity : ComponentActivity() {
 
         super.onCreate(savedInstanceState)
 
+        val authenticationManager = AuthenticationManager(this)
+
         setContent {
-            StitchCounterWearApp()
+            StitchCounterWearApp(authenticationManager, Modifier)
         }
     }
 }
 
 @Composable
-fun StitchCounterWearApp(modifier: Modifier = Modifier) {
+fun StitchCounterWearApp(
+    authenticationManager: AuthenticationManager,
+    modifier: Modifier = Modifier
+) {
     StitchCounterTheme {
         val listState = rememberScalingLazyListState()
         val viewModel: MainViewModel = hiltViewModel()
@@ -85,7 +91,13 @@ fun StitchCounterWearApp(modifier: Modifier = Modifier) {
             },
             modifier = modifier
         ) {
-            NavHost(navController = navController, viewModel = viewModel, listState = listState, modifier = Modifier.fillMaxSize())
+            NavHost(
+                navController = navController,
+                viewModel = viewModel,
+                listState = listState,
+                authenticationManager = authenticationManager,
+                modifier = Modifier.fillMaxSize()
+            )
         }
     }
 }

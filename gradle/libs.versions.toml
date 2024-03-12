@@ -8,6 +8,8 @@ compose-compiler = "1.5.10"
 datastore = '1.0.0'
 firebase-bom = "32.7.4"
 firebaseCrashlyticsPlugin = "2.9.9"
+googleApiClient = "1.23.0"
+googleApiDrive = "v3-rev20240123-2.0.0"
 googleServicesPlugin = "4.4.1"
 googleServicesWearable = "18.1.0"
 hilt = "2.49"
@@ -25,6 +27,9 @@ wear-remote-interactions = '1.0.0'
 wear-tiles = "1.0.1"
 wear-watchface = "1.0.1"
 wearToolingPreview = "1.0.0"
+credentials = "1.3.0-alpha01"
+googleid = "1.1.0"
+timber = "5.0.1"
 
 [libraries]
 activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activity-compose" }
@@ -39,6 +44,15 @@ datastore = { module = "androidx.datastore:datastore", version.ref = "datastore"
 firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics-ktx" }
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebase-bom" }
 firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics-ktx" }
+
+google-api-client = { module = "com.google.api-client:google-api-client-android", version.ref = "googleApiClient" }
+google-api-drive = { module = "com.google.apis:google-api-services-drive", version.ref = "googleApiDrive" }
+
+credentials = { module = "androidx.credentials:credentials", version.ref = "credentials" }
+credentials-play-services = { module = "androidx.credentials:credentials-play-services-auth", version.ref = "credentials" }
+googleid = { module = "com.google.android.libraries.identity.googleid:googleid", version.ref = "googleid" }
+timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
+
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
 hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hilt" }
 hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hilt_androidx" }

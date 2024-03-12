@@ -15,6 +15,7 @@ import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Sync
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -58,11 +59,12 @@ fun ProjectListScreen(
     listState: ScalingLazyListState,
     onProjectClick: (Int) -> Unit,
     onAddProjectClick: () -> Unit,
+    onSyncClick: () -> Unit,
     onAboutClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val projects: List<Project> by viewModel.projects.collectAsState(initial = emptyList())
-    ProjectList(projects, listState,  onProjectClick, onAddProjectClick, onAboutClick, modifier)
+    ProjectList(projects, listState,  onSyncClick, onProjectClick, onAddProjectClick, onAboutClick, modifier)
 }
 
 @OptIn(ExperimentalWearFoundationApi::class)
@@ -70,6 +72,7 @@ fun ProjectListScreen(
 fun ProjectList(
     projectList: List<Project>,
     listState: ScalingLazyListState,
+    onSyncClick: () -> Unit,
     onProjectClick: (Int) -> Unit,
     onAddProjectClick: () -> Unit,
     onAboutClick: () -> Unit,
@@ -108,6 +111,7 @@ fun ProjectList(
             Row(horizontalArrangement = Arrangement.Center,
                 modifier = Modifier.fillMaxWidth(0.75f)) {
                 AddProjectButton(onAddProjectClick)
+                SyncButton(onSyncClick)
                 AboutButton(onAboutClick)
             }
         }
@@ -162,6 +166,19 @@ fun AddProjectButton(onAddProjectClick: () -> Unit, modifier: Modifier = Modifie
         Icon(
             imageVector = Icons.Filled.Add,
             contentDescription = stringResource(id = R.string.add_project)
+        )
+    }
+}
+
+@Composable
+fun SyncButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
+    CompactButton(onClick = onClick,
+        colors = ButtonDefaults.secondaryButtonColors(),
+        modifier = modifier
+    ) {
+        Icon(
+            imageVector = Icons.Filled.Sync,
+            contentDescription = stringResource(id = R.string.sync_title)
         )
     }
 }

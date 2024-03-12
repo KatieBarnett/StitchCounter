@@ -1,0 +1,23 @@
+syntax = "proto3";
+option java_package = "dev.veryniche.stitchcounter.storage.models";
+option java_multiple_files = true;
+
+
+message Projects {
+  repeated SavedProject project = 1;
+}
+
+message SavedProject {
+  int32 id = 1;
+  string name = 2;
+  double elapsedTime = 3;
+  double lastModified = 4;
+  repeated SavedCounter counters = 5;
+}
+
+message SavedCounter {
+  int32 id = 1;
+  string name = 2;
+  int32 currentCount = 3;
+  int32 maxCount = 4;
+}

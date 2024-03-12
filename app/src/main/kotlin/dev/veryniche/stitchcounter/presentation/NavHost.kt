@@ -10,6 +10,7 @@ import androidx.wear.compose.navigation.SwipeDismissableNavHost
 import androidx.wear.compose.navigation.composable
 import dev.veryniche.stitchcounter.MainViewModel
 import dev.veryniche.stitchcounter.R
+import dev.veryniche.stitchcounter.sync.AuthenticationManager
 import dev.veryniche.stitchcounter.util.Analytics
 import dev.veryniche.stitchcounter.util.trackEvent
 import kotlinx.coroutines.launch
@@ -18,6 +19,7 @@ import kotlinx.coroutines.launch
 fun NavHost(
     navController: NavHostController,
     viewModel: MainViewModel,
+    authenticationManager: AuthenticationManager,
     modifier: Modifier = Modifier,
     listState: ScalingLazyListState
 ) {
@@ -47,6 +49,11 @@ fun NavHost(
                         listState.scrollToItem(index = 0)
                     }
                     navController.navigate("about")
+                },
+                onSyncClick = {
+                    coroutineScope.launch {
+                        authenticationManager.initAuth(false)
+                    }
                 }
             )
         }

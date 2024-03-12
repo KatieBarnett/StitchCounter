@@ -51,6 +51,7 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "/META-INF/DEPENDENCIES"
         }
     }
 }
@@ -61,6 +62,7 @@ dependencies {
 
     implementation(project(":data"))
     implementation(project(":storage"))
+    implementation(project(":sync"))
 
     implementation(platform(libs.compose.bom))
     implementation(libs.activity.compose)
