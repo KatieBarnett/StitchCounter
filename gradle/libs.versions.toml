@@ -1,6 +1,6 @@
 [versions]
 activity-compose = "1.8.2"
-agp = "8.2.2"
+agp = "8.4.0-alpha13"
 androidx-lifecycle = "2.4.1"
 androidx-test = "1.4.0"
 compose-bom = "2024.02.02"
