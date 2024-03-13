@@ -36,13 +36,13 @@ import androidx.wear.compose.material.dialog.Alert
 import androidx.wear.compose.material.dialog.Confirmation
 import androidx.wear.input.RemoteInputIntentHelper
 import androidx.wear.input.wearableExtender
+import dev.veryniche.stitchcounter.core.AnalyticsConstants
 import dev.veryniche.stitchcounter.core.R
 import dev.veryniche.stitchcounter.core.theme.Dimen
+import dev.veryniche.stitchcounter.wear.TrackedScreen
 import dev.veryniche.stitchcounter.wear.presentation.theme.StitchCounterTheme
 import dev.veryniche.stitchcounter.wear.previews.PreviewScreen
-import dev.veryniche.stitchcounter.wear.util.Analytics
-import dev.veryniche.stitchcounter.wear.util.TrackedScreen
-import dev.veryniche.stitchcounter.wear.util.trackScreenView
+import dev.veryniche.stitchcounter.wear.trackScreenView
 
 @Composable
 fun EditProjectScreen(
@@ -58,7 +58,7 @@ fun EditProjectScreen(
     var showDeleteProjectConfirmation by remember { mutableStateOf(false) }
 
     TrackedScreen {
-        trackScreenView(name = Analytics.Screen.EditProject)
+        trackScreenView(name = AnalyticsConstants.Screen.EditProject)
     }
 
     val inputTextKey = "input_text"

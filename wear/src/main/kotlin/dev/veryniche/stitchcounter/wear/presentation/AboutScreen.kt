@@ -36,15 +36,15 @@ import androidx.wear.compose.material.ListHeader
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
 import androidx.wear.compose.material.dialog.Confirmation
+import dev.veryniche.stitchcounter.core.AnalyticsConstants
 import dev.veryniche.stitchcounter.core.R
 import dev.veryniche.stitchcounter.core.theme.Dimen
 import dev.veryniche.stitchcounter.wear.BuildConfig
+import dev.veryniche.stitchcounter.wear.TrackedScreen
 import dev.veryniche.stitchcounter.wear.presentation.theme.StitchCounterTheme
 import dev.veryniche.stitchcounter.wear.previews.PreviewScreen
-import dev.veryniche.stitchcounter.wear.util.Analytics
-import dev.veryniche.stitchcounter.wear.util.TrackedScreen
+import dev.veryniche.stitchcounter.wear.trackScreenView
 import dev.veryniche.stitchcounter.wear.util.openUrlOnPhone
-import dev.veryniche.stitchcounter.wear.util.trackScreenView
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalWearFoundationApi::class)
@@ -54,7 +54,7 @@ fun AboutScreen(
     modifier: Modifier = Modifier
 ) {
     TrackedScreen {
-        trackScreenView(name = Analytics.Screen.About)
+        trackScreenView(name = AnalyticsConstants.Screen.About)
     }
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
@@ -84,7 +84,7 @@ fun AboutScreen(
                         modifier = Modifier.padding(top = Dimen.spacingQuad))
                 }
             }
-            listOf(R.string.about_content, R.string.about_feedback).forEach {
+            listOf(R.string.about_content_wear, R.string.about_feedback).forEach {
                 item {
                     Text(
                         text = stringResource(id = it)
@@ -115,15 +115,34 @@ fun AboutScreen(
 //                }
 //            }
 //        )
-
+        item {
+            Text(
+                text = stringResource(id = R.string.about_sync_version)
+            )
+        }
+        item {
+//            val privacyPolicyLink = stringResource(id = R.string.about_privacy_policy_url)
+            Chip(colors = ChipDefaults.secondaryChipColors(),
+                modifier = Modifier.fillMaxWidth(),
+                label = {
+                    Text(stringResource(id = R.string.about_get_sync_version_wear))
+                },
+                onClick = {
+                    coroutineScope.launch {
+//                        openUrlOnPhone(context, privacyPolicyLink)
+                        // TODO
+                        showLinkOpenedConfirmation = true
+                    }
+                }
+            )
+        }
         item {
             Text(
                 text = stringResource(id = R.string.about_privacy_policy)
             )
         }
-
         item {
-            val privacyPolicyLink = stringResource(id = R.string.about_privacy_policy_link)
+            val privacyPolicyLink = stringResource(id = R.string.about_privacy_policy_url)
             Chip(colors = ChipDefaults.secondaryChipColors(),
                 modifier = Modifier.fillMaxWidth(),
                 label = {
@@ -143,7 +162,7 @@ fun AboutScreen(
             )
         }
         item {
-            val devLink = stringResource(id = R.string.about_developer_link)
+            val devLink = stringResource(id = R.string.about_developer_url)
             Chip(colors = ChipDefaults.secondaryChipColors(),
                 modifier = Modifier.fillMaxWidth(),
                 label = {
@@ -155,24 +174,6 @@ fun AboutScreen(
                 onClick = {
                     coroutineScope.launch {
                         openUrlOnPhone(context, devLink)
-                        showLinkOpenedConfirmation = true
-                    }
-                }
-            )
-        }
-        item {
-            val companyLink = stringResource(id = R.string.about_developer_company_link)
-            Chip(colors = ChipDefaults.secondaryChipColors(),
-                modifier = Modifier.fillMaxWidth(),
-                label = {
-                    Text(stringResource(id = R.string.about_developer_company_link_text))
-                },
-                secondaryLabel = {
-                    Text(companyLink)
-                },
-                onClick = {
-                    coroutineScope.launch {
-                        openUrlOnPhone(context, companyLink)
                         showLinkOpenedConfirmation = true
                     }
                 }

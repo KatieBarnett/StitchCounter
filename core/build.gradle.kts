@@ -33,13 +33,18 @@ android {
 }
 
 dependencies {
-
     implementation(libs.core.ktx)
     implementation(libs.material3)
     implementation(platform(libs.compose.bom))
     implementation(libs.ui)
     implementation(libs.ui.graphics)
     implementation(libs.compose.ui.tooling.preview)
+    implementation(libs.compose.foundation)
+
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
+
+    implementation(libs.timber)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

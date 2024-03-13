@@ -76,10 +76,12 @@ dependencies {
     implementation(libs.compose.material.iconscore)
     implementation(libs.compose.material.iconsext)
 
-
     implementation(libs.timber)
 
     implementation(libs.hilt.android)
+    implementation(libs.compose.foundation)
+    implementation(libs.navigation.compose)
+    implementation(libs.hilt.navigation.compose)
     ksp(libs.hilt.compiler)
 
     implementation(platform(libs.firebase.bom))

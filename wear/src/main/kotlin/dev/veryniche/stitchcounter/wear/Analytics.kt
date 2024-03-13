@@ -1,4 +1,4 @@
-package dev.veryniche.stitchcounter.wear.util
+package dev.veryniche.stitchcounter.wear
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -13,29 +13,8 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.analytics.ktx.logEvent
 import com.google.firebase.ktx.Firebase
+import dev.veryniche.stitchcounter.core.AnalyticsConstants
 import timber.log.Timber
-
-private const val ANALYTICS_LOG_TAG = "Analytics"
-
-object Analytics {
-    object Screen {
-        const val ProjectList = "Project List"
-        const val Project = "Project"
-        const val EditProject = "Edit Project"
-        const val Counter = "Counter"
-        const val EditCounter = "Edit Counter"
-        const val EditCounterMax = "Edit Counter Max"
-        const val About = "About"
-    }
-
-    object Action {
-        const val AddProject = "Reset Counter"
-        const val ResetCounter = "Reset Counter"
-        const val ResetProject = "Reset Project"
-        const val DeleteCounter = "Delete Counter"
-        const val DeleteProject = "Delete Project"
-    }
-}
 
 @Composable
 fun TrackedScreen(
@@ -68,22 +47,22 @@ fun TrackedScreen(
 }
 
 fun trackScreenView(name: String) {
-    Timber.d(ANALYTICS_LOG_TAG, "Track screen: $name")
+    Timber.d("Track screen: $name")
     Firebase.analytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW) {
         param(FirebaseAnalytics.Param.SCREEN_NAME, name ?: "Unknown")
     }
 }
 
 fun trackEvent(name: String) {
-    Timber.d(ANALYTICS_LOG_TAG, "Track action: $name")
+    Timber.d("Track action: $name")
     Firebase.analytics.logEvent(name) {
     }
 }
 
 fun trackProjectScreenView(counterCount: Int) {
-    Timber.d(ANALYTICS_LOG_TAG, "Track screen: ${Analytics.Screen.Project}")
+    Timber.d("Track screen: ${AnalyticsConstants.Screen.Project}")
     Firebase.analytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW) {
-        param(FirebaseAnalytics.Param.SCREEN_NAME, Analytics.Screen.Project)
+        param(FirebaseAnalytics.Param.SCREEN_NAME, AnalyticsConstants.Screen.Project)
         param(FirebaseAnalytics.Param.ITEMS, counterCount.toDouble())
     }
 }

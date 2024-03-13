@@ -5,6 +5,9 @@
 
     <string name="about_version">App version: %s</string>
 
+    <string name="navigate_back">Back</string>
+    <string name="navigate_about">About</string>
+
 
     <string name="context_project">Project</string>
     <string name="context_counter">Counter</string>
@@ -58,19 +61,34 @@
     <string name="delete_counter_negative">Cancel</string>
     <string name="delete_counter_success">%s Deleted</string>
 
-    <string name="about_title">About</string>
-    <string name="about_content">This is an app to keep track of your rows or stitches when working on craft projects like knitting, crochet and cross stitch.\n\nI always have several craft projects on the go and use either paper or a physical stitch counter to keep track of where I am up to. Now I have a wearable device I decided to build this app!</string>
+    <string name="about_title">Stitch Counter: About</string>
+    <string name="about_welcome">Thank-you for using Stitch Counter!</string>
+    <string name="about_content_wear">This is an app to keep track of your rows or stitches when working on craft projects like knitting, crochet and cross stitch.\n\nI always have several craft projects on the go and use either paper or a physical stitch counter to keep track of where I am up to. Now I have a wearable device I decided to build this app!</string>
+    <string name="about_content_wear_get_mobile">Did you know there is a phone app? You can check your progress on your phone and even set up data sync!</string>
+    <string name="about_content_mobile">This is an app to keep track of your rows or stitches when working on craft projects like knitting, crochet and cross stitch.\n\nI always have several craft projects on the go and use either paper or a physical stitch counter to keep track of where I am up to. Now I have a wearable device I decided to build this app!</string>
     <string name="about_feedback">Found any bugs or have any feature suggestions? Leave a review or please email:</string>
     <string name="about_email">very.niche.dev@gmail.com</string>
     <string name="about_email_subject">Feedback: Stitch Counter</string>
-    <string name="about_privacy_policy">Want to view the privacy policy?\nPlease click here:</string>
+
+    <string name="about_developer_title">About the developer</string>
+    <string name="about_developer">Visit our website</string>
+    <string name="about_developer_link_text">Very Niche</string>
+    <string name="about_developer_text">At Very Niche we are a small app development team specialising in apps for very niche uses, nothing is too small! If you have an idea for an app you need, please let us know!</string>
+    <string name="about_developer_url">https://veryniche.dev</string>
+    <string name="about_privacy_policy_title">Privacy policy</string>
+    <string name="about_privacy_policy">View the privacy policy</string>
     <string name="about_privacy_policy_link_text">Privacy policy</string>
-    <string name="about_privacy_policy_link">https://veryniche.dev/docs/stitchcounterprivacypolicy/</string>
-    <string name="about_developer">Thank-you for using this app.</string>
-    <string name="about_developer_link_text">Katie Barnett</string>
-    <string name="about_developer_link">http://katiebarnett.dev</string>
-    <string name="about_developer_company_link_text">Very Niche Apps</string>
-    <string name="about_developer_company_link">http://veryniche.dev</string>
+    <string name="about_privacy_policy_url">https://veryniche.dev/docs/stitchcounterprivacypolicy/</string>
+
+    <string name="about_remove_ads_version_title">Don\'t want to see ads?</string>
+    <string name="about_get_remove_ads_version">Click here to remove them!</string>
+    <string name="about_sync_version_title">Don\'t want to lose your projects?</string>
+    <string name="about_sync_version">Do you want to protect your progress in case you have to change devices?</string>
+    <string name="about_get_sync_version">Add on data sync!</string>
+    <string name="about_get_sync_version_wear">Get data sync on the phone app!</string>
+    <string name="about_bundle_version_title">Want all the features and no ads?</string>
+    <string name="about_bundle_version">Includes both ad removal and data sync. Plus any future added features!</string>
+    <string name="about_get_bundle_version">Click here to purchase the unlimited version!</string>
 
     <string name="about_link_opened_confirmation">Link opened on your phone.</string>
     <string name="about_email_opened_confirmation">Email client opened on your phone.</string>

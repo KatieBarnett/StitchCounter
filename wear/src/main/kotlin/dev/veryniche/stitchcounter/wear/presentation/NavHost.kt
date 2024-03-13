@@ -8,10 +8,10 @@ import androidx.navigation.NavHostController
 import androidx.wear.compose.foundation.lazy.ScalingLazyListState
 import androidx.wear.compose.navigation.SwipeDismissableNavHost
 import androidx.wear.compose.navigation.composable
+import dev.veryniche.stitchcounter.core.AnalyticsConstants
 import dev.veryniche.stitchcounter.core.R
 import dev.veryniche.stitchcounter.wear.MainViewModel
-import dev.veryniche.stitchcounter.wear.util.Analytics
-import dev.veryniche.stitchcounter.wear.util.trackEvent
+import dev.veryniche.stitchcounter.wear.trackEvent
 import kotlinx.coroutines.launch
 
 @Composable
@@ -160,7 +160,7 @@ fun LoadEditProjectScreen(
         onDelete = {
             composableScope.launch {
                 projectId?.let {
-                    trackEvent(Analytics.Action.DeleteProject)
+                    trackEvent(AnalyticsConstants.Action.DeleteProject)
                     viewModel.deleteProject(projectId)
                 }
                 navController.navigateUp()
@@ -194,7 +194,7 @@ fun LoadEditCounterScreen(
         },
         onDelete = {
             composableScope.launch {
-                trackEvent(Analytics.Action.DeleteCounter)
+                trackEvent(AnalyticsConstants.Action.DeleteCounter)
                 viewModel.deleteCounter(projectId, counterId)
                 navController.navigateUp()
             }

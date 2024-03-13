@@ -5,15 +5,16 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.hilt.navigation.compose.hiltViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import dev.veryniche.stitchcounter.mobile.ui.theme.StitchCounterTheme
+import androidx.navigation.compose.rememberNavController
+import dev.veryniche.stitchcounter.mobile.purchase.PurchaseStatus
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
@@ -21,29 +22,28 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             StitchCounterTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+                StitchCounterMobileApp()
             }
         }
     }
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
+fun StitchCounterMobileApp(modifier: Modifier = Modifier) {
     StitchCounterTheme {
-        Greeting("Android")
+        val viewModel: MainViewModel = hiltViewModel()
+        val navController = rememberNavController()
+
+        MobileNavHost(
+            navController = navController,
+            viewModel = viewModel,
+            purchaseStatus = PurchaseStatus(
+                isAdRemovalPurchased = false,
+                isSyncPurchased = false,
+                isBundlePurchased = false
+            ),
+            onPurchaseClick = {},
+            modifier = Modifier.fillMaxSize()
+        )
     }
 }
