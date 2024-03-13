@@ -2,6 +2,7 @@ package dev.veryniche.stitchcounter.mobile.screens
 
 import android.content.Intent
 import android.net.Uri
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -23,6 +24,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.core.content.ContextCompat.startActivity
 import dev.veryniche.stitchcounter.core.AnalyticsConstants
 import dev.veryniche.stitchcounter.core.R
 import dev.veryniche.stitchcounter.core.theme.Dimen
@@ -107,13 +109,24 @@ fun AboutScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
+            val email = stringResource(id = R.string.about_email)
+            val emailSubject = stringResource(id = R.string.about_email_subject)
             Text(
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.tertiary,
-                text = stringResource(id = R.string.about_email)
+                text = email,
+                modifier = Modifier.clickable {
+                    trackEvent(AnalyticsConstants.Action.AboutEmail)
+                    val intent = Intent(Intent.ACTION_SENDTO)
+                    intent.setData(Uri.parse("mailto:")) // only email apps should handle this
+                    intent.putExtra(Intent.EXTRA_EMAIL, email)
+                    intent.putExtra(Intent.EXTRA_SUBJECT, emailSubject)
+                    if (intent.resolveActivity(context.packageManager) != null) {
+                        startActivity(context, intent, null)
+                    }
+                }
             )
-
 
             if (!(purchaseStatus.isAdRemovalPurchased || purchaseStatus.isBundlePurchased)) {
                 AboutHeading(R.string.about_remove_ads_version_title)
