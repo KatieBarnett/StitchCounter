@@ -23,6 +23,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.rotary.onRotaryScrollEvent
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.wear.compose.foundation.ExperimentalWearFoundationApi
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
@@ -69,36 +70,48 @@ fun AboutScreen(
         modifier = modifier
             .fillMaxSize()
             .onRotaryScrollEvent {
-            coroutineScope.launch {
-                listState.scrollBy(it.verticalScrollPixels)
-                listState.animateScrollBy(0f)
+                coroutineScope.launch {
+                    listState.scrollBy(it.verticalScrollPixels)
+                    listState.animateScrollBy(0f)
+                }
+                true
             }
-            true
-        }
             .focusRequester(focusRequester)
             .focusable(),
-        ) {
-            item {
-                ListHeader(Modifier) {
-                    ListTitle(stringResource(R.string.about_title),
-                        modifier = Modifier.padding(top = Dimen.spacingQuad))
-                }
-            }
-            listOf(R.string.about_content_wear, R.string.about_feedback).forEach {
-                item {
-                    Text(
-                        text = stringResource(id = it)
-                    )
-                }
-            }
-            item {
-                Text(
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.body2,
-                    color = MaterialTheme.colors.primaryVariant,
-                    text = stringResource(id = R.string.about_email)
+    ) {
+        item {
+            ListHeader(Modifier) {
+                ListTitle(
+                    stringResource(R.string.about_title),
+                    modifier = Modifier.padding(top = Dimen.spacingQuad)
                 )
             }
+        }
+        item {
+            Text(
+                text = stringResource(id = R.string.about_content_wear)
+            )
+        }
+        item {
+            Text(
+                text = stringResource(id = R.string.about_content_wear_get_mobile),
+                fontWeight = FontWeight.Bold
+            )
+        }
+        item {
+            Text(
+                text = stringResource(id = R.string.about_feedback)
+            )
+        }
+        item {
+            Text(
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.body2,
+                color = MaterialTheme.colors.primaryVariant,
+                fontWeight = FontWeight.Bold,
+                text = stringResource(id = R.string.about_email)
+            )
+        }
         // TODO: Fix & make this work if possible
 //        val email = stringResource(id = R.string.about_email)
 //        val emailSubject = stringResource(id = R.string.about_email_subject)
@@ -122,7 +135,8 @@ fun AboutScreen(
         }
         item {
 //            val privacyPolicyLink = stringResource(id = R.string.about_privacy_policy_url)
-            Chip(colors = ChipDefaults.secondaryChipColors(),
+            Chip(
+                colors = ChipDefaults.secondaryChipColors(),
                 modifier = Modifier.fillMaxWidth(),
                 label = {
                     Text(stringResource(id = R.string.about_get_sync_version_wear))
@@ -143,7 +157,8 @@ fun AboutScreen(
         }
         item {
             val privacyPolicyLink = stringResource(id = R.string.about_privacy_policy_url)
-            Chip(colors = ChipDefaults.secondaryChipColors(),
+            Chip(
+                colors = ChipDefaults.secondaryChipColors(),
                 modifier = Modifier.fillMaxWidth(),
                 label = {
                     Text(stringResource(id = R.string.about_privacy_policy_link_text))
@@ -163,7 +178,8 @@ fun AboutScreen(
         }
         item {
             val devLink = stringResource(id = R.string.about_developer_url)
-            Chip(colors = ChipDefaults.secondaryChipColors(),
+            Chip(
+                colors = ChipDefaults.secondaryChipColors(),
                 modifier = Modifier.fillMaxWidth(),
                 label = {
                     Text(stringResource(id = R.string.about_developer_link_text))
@@ -213,7 +229,8 @@ fun LinkOpenedConfirmation(onTimeout: () -> Unit) {
             )
         },
         content = {
-            Text(stringResource(R.string.about_link_opened_confirmation),
+            Text(
+                stringResource(R.string.about_link_opened_confirmation),
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth(0.75f)
             )
@@ -234,9 +251,11 @@ fun EmailOpenedConfirmation(onTimeout: () -> Unit) {
             )
         },
         content = {
-            Text(stringResource(R.string.about_email_opened_confirmation),
+            Text(
+                stringResource(R.string.about_email_opened_confirmation),
                 textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth(0.75f))
+                modifier = Modifier.fillMaxWidth(0.75f)
+            )
         }
     )
 }

@@ -65,7 +65,10 @@
     <string name="about_welcome">Thank-you for using Stitch Counter!</string>
     <string name="about_content_wear">This is an app to keep track of your rows or stitches when working on craft projects like knitting, crochet and cross stitch.\n\nI always have several craft projects on the go and use either paper or a physical stitch counter to keep track of where I am up to. Now I have a wearable device I decided to build this app!</string>
     <string name="about_content_wear_get_mobile">Did you know there is a phone app? You can check your progress on your phone and even set up data sync!</string>
-    <string name="about_content_mobile">This is an app to keep track of your rows or stitches when working on craft projects like knitting, crochet and cross stitch.\n\nI always have several craft projects on the go and use either paper or a physical stitch counter to keep track of where I am up to. Now I have a wearable device I decided to build this app!</string>
+<!--    <string name="about_content_wear_get_mobile_cta">Get the phone app!</string>-->
+    <string name="about_content_mobile">This is an app to keep track of your rows or stitches when working on craft projects like knitting, crochet and cross stitch.\n\nI always have several craft projects on the go and use either paper or a physical stitch counter to keep track of where I am up to.</string>
+    <string name="about_content_mobile_get_wear">Did you know there is a watch app? Track your projects right on your wrist!</string>
+<!--    <string name="about_content_mobile_get_wear_cta">Get the Wear app!</string>-->
     <string name="about_feedback">Found any bugs or have any feature suggestions? Leave a review or please email:</string>
     <string name="about_email">very.niche.dev@gmail.com</string>
     <string name="about_email_subject">Feedback: Stitch Counter</string>

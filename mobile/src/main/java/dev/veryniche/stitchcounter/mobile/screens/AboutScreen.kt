@@ -99,8 +99,14 @@ fun AboutScreen(
                 modifier = Modifier.fillMaxWidth()
             )
             Text(
-                text = stringResource(id = R.string.about_content_wear),
+                text = stringResource(id = R.string.about_content_mobile),
                 style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.fillMaxWidth()
+            )
+            Text(
+                text = stringResource(id = R.string.about_content_mobile_get_wear),
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.Bold,
                 modifier = Modifier.fillMaxWidth()
             )
             Text(
@@ -115,6 +121,7 @@ fun AboutScreen(
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.tertiary,
+                fontWeight = FontWeight.Bold,
                 text = email,
                 modifier = Modifier.clickable {
                     trackEvent(AnalyticsConstants.Action.AboutEmail)
