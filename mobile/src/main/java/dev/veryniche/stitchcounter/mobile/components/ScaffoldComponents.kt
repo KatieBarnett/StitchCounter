@@ -19,7 +19,7 @@ import androidx.compose.ui.res.stringResource
 import dev.veryniche.stitchcounter.core.R
 
 @OptIn(ExperimentalMaterial3Api::class)
-private val topAppBarColors: TopAppBarColors
+val topAppBarColors: TopAppBarColors
     @Composable
     get() = TopAppBarDefaults.topAppBarColors(
         containerColor = MaterialTheme.colorScheme.primaryContainer,

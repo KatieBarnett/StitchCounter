@@ -59,6 +59,13 @@ fun trackEvent(name: String) {
     }
 }
 
+fun trackAdClick(screen: String) {
+    Timber.d("Track ad click: ${AnalyticsConstants.Action.AdClick}")
+    Firebase.analytics.logEvent(FirebaseAnalytics.Event.AD_IMPRESSION) {
+        param(FirebaseAnalytics.Param.SCREEN_NAME, screen)
+    }
+}
+
 fun trackProjectScreenView(counterCount: Int) {
     Timber.d("Track screen: ${AnalyticsConstants.Screen.Project}")
     Firebase.analytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW) {

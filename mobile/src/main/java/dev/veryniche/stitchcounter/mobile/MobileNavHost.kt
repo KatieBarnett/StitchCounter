@@ -1,14 +1,19 @@
 package dev.veryniche.stitchcounter.mobile
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import dev.veryniche.stitchcounter.core.AnalyticsConstants
 import dev.veryniche.stitchcounter.mobile.purchase.PurchaseAction
 import dev.veryniche.stitchcounter.mobile.purchase.PurchaseStatus
 import dev.veryniche.stitchcounter.mobile.screens.AboutScreen
 import dev.veryniche.stitchcounter.mobile.screens.ProjectListScreen
+import dev.veryniche.stitchcounter.mobile.screens.ProjectScreen
+import kotlinx.coroutines.launch
 
 @Composable
 fun MobileNavHost(
@@ -24,7 +29,11 @@ fun MobileNavHost(
         modifier = modifier
     ) {
         composable("about") {
-            AboutScreen(purchaseStatus = purchaseStatus, onNavigateBack = {}, onPurchaseClick = onPurchaseClick)
+            AboutScreen(
+                purchaseStatus = purchaseStatus,
+                onNavigateBack = { navController.navigateUp() },
+                onPurchaseClick = onPurchaseClick
+            )
         }
         composable("project_list") {
             ProjectListScreen(
@@ -40,47 +49,37 @@ fun MobileNavHost(
                 }
             )
         }
-//        composable("project/{id}") {
-//            it.arguments?.getString("id")?.toIntOrNull()?.let { projectId ->
-//                viewModel.updatePageContext(null)
-//                ProjectScreen(
-//                    viewModel = viewModel,
-//                    id = projectId,
-//                    listState = listState,
-//                    onCounterClick = { counter ->
-//                        navController.navigate("counter/$projectId/${counter.id}")
-//                    },
-//                    onCounterAdd = { newCounterId ->
-//                        navController.navigate("edit_counter/$projectId/$newCounterId")
-//                    },
-//                    onProjectEdit = { id, name ->
-//                        navController.navigate("edit_project/$id/$name")
-//                    }
-//                )
-//            }
-//        }
-//        composable("edit_project") {
-//            viewModel.updatePageContext(stringResource(id = R.string.context_project))
-//            LoadEditProjectScreen(
-//                navController = navController,
-//                viewModel = viewModel,
-//                projectId = null,
-//                projectName = null
-//            )
-//        }
-//        composable("edit_project/{id}/{name}") {
-//            val projectId = it.arguments?.getString("id")?.toIntOrNull()
-//            val projectName = it.arguments?.getString("name")
-//            if (projectId != null && projectName != null) {
-//                viewModel.updatePageContext(stringResource(id = R.string.context_project))
-//                LoadEditProjectScreen(
-//                    navController = navController,
-//                    viewModel = viewModel,
-//                    projectId = projectId,
-//                    projectName = projectName
-//                )
-//            }
-//        }
+        composable("project/{id}") {
+            it.arguments?.getString("id")?.toIntOrNull()?.let { projectId ->
+                val projectState = viewModel.getProject(projectId).collectAsState(initial = null)
+                projectState.value?.let { project ->
+                    val composableScope = rememberCoroutineScope()
+                    ProjectScreen(
+                        project = project,
+                        onSave = { updatedProject ->
+                            composableScope.launch {
+                                viewModel.saveProject(updatedProject)
+                                navController.navigateUp()
+                            }
+                        },
+                        onDelete = {
+                            composableScope.launch {
+                                trackEvent(AnalyticsConstants.Action.DeleteProject)
+                                viewModel.deleteProject(projectId)
+                                navController.navigateUp()
+                            }
+                        },
+                        onBack = {
+                            navController.navigateUp()
+                        },
+                        onAboutClick = {
+                            navController.navigate("about")
+                        }
+                    )
+                }
+            }
+        }
+
 //        composable("counter/{project_id}/{counter_id}") {
 //            val projectId = it.arguments?.getString("project_id")?.toIntOrNull()
 //            val counterId = it.arguments?.getString("counter_id")?.toIntOrNull()
@@ -130,37 +129,6 @@ fun MobileNavHost(
 //        }
     }
 }
-
-// @Composable
-// fun LoadEditProjectScreen(
-//    navController: NavHostController,
-//    viewModel: MainViewModel,
-//    projectId: Int?,
-//    projectName: String?
-// ) {
-//    val composableScope = rememberCoroutineScope()
-//    EditProjectScreen(
-//        initialName = projectName,
-//        onSave = { projectName ->
-//            composableScope.launch {
-//                viewModel.saveProjectName(projectId, projectName)
-//                navController.navigateUp()
-//            }
-//        },
-//        onDelete = {
-//            composableScope.launch {
-//                projectId?.let {
-//                    trackEvent(Analytics.Action.DeleteProject)
-//                    viewModel.deleteProject(projectId)
-//                }
-//                navController.navigateUp()
-//            }
-//        },
-//        onClose = {
-//            navController.navigateUp()
-//        }
-//    )
-// }
 //
 // @Composable
 // fun LoadEditCounterScreen(

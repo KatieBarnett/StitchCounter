@@ -76,6 +76,9 @@ dependencies {
     implementation(libs.compose.material.iconscore)
     implementation(libs.compose.material.iconsext)
 
+    implementation(libs.play.services.base)
+    implementation(libs.play.services.ads)
+
     implementation(libs.timber)
 
     implementation(libs.hilt.android)

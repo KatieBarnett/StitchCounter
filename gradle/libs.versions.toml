@@ -23,6 +23,8 @@ ktlint = "0.46.1"
 lifecycleRuntimeKtx = "2.7.0"
 material = "1.11.0"
 navigationCompose = "2.7.7"
+play-services-ads = "23.0.0"
+play-services-base = "18.3.0"
 protobuf = "3.24.3"
 protobufPlugin = "0.9.4"
 splashscreen = "1.1.0-alpha02"
@@ -60,6 +62,8 @@ lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtim
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 material3 = { group = "androidx.compose.material3", name = "material3" }
 navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
+play-services-ads = { group = "com.google.android.gms", name = "play-services-ads", version.ref = "play-services-ads" }
+play-services-base = { group = "com.google.android.gms", name = "play-services-base", version.ref = "play-services-base" }
 playservices-wearable = { group = "com.google.android.gms", name = "play-services-wearable", version.ref = "googleServicesWearable" }
 protobuf-kotlin-lite = { group = "com.google.protobuf", name = "protobuf-kotlin-lite", version.ref = "protobuf" }
 protobuf-protoc = { group = "com.google.protobuf", name = "protoc", version.ref = "protobuf" }
