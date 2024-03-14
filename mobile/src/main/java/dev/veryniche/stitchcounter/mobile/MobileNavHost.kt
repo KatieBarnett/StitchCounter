@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import dev.veryniche.stitchcounter.mobile.purchase.PurchaseAction
 import dev.veryniche.stitchcounter.mobile.purchase.PurchaseStatus
 import dev.veryniche.stitchcounter.mobile.screens.AboutScreen
+import dev.veryniche.stitchcounter.mobile.screens.ProjectListScreen
 
 @Composable
 fun MobileNavHost(
@@ -19,31 +20,26 @@ fun MobileNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = "about",
+        startDestination = "project_list",
         modifier = modifier
     ) {
         composable("about") {
             AboutScreen(purchaseStatus = purchaseStatus, onNavigateBack = {}, onPurchaseClick = onPurchaseClick)
         }
-//        composable("project_list") {
-//            viewModel.updatePageContext(stringResource(id = R.string.app_name))
-//            ProjectListScreen(
-//                viewModel = viewModel,
-//                listState = listState,
-//                onProjectClick = { projectId ->
-//                    navController.navigate("project/$projectId")
-//                },
-//                onAddProjectClick = {
-//                    navController.navigate("edit_project")
-//                },
-//                onAboutClick = {
-//                    coroutineScope.launch {
-//                        listState.scrollToItem(index = 0)
-//                    }
-//                    navController.navigate("about")
-//                }
-//            )
-//        }
+        composable("project_list") {
+            ProjectListScreen(
+                viewModel = viewModel,
+                onProjectClick = { projectId ->
+                    navController.navigate("project/$projectId")
+                },
+                onAddProjectClick = {
+                    navController.navigate("edit_project")
+                },
+                onAboutClick = {
+                    navController.navigate("about")
+                }
+            )
+        }
 //        composable("project/{id}") {
 //            it.arguments?.getString("id")?.toIntOrNull()?.let { projectId ->
 //                viewModel.updatePageContext(null)

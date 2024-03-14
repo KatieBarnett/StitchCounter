@@ -19,6 +19,8 @@ import dev.veryniche.stitchcounter.mobile.BuildConfig
 private val DarkColorScheme = darkColorScheme(
     primary = RubineRed,
     onPrimary = Color.White,
+    primaryContainer = BlackCoral,
+    onPrimaryContainer = Color.White,
     tertiary = Pink,
     secondary = BlackCoral,
 //    secondaryVariant = Charcoal,
@@ -32,6 +34,8 @@ private val DarkColorScheme = darkColorScheme(
 private val LightColorScheme = lightColorScheme(
     primary = RubineRed,
     onPrimary = Color.White,
+    primaryContainer = RubineRed,
+    onPrimaryContainer = Color.White,
     tertiary = Pink,
     secondary = BlackCoral,
 //    secondaryVariant = Charcoal,

@@ -9,10 +9,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.navigation.compose.hiltViewModel
-import dagger.hilt.android.AndroidEntryPoint
-import dev.veryniche.stitchcounter.mobile.ui.theme.StitchCounterTheme
 import androidx.navigation.compose.rememberNavController
+import dagger.hilt.android.AndroidEntryPoint
 import dev.veryniche.stitchcounter.mobile.purchase.PurchaseStatus
+import dev.veryniche.stitchcounter.mobile.ui.theme.StitchCounterTheme
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {

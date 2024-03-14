@@ -1,7 +1,5 @@
 package dev.veryniche.stitchcounter.mobile
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.veryniche.stitchcounter.data.models.Counter

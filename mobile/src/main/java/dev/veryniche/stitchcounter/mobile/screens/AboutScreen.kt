@@ -16,7 +16,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,8 +29,7 @@ import dev.veryniche.stitchcounter.core.R
 import dev.veryniche.stitchcounter.core.theme.Dimen
 import dev.veryniche.stitchcounter.mobile.BuildConfig
 import dev.veryniche.stitchcounter.mobile.TrackedScreen
-import dev.veryniche.stitchcounter.mobile.components.NavigationIcon
-import dev.veryniche.stitchcounter.mobile.components.TopAppBarTitle
+import dev.veryniche.stitchcounter.mobile.components.CollapsedTopAppBar
 import dev.veryniche.stitchcounter.mobile.previews.PreviewScreen
 import dev.veryniche.stitchcounter.mobile.purchase.PurchaseAction
 import dev.veryniche.stitchcounter.mobile.purchase.PurchaseStatus
@@ -74,11 +72,10 @@ fun AboutScreen(
     }
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {
-                    TopAppBarTitle(R.string.about_title)
-                },
-                navigationIcon = { NavigationIcon { onNavigateBack.invoke() } }
+            CollapsedTopAppBar(
+                titleText = stringResource(id = R.string.about_title),
+                actions = {},
+                onNavigation = onNavigateBack
             )
         },
         modifier = modifier
