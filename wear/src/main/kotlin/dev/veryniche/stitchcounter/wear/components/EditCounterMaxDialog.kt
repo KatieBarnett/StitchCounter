@@ -1,4 +1,4 @@
-package dev.veryniche.stitchcounter.wear.presentation
+package dev.veryniche.stitchcounter.wear.components
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,8 +24,8 @@ import dev.veryniche.stitchcounter.core.AnalyticsConstants
 import dev.veryniche.stitchcounter.core.R
 import dev.veryniche.stitchcounter.core.theme.Dimen
 import dev.veryniche.stitchcounter.wear.TrackedScreen
-import dev.veryniche.stitchcounter.wear.presentation.theme.StitchCounterTheme
 import dev.veryniche.stitchcounter.wear.previews.PreviewScreen
+import dev.veryniche.stitchcounter.wear.theme.StitchCounterTheme
 import dev.veryniche.stitchcounter.wear.trackScreenView
 
 @Composable

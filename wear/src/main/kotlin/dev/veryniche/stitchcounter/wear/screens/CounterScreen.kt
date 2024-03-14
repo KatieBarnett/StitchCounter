@@ -1,4 +1,4 @@
-package dev.veryniche.stitchcounter.wear.presentation
+package dev.veryniche.stitchcounter.wear.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -49,8 +49,8 @@ import dev.veryniche.stitchcounter.data.models.Counter
 import dev.veryniche.stitchcounter.wear.MainViewModel
 import dev.veryniche.stitchcounter.wear.TrackedScreen
 import dev.veryniche.stitchcounter.wear.getCounterProgress
-import dev.veryniche.stitchcounter.wear.presentation.theme.StitchCounterTheme
 import dev.veryniche.stitchcounter.wear.previews.PreviewScreen
+import dev.veryniche.stitchcounter.wear.theme.StitchCounterTheme
 import dev.veryniche.stitchcounter.wear.trackScreenView
 import kotlinx.coroutines.launch
 

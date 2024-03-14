@@ -1,4 +1,4 @@
-package dev.veryniche.stitchcounter.wear.presentation
+package dev.veryniche.stitchcounter.wear.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
@@ -41,6 +41,8 @@ import dev.veryniche.stitchcounter.data.models.Project
 import dev.veryniche.stitchcounter.wear.MainViewModel
 import dev.veryniche.stitchcounter.wear.TrackedScreen
 import dev.veryniche.stitchcounter.wear.getNextCounterId
+import dev.veryniche.stitchcounter.wear.components.CounterListItemComponent
+import dev.veryniche.stitchcounter.wear.components.ListTitle
 import dev.veryniche.stitchcounter.wear.previews.PreviewScreen
 import dev.veryniche.stitchcounter.wear.trackEvent
 import dev.veryniche.stitchcounter.wear.trackProjectScreenView

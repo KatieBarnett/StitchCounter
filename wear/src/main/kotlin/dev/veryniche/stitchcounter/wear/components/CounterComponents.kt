@@ -1,4 +1,4 @@
-package dev.veryniche.stitchcounter.wear.presentation
+package dev.veryniche.stitchcounter.wear.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -20,9 +20,9 @@ import androidx.wear.compose.material.Text
 import dev.veryniche.stitchcounter.core.R
 import dev.veryniche.stitchcounter.core.theme.Dimen
 import dev.veryniche.stitchcounter.data.models.Counter
-import dev.veryniche.stitchcounter.wear.presentation.theme.StitchCounterTheme
 import dev.veryniche.stitchcounter.wear.previews.PreviewComponent
 import dev.veryniche.stitchcounter.wear.previews.PreviewScreen
+import dev.veryniche.stitchcounter.wear.theme.StitchCounterTheme
 
 
 @Composable

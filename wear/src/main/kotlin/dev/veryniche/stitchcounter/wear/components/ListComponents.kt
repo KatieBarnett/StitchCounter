@@ -1,4 +1,4 @@
-package dev.veryniche.stitchcounter.wear.presentation
+package dev.veryniche.stitchcounter.wear.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable

@@ -1,4 +1,4 @@
-package dev.veryniche.stitchcounter.wear.util
+package dev.veryniche.stitchcounter.wear
 
 import android.content.Context
 import android.content.Intent

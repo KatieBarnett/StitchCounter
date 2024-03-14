@@ -1,4 +1,4 @@
-package dev.veryniche.stitchcounter.wear.presentation
+package dev.veryniche.stitchcounter.wear
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -25,8 +25,7 @@ import androidx.wear.compose.material.curvedText
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import dagger.hilt.android.AndroidEntryPoint
 import dev.veryniche.stitchcounter.core.R
-import dev.veryniche.stitchcounter.wear.MainViewModel
-import dev.veryniche.stitchcounter.wear.presentation.theme.StitchCounterTheme
+import dev.veryniche.stitchcounter.wear.theme.StitchCounterTheme
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {

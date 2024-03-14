@@ -1,4 +1,4 @@
-package dev.veryniche.stitchcounter.wear.presentation.theme
+package dev.veryniche.stitchcounter.wear.theme
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color

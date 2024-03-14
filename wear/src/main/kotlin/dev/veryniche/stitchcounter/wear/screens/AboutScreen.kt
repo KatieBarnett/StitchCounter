@@ -1,4 +1,4 @@
-package dev.veryniche.stitchcounter.wear.presentation
+package dev.veryniche.stitchcounter.wear.screens
 
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.gestures.animateScrollBy
@@ -42,10 +42,11 @@ import dev.veryniche.stitchcounter.core.R
 import dev.veryniche.stitchcounter.core.theme.Dimen
 import dev.veryniche.stitchcounter.wear.BuildConfig
 import dev.veryniche.stitchcounter.wear.TrackedScreen
-import dev.veryniche.stitchcounter.wear.presentation.theme.StitchCounterTheme
+import dev.veryniche.stitchcounter.wear.components.ListTitle
+import dev.veryniche.stitchcounter.wear.theme.StitchCounterTheme
 import dev.veryniche.stitchcounter.wear.previews.PreviewScreen
 import dev.veryniche.stitchcounter.wear.trackScreenView
-import dev.veryniche.stitchcounter.wear.util.openUrlOnPhone
+import dev.veryniche.stitchcounter.wear.openUrlOnPhone
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalWearFoundationApi::class)

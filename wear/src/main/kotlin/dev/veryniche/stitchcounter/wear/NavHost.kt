@@ -1,4 +1,4 @@
-package dev.veryniche.stitchcounter.wear.presentation
+package dev.veryniche.stitchcounter.wear
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -10,8 +10,12 @@ import androidx.wear.compose.navigation.SwipeDismissableNavHost
 import androidx.wear.compose.navigation.composable
 import dev.veryniche.stitchcounter.core.AnalyticsConstants
 import dev.veryniche.stitchcounter.core.R
-import dev.veryniche.stitchcounter.wear.MainViewModel
-import dev.veryniche.stitchcounter.wear.trackEvent
+import dev.veryniche.stitchcounter.wear.screens.AboutScreen
+import dev.veryniche.stitchcounter.wear.screens.CounterScreen
+import dev.veryniche.stitchcounter.wear.screens.EditCounterScreen
+import dev.veryniche.stitchcounter.wear.screens.EditProjectScreen
+import dev.veryniche.stitchcounter.wear.screens.ProjectListScreen
+import dev.veryniche.stitchcounter.wear.screens.ProjectScreen
 import kotlinx.coroutines.launch
 
 @Composable

@@ -1,4 +1,4 @@
-package dev.veryniche.stitchcounter.wear.presentation
+package dev.veryniche.stitchcounter.wear.screens
 
 import android.app.RemoteInput
 import android.content.Intent
@@ -9,13 +9,10 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.Icons.Filled
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
@@ -28,6 +25,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.wear.compose.material.Button
 import androidx.wear.compose.material.ButtonDefaults
 import androidx.wear.compose.material.CompactButton
@@ -42,41 +40,38 @@ import dev.veryniche.stitchcounter.core.AnalyticsConstants
 import dev.veryniche.stitchcounter.core.R
 import dev.veryniche.stitchcounter.core.theme.Dimen
 import dev.veryniche.stitchcounter.wear.TrackedScreen
-import dev.veryniche.stitchcounter.wear.presentation.theme.StitchCounterTheme
+import dev.veryniche.stitchcounter.wear.theme.StitchCounterTheme
 import dev.veryniche.stitchcounter.wear.previews.PreviewScreen
 import dev.veryniche.stitchcounter.wear.trackScreenView
 
 @Composable
-fun EditCounterScreen(
-    counterId: Int,
-    initialName: String?,
-    initialMax: Int,// = 0,
-    onSave: (counterName: String, counterMax: Int) -> Unit,
+fun EditProjectScreen(
+    initialName: String? = null,
+    onSave: (projectName: String) -> Unit,
     onDelete: () -> Unit,
     onClose: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val counterDefaultName = initialName ?: stringResource(R.string.counter_name_default, counterId)
-    var counterName by remember { mutableStateOf(counterDefaultName) }
-    var counterMax by remember { mutableStateOf(initialMax) }
-    var showEditCounterMaxDialog by remember { mutableStateOf(false) }
-    var showDeleteCounterDialog by remember { mutableStateOf(false) }
-    var showDeleteCounterConfirmation by remember { mutableStateOf(false) }
+    val projectNameHint = stringResource(id = R.string.project_name_default)
+    var projectName by remember { mutableStateOf(initialName ?: projectNameHint) }
+    var showDeleteProjectDialog by remember { mutableStateOf(false) }
+    var showDeleteProjectConfirmation by remember { mutableStateOf(false) }
 
     TrackedScreen {
-        trackScreenView(name = AnalyticsConstants.Screen.EditCounter)
+        trackScreenView(name = AnalyticsConstants.Screen.EditProject)
     }
 
     val inputTextKey = "input_text"
     val intent: Intent = RemoteInputIntentHelper.createActionRemoteInputIntent()
     val remoteInputs: List<RemoteInput> = listOf(
         RemoteInput.Builder(inputTextKey)
-            .setLabel(stringResource(R.string.edit_counter_name))
+            .setLabel(stringResource(R.string.edit_project_name))
             .wearableExtender {
                 setEmojisAllowed(true)
                 setInputActionType(EditorInfo.IME_ACTION_DONE)
             }.build()
     )
+    RemoteInputIntentHelper.putRemoteInputsExtra(intent, remoteInputs)
 
     val launcher = rememberLauncherForActivityResult(
             ActivityResultContracts.StartActivityForResult()
@@ -84,107 +79,76 @@ fun EditCounterScreen(
             it.data?.let { data ->
                 val results: Bundle = RemoteInput.getResultsFromIntent(data)
                 val newInputText: CharSequence? = results.getCharSequence(inputTextKey)
-                counterName = newInputText.toString()
+                projectName = newInputText.toString()
             }
         }
 
-    RemoteInputIntentHelper.putRemoteInputsExtra(intent, remoteInputs)
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier.fillMaxSize()
     ) {
-        Spacer(Modifier.height(Dimen.spacingExtraHuge))
         Row(verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth(0.75f)) {
-            Text(text = counterName, Modifier.weight(1f))
+            modifier = Modifier.fillMaxWidth(0.85f)){
+            Text(text = projectName, Modifier.weight(1f))
             CompactButton(
                 onClick = { launcher.launch(intent) },
                 colors = ButtonDefaults.secondaryButtonColors()
             ) {
                 Icon(
                     imageVector = Icons.Filled.Edit,
-                    contentDescription = stringResource(id = R.string.edit_counter_name)
-                )
-            }
-        }
-        Row(verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth(0.95f)) {
-            Text(if (counterMax == 0) {
-                stringResource(R.string.counter_max_label_zero)
-            } else {
-                stringResource(R.string.counter_max_label_many, counterMax)
-            }, Modifier.weight(1f))
-            CompactButton(
-                onClick = { showEditCounterMaxDialog = true },
-                colors = ButtonDefaults.secondaryButtonColors()
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Edit,
-                    contentDescription = stringResource(id = R.string.edit_counter_max)
+                    contentDescription = stringResource(id = R.string.edit_project_name)
                 )
             }
         }
         Row(horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxWidth(0.75f)) {
+            modifier = Modifier.fillMaxWidth(0.85f)) {
             CompactButton(
                 onClick = { onClose.invoke() },
                 colors = ButtonDefaults.secondaryButtonColors()
             ) {
                 Icon(
-                    imageVector = Filled.Close,
+                    imageVector = Icons.Filled.Close,
                     contentDescription = stringResource(id = R.string.cancel_edit_project)
                 )
             }
             if (initialName != null) {
                 CompactButton(
-                    onClick = { showDeleteCounterDialog = true },
+                    onClick = { showDeleteProjectDialog = true },
                     colors = ButtonDefaults.secondaryButtonColors()
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Delete,
-                        contentDescription = stringResource(id = R.string.delete_counter)
+                        contentDescription = stringResource(id = R.string.delete_project)
                     )
                 }
             }
             CompactButton(
-                onClick = { 
-                    onSave.invoke(counterName, counterMax) 
-                },
+                onClick = { onSave.invoke(projectName) },
                 colors = ButtonDefaults.primaryButtonColors()
             ) {
                 Icon(
-                    imageVector = Filled.Check,
+                    imageVector = Icons.Filled.Check,
                     contentDescription = stringResource(id = R.string.save_project)
                 )
             }
         }
-        Spacer(Modifier.height(Dimen.spacingHuge))
     }
-    EditCounterMaxDialog(
-        showDialog = showEditCounterMaxDialog,
-        initialValue = counterMax,
-        onDismissRequest = { showEditCounterMaxDialog = false },
-        onDone = { 
-            counterMax = it
-            showEditCounterMaxDialog = false
-        }
-    )
-    if (showDeleteCounterDialog) {
-        DeleteCounterAlert(
-            counterName = counterName,
+    if (showDeleteProjectDialog) {
+        DeleteProjectAlert(
+            projectName = projectName,
             onConfirm = {
-                showDeleteCounterDialog = false
-                showDeleteCounterConfirmation = true
+                showDeleteProjectDialog = false
+                showDeleteProjectConfirmation = true
             },
             onCancel = {
-                showDeleteCounterDialog = false
+                showDeleteProjectDialog = false
             }
         )
     }
-    if (showDeleteCounterConfirmation) {
-        DeleteCounterConfirmation(
-            counterName = counterName,
+    if (showDeleteProjectConfirmation) {
+        DeleteProjectConfirmation(
+            projectName = projectName,
             onTimeout = {
                 onDelete.invoke()
                 onClose.invoke()
@@ -194,58 +158,81 @@ fun EditCounterScreen(
 }
 
 @Composable
-fun DeleteCounterAlert(counterName: String, onConfirm: () -> Unit, onCancel: () -> Unit) {
-    Alert(
-        title = {
-            Text(stringResource(R.string.delete_project_message, counterName))
-        },
-        negativeButton = {
-            Button(
-                onClick = onCancel,
-                colors = ButtonDefaults.secondaryButtonColors()
-            ) {
-                Icon(
-                    imageVector = Filled.Close,
-                    contentDescription = stringResource(R.string.delete_counter_negative)
+fun DeleteProjectAlert(projectName: String, onConfirm: () -> Unit, onCancel: () -> Unit) {
+        Alert(
+            title = {
+                Text(
+                    text = stringResource(R.string.delete_project_message, projectName),
+                    textAlign = TextAlign.Center
                 )
+            },
+            negativeButton = {
+                Button(
+                    onClick = onCancel,
+                    colors = ButtonDefaults.secondaryButtonColors()
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Close,
+                        contentDescription = stringResource(R.string.delete_project_negative)
+                    )
+                }
+            },
+            positiveButton = {
+                Button(
+                    onClick = onConfirm,
+                    colors = ButtonDefaults.primaryButtonColors()
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Check,
+                        contentDescription = stringResource(R.string.delete_project_positive)
+                    )
+                }
             }
-        },
-        positiveButton = {
-            Button(
-                onClick = onConfirm,
-                colors = ButtonDefaults.primaryButtonColors()
-            ) {
-                Icon(
-                    imageVector = Filled.Check,
-                    contentDescription = stringResource(R.string.delete_counter_positive)
-                )
-            }
-        }
-    )
+        )
 }
 
 @Composable
-fun DeleteCounterConfirmation(counterName: String, onTimeout: () -> Unit) {
+fun DeleteProjectConfirmation(projectName: String, onTimeout: () -> Unit) {
     Confirmation(
         onTimeout = onTimeout,
         icon = {
             Icon(
-                imageVector = Filled.Check,
-                contentDescription = stringResource(R.string.delete_counter_positive),
+                imageVector = Icons.Filled.Check,
+                contentDescription = stringResource(R.string.delete_project_positive),
                 tint = MaterialTheme.colors.primary,
                 modifier = Modifier.size(Dimen.confirmationIconSize)
             )
         },
         content = {
-            Text(stringResource(R.string.delete_counter_success, counterName))
+            Text(
+                text = stringResource(R.string.delete_project_success, projectName),
+                textAlign = TextAlign.Center
+            )
         }
     )
 }
 
+
 @PreviewScreen
 @Composable
-fun EditCounterScreenPreview() {
+fun DeleteProjectAlertPreview() {
     StitchCounterTheme {
-        EditCounterScreen(1, "initial name that is really long", 450000, {_, _ -> }, {}, {})
+        DeleteProjectAlert("Project Name that is really long", {}, {})
+    }
+}
+
+@PreviewScreen
+@Composable
+fun DeleteProjectConfirmationPreview() {
+    StitchCounterTheme {
+        DeleteProjectConfirmation("Project Name that is really long", {})
+    }
+}
+
+@PreviewScreen
+@Composable
+fun EditProjectScreenPreview() {
+    StitchCounterTheme {
+        EditProjectScreen(null, {}, {}, {})
     }
 }
