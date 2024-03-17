@@ -29,7 +29,7 @@ object Analytics {
     }
 
     object Action {
-        const val AddProject = "Reset Counter"
+        const val AddProject = "Add Project"
         const val ResetCounter = "Reset Counter"
         const val ResetProject = "Reset Project"
         const val DeleteCounter = "Delete Counter"
