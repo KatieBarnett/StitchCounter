@@ -102,5 +102,16 @@
 
     <string name="confirm_changes_confirm">OK</string>
     <string name="confirm_changes_dismiss">Cancel</string>
+
+
+
+
+    <string name="reset_project_message">Reset %s?</string>
+    <string name="reset_project_positive">Reset project</string>
+    <string name="reset_project_negative">Cancel</string>
+
+    <string name="reset_counter_message">Reset %s?</string>
+    <string name="reset_counter_positive">Reset counter</string>
+    <string name="reset_counter_negative">Cancel</string>
     
 </resources>

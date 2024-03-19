@@ -13,26 +13,36 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material.icons.Icons.Filled
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.rotary.onRotaryScrollEvent
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.wear.compose.foundation.ExperimentalWearFoundationApi
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.ScalingLazyListState
 import androidx.wear.compose.foundation.lazy.items
 import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
 import androidx.wear.compose.foundation.rememberActiveFocusRequester
+import androidx.wear.compose.material.Button
 import androidx.wear.compose.material.ButtonDefaults
 import androidx.wear.compose.material.CompactButton
 import androidx.wear.compose.material.Icon
 import androidx.wear.compose.material.ListHeader
 import androidx.wear.compose.material.MaterialTheme
+import androidx.wear.compose.material.Text
+import androidx.wear.compose.material.dialog.Alert
 import dev.veryniche.stitchcounter.core.AnalyticsConstants
 import dev.veryniche.stitchcounter.core.R.string
 import dev.veryniche.stitchcounter.core.theme.Dimen
@@ -40,9 +50,9 @@ import dev.veryniche.stitchcounter.data.models.Counter
 import dev.veryniche.stitchcounter.data.models.Project
 import dev.veryniche.stitchcounter.wear.MainViewModel
 import dev.veryniche.stitchcounter.wear.TrackedScreen
-import dev.veryniche.stitchcounter.wear.getNextCounterId
 import dev.veryniche.stitchcounter.wear.components.CounterListItemComponent
 import dev.veryniche.stitchcounter.wear.components.ListTitle
+import dev.veryniche.stitchcounter.wear.getNextCounterId
 import dev.veryniche.stitchcounter.wear.previews.PreviewScreen
 import dev.veryniche.stitchcounter.wear.trackEvent
 import dev.veryniche.stitchcounter.wear.trackProjectScreenView
@@ -60,6 +70,7 @@ fun ProjectScreen(
 ) {
     val composableScope = rememberCoroutineScope()
     val project = viewModel.getProject(id).collectAsState(initial = null)
+    var showResetProjectDialog by remember { mutableStateOf(false) }
     project.value?.let { project ->
         TrackedScreen {
             trackProjectScreenView(project.counters.size)
@@ -73,16 +84,29 @@ fun ProjectScreen(
                     viewModel.updateCounter(project, counter)
                 }
             },
-            onCounterAdd = { onCounterAdd.invoke(nextCounterId)},
+            onCounterAdd = { onCounterAdd.invoke(nextCounterId) },
             onProjectReset = {
-                composableScope.launch {
-                    viewModel.resetProject(project)
-                }
+                showResetProjectDialog = true
             },
             onProjectEdit = { onProjectEdit.invoke(id, project.name) },
             onCounterClick = onCounterClick,
             modifier = modifier
         )
+        if (showResetProjectDialog) {
+            ResetProjectAlert(
+                projectName = project.name,
+                onConfirm = {
+                    composableScope.launch {
+                        trackEvent(AnalyticsConstants.Action.ResetProject)
+                        viewModel.resetProject(project)
+                        showResetProjectDialog = false
+                    }
+                },
+                onCancel = {
+                    showResetProjectDialog = false
+                }
+            )
+        }
     } // TODO - else display error
 }
 
@@ -100,7 +124,7 @@ fun ProjectContent(
 ) {
     val focusRequester = rememberActiveFocusRequester()
     val coroutineScope = rememberCoroutineScope()
-    ScalingLazyColumn (
+    ScalingLazyColumn(
         modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colors.background)
@@ -120,18 +144,21 @@ fun ProjectContent(
             ListHeader {
                 ListTitle(project.name)
             }
-        }   
+        }
         items(project.counters) { counter ->
             CounterListItemComponent(
                 counter = counter,
-                onCounterUpdate = onCounterUpdate, 
+                onCounterUpdate = onCounterUpdate,
                 onCounterClick = onCounterClick,
-                Modifier)
+                Modifier
+            )
         }
         item {
-            Row(horizontalArrangement = Arrangement.Center,
+            Row(
+                horizontalArrangement = Arrangement.Center,
                 modifier = Modifier
-                    .fillMaxWidth()) {
+                    .fillMaxWidth()
+            ) {
                 CompactButton(
                     onClick = { onCounterAdd.invoke() },
                     colors = ButtonDefaults.secondaryButtonColors()
@@ -156,7 +183,7 @@ fun ProjectContent(
                     onClick = {
                         trackEvent(AnalyticsConstants.Action.ResetProject)
                         onProjectReset.invoke()
-                              },
+                    },
                     colors = ButtonDefaults.secondaryButtonColors()
                 ) {
                     Icon(
@@ -164,10 +191,43 @@ fun ProjectContent(
                         contentDescription = stringResource(id = string.reset_project)
                     )
                 }
-                
             }
         }
     }
+}
+
+@Composable
+fun ResetProjectAlert(projectName: String, onConfirm: () -> Unit, onCancel: () -> Unit) {
+    Alert(
+        title = {
+            Text(
+                text = stringResource(string.reset_project_message, projectName),
+                textAlign = TextAlign.Center
+            )
+        },
+        negativeButton = {
+            Button(
+                onClick = onCancel,
+                colors = ButtonDefaults.secondaryButtonColors()
+            ) {
+                Icon(
+                    imageVector = Filled.Close,
+                    contentDescription = stringResource(string.reset_project_negative)
+                )
+            }
+        },
+        positiveButton = {
+            Button(
+                onClick = onConfirm,
+                colors = ButtonDefaults.primaryButtonColors()
+            ) {
+                Icon(
+                    imageVector = Filled.Check,
+                    contentDescription = stringResource(string.reset_project_positive)
+                )
+            }
+        }
+    )
 }
 
 @PreviewScreen
@@ -195,8 +255,12 @@ fun ProjectContentPreview() {
                 )
             )
         ),
-        listState = rememberScalingLazyListState(), 
-        {},{},{}, {}, {},
+        listState = rememberScalingLazyListState(),
+        {},
+        {},
+        {},
+        {},
+        {},
         Modifier.fillMaxSize()
     )
 }

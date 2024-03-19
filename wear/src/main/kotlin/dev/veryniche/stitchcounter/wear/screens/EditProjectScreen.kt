@@ -74,22 +74,24 @@ fun EditProjectScreen(
     RemoteInputIntentHelper.putRemoteInputsExtra(intent, remoteInputs)
 
     val launcher = rememberLauncherForActivityResult(
-            ActivityResultContracts.StartActivityForResult()
-        ) {
-            it.data?.let { data ->
-                val results: Bundle = RemoteInput.getResultsFromIntent(data)
-                val newInputText: CharSequence? = results.getCharSequence(inputTextKey)
-                projectName = newInputText.toString()
-            }
+        ActivityResultContracts.StartActivityForResult()
+    ) {
+        it.data?.let { data ->
+            val results: Bundle = RemoteInput.getResultsFromIntent(data)
+            val newInputText: CharSequence? = results.getCharSequence(inputTextKey)
+            projectName = newInputText.toString()
         }
+    }
 
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier.fillMaxSize()
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth(0.85f)){
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth(0.85f)
+        ) {
             Text(text = projectName, Modifier.weight(1f))
             CompactButton(
                 onClick = { launcher.launch(intent) },
@@ -101,8 +103,10 @@ fun EditProjectScreen(
                 )
             }
         }
-        Row(horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxWidth(0.85f)) {
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxWidth(0.85f)
+        ) {
             CompactButton(
                 onClick = { onClose.invoke() },
                 colors = ButtonDefaults.secondaryButtonColors()
@@ -159,36 +163,36 @@ fun EditProjectScreen(
 
 @Composable
 fun DeleteProjectAlert(projectName: String, onConfirm: () -> Unit, onCancel: () -> Unit) {
-        Alert(
-            title = {
-                Text(
-                    text = stringResource(R.string.delete_project_message, projectName),
-                    textAlign = TextAlign.Center
+    Alert(
+        title = {
+            Text(
+                text = stringResource(R.string.delete_project_message, projectName),
+                textAlign = TextAlign.Center
+            )
+        },
+        negativeButton = {
+            Button(
+                onClick = onCancel,
+                colors = ButtonDefaults.secondaryButtonColors()
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Close,
+                    contentDescription = stringResource(R.string.delete_project_negative)
                 )
-            },
-            negativeButton = {
-                Button(
-                    onClick = onCancel,
-                    colors = ButtonDefaults.secondaryButtonColors()
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Close,
-                        contentDescription = stringResource(R.string.delete_project_negative)
-                    )
-                }
-            },
-            positiveButton = {
-                Button(
-                    onClick = onConfirm,
-                    colors = ButtonDefaults.primaryButtonColors()
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Check,
-                        contentDescription = stringResource(R.string.delete_project_positive)
-                    )
-                }
             }
-        )
+        },
+        positiveButton = {
+            Button(
+                onClick = onConfirm,
+                colors = ButtonDefaults.primaryButtonColors()
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Check,
+                    contentDescription = stringResource(R.string.delete_project_positive)
+                )
+            }
+        }
+    )
 }
 
 @Composable
@@ -211,7 +215,6 @@ fun DeleteProjectConfirmation(projectName: String, onTimeout: () -> Unit) {
         }
     )
 }
-
 
 @PreviewScreen
 @Composable

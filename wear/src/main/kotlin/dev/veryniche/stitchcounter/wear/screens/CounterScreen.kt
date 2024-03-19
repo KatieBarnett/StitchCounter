@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons.Filled
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Remove
@@ -22,7 +24,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalConfiguration
@@ -36,6 +37,7 @@ import androidx.wear.compose.material.CompactButton
 import androidx.wear.compose.material.Icon
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
+import androidx.wear.compose.material.dialog.Alert
 import com.google.android.horologist.annotations.ExperimentalHorologistApi
 import com.google.android.horologist.composables.ProgressIndicatorSegment
 import com.google.android.horologist.composables.SquareSegmentedProgressIndicator
@@ -51,6 +53,7 @@ import dev.veryniche.stitchcounter.wear.TrackedScreen
 import dev.veryniche.stitchcounter.wear.getCounterProgress
 import dev.veryniche.stitchcounter.wear.previews.PreviewScreen
 import dev.veryniche.stitchcounter.wear.theme.StitchCounterTheme
+import dev.veryniche.stitchcounter.wear.trackEvent
 import dev.veryniche.stitchcounter.wear.trackScreenView
 import kotlinx.coroutines.launch
 
@@ -64,6 +67,7 @@ fun CounterScreen(
 ) {
     val composableScope = rememberCoroutineScope()
     val projectState = viewModel.getProject(projectId).collectAsState(initial = null)
+    var showResetCounterDialog by remember { mutableStateOf(false) }
     projectState.value?.let { project ->
         val counter = project.counters.firstOrNull { it.id == counterId }
         counter?.let {
@@ -78,25 +82,73 @@ fun CounterScreen(
                     }
                 },
                 onCounterReset = {
-                    composableScope.launch {
-                        viewModel.resetCounter(project, counter)
-                    }
+                    showResetCounterDialog = true
                 },
                 onCounterEdit = { onCounterEdit.invoke(counter.name, counter.maxCount) },
                 modifier = modifier
             )
+            if (showResetCounterDialog) {
+                ResetCounterAlert(
+                    counterName = counter.name,
+                    onConfirm = {
+                        composableScope.launch {
+                            trackEvent(AnalyticsConstants.Action.ResetCounter)
+                            viewModel.resetCounter(project, counter)
+                            showResetCounterDialog = false
+                        }
+                    },
+                    onCancel = {
+                        showResetCounterDialog = false
+                    }
+                )
+            }
         } // TODO - else display error
     } // TODO - else display error
 }
 
-@OptIn(ExperimentalComposeUiApi::class, ExperimentalHorologistApi::class)
 @Composable
-fun CounterContent(counter: Counter,
-                   onCounterUpdate: (counter: Counter) -> Unit,
-                   onCounterReset: () -> Unit,
-                   onCounterEdit: () -> Unit,
-                   modifier: Modifier = Modifier) {
+fun ResetCounterAlert(counterName: String, onConfirm: () -> Unit, onCancel: () -> Unit) {
+    Alert(
+        title = {
+            Text(
+                text = stringResource(string.reset_counter_message, counterName),
+                textAlign = TextAlign.Center
+            )
+        },
+        negativeButton = {
+            Button(
+                onClick = onCancel,
+                colors = ButtonDefaults.secondaryButtonColors()
+            ) {
+                Icon(
+                    imageVector = Filled.Close,
+                    contentDescription = stringResource(string.reset_counter_negative)
+                )
+            }
+        },
+        positiveButton = {
+            Button(
+                onClick = onConfirm,
+                colors = ButtonDefaults.primaryButtonColors()
+            ) {
+                Icon(
+                    imageVector = Filled.Check,
+                    contentDescription = stringResource(string.reset_counter_positive)
+                )
+            }
+        }
+    )
+}
 
+@OptIn(ExperimentalHorologistApi::class)
+@Composable
+fun CounterContent(
+    counter: Counter,
+    onCounterUpdate: (counter: Counter) -> Unit,
+    onCounterReset: () -> Unit,
+    onCounterEdit: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     var useCompactButton by remember { mutableStateOf(false) }
     val isRound = LocalConfiguration.current.isScreenRound
 
@@ -136,21 +188,30 @@ fun CounterContent(counter: Counter,
                 )
             }
         }
-        Column(horizontalAlignment = Alignment.CenterHorizontally,
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
             modifier = Modifier
                 .fillMaxSize()
-                .padding(Dimen.withinProgressIndicatorPadding)) {
-            Row(horizontalArrangement = Arrangement.spacedBy(Dimen.spacing),
+                .padding(Dimen.withinProgressIndicatorPadding)
+        ) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(Dimen.spacing),
                 verticalAlignment = Alignment.Bottom,
                 modifier = Modifier
                     .fillMaxWidth(0.75f)
-                    .weight(1f)) {
+                    .weight(1f)
+            ) {
                 Text(
                     text = if (counter.maxCount == 0) {
                         stringResource(R.string.counter_label_fraction_zero, counter.name)
                     } else {
-                        stringResource(R.string.counter_label_fraction_many, counter.name,counter.currentCount, counter.maxCount)
+                        stringResource(
+                            R.string.counter_label_fraction_many,
+                            counter.name,
+                            counter.currentCount,
+                            counter.maxCount
+                        )
                     },
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -161,7 +222,8 @@ fun CounterContent(counter: Counter,
                         .padding(vertical = Dimen.spacing)
                 )
             }
-            Row(horizontalArrangement = Arrangement.spacedBy(Dimen.spacing),
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(Dimen.spacing),
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth(0.95f)
             ) {
@@ -227,11 +289,13 @@ fun CounterContent(counter: Counter,
                     }
                 }
             }
-            Row(horizontalArrangement = Arrangement.Center,
+            Row(
+                horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.Top,
                 modifier = Modifier
                     .fillMaxWidth(0.75f)
-                    .weight(1f)) {
+                    .weight(1f)
+            ) {
                 CompactButton(
                     onClick = { onCounterEdit.invoke() },
                     colors = ButtonDefaults.secondaryButtonColors()
