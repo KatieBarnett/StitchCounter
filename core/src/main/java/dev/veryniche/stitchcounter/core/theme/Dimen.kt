@@ -18,4 +18,8 @@ object Dimen {
     val withinProgressIndicatorPadding = 7.dp
 
     val confirmationIconSize = 60.dp
+
+
+    val mobileEditModeIconSize = 60.dp
+    val mobileBannerAdSize = 50.dp
 }
