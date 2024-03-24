@@ -46,14 +46,11 @@ dependencies {
     ksp(libs.hilt.compiler)
 }
 
+// Setup protobuf configuration, generating lite Java and Kotlin classes
 protobuf {
-    // Configures the Protobuf compilation and the protoc executable
     protoc {
-        // Downloads from the repositories
         artifact = libs.protobuf.protoc.get().toString()
     }
-
-    // Generates the java Protobuf-lite code for the Protobufs in this project
     generateProtoTasks {
         all().forEach { task ->
             task.builtins {

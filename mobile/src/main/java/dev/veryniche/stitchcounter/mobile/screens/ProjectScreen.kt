@@ -1,34 +1,43 @@
 package dev.veryniche.stitchcounter.mobile.screens
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.ime
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import dev.veryniche.stitchcounter.core.AnalyticsConstants
 import dev.veryniche.stitchcounter.core.R
@@ -39,13 +48,21 @@ import dev.veryniche.stitchcounter.mobile.TrackedScreen
 import dev.veryniche.stitchcounter.mobile.ads.BannerAd
 import dev.veryniche.stitchcounter.mobile.ads.BannerAdLocation
 import dev.veryniche.stitchcounter.mobile.components.AboutActionIcon
+import dev.veryniche.stitchcounter.mobile.components.DeleteProjectConfirmation
+import dev.veryniche.stitchcounter.mobile.components.EditActionIcon
 import dev.veryniche.stitchcounter.mobile.components.NavigationIcon
+import dev.veryniche.stitchcounter.mobile.components.SaveProjectConfirmation
 import dev.veryniche.stitchcounter.mobile.components.topAppBarColors
-import dev.veryniche.stitchcounter.mobile.previews.PreviewComponent
 import dev.veryniche.stitchcounter.mobile.previews.PreviewScreen
 import dev.veryniche.stitchcounter.mobile.trackEvent
 import dev.veryniche.stitchcounter.mobile.trackScreenView
 import dev.veryniche.stitchcounter.mobile.ui.theme.StitchCounterTheme
+
+@Composable
+fun keyboardAsState(): State<Boolean> {
+    val isImeVisible = WindowInsets.ime.getBottom(LocalDensity.current) > 0
+    return rememberUpdatedState(isImeVisible)
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -58,14 +75,13 @@ fun ProjectScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val projectNameHint = stringResource(id = R.string.project_name_default)
     var projectName by remember { mutableStateOf(project.name) }
     var projectState by remember { mutableStateOf(project) }
     var showProjectEditMode by remember { mutableStateOf(projectEditMode) }
     var showDeleteProjectDialog by remember { mutableStateOf(false) }
     var showDeleteProjectConfirmation by remember { mutableStateOf(false) }
     var showSaveProjectConfirmation by remember { mutableStateOf(false) }
-
+    val isKeyboardOpen by keyboardAsState()
     TrackedScreen {
         trackScreenView(name = AnalyticsConstants.Screen.Project)
     }
@@ -75,25 +91,35 @@ fun ProjectScreen(
             LargeTopAppBar(
                 title = {
                     Text(
-                        text = projectName,
+                        text = if (projectName.isBlank()) {
+                            stringResource(R.string.project_name_default)
+                        } else {
+                            projectName
+                        },
                         style = MaterialTheme.typography.headlineMedium,
                     )
                 },
                 colors = topAppBarColors,
                 actions = {
+                    if (!showProjectEditMode) {
+                        EditActionIcon { showProjectEditMode = true }
+                    }
                     AboutActionIcon { onAboutClick.invoke() }
                 },
                 scrollBehavior = scrollBehavior,
                 navigationIcon = {
-                    if (showProjectEditMode) {
-                        showSaveProjectConfirmation = true
-                    } else {
-                        NavigationIcon { onBack.invoke() }
+                    NavigationIcon {
+                        if (showProjectEditMode) {
+                            showSaveProjectConfirmation = true
+                        } else {
+                            onBack.invoke()
+                        }
                     }
                 }
             )
         },
         floatingActionButton = {
+            val fabModifier = Modifier
             if (showProjectEditMode) {
                 ExtendedFloatingActionButton(
                     onClick = {
@@ -103,6 +129,7 @@ fun ProjectScreen(
                     },
                     icon = { Icon(Icons.Filled.Check, stringResource(id = R.string.add_project)) },
                     text = { Text(text = stringResource(id = R.string.save_project)) },
+                    modifier = fabModifier
                 )
             } else {
                 ExtendedFloatingActionButton(
@@ -112,6 +139,7 @@ fun ProjectScreen(
                     },
                     icon = { Icon(Icons.Filled.Edit, stringResource(id = R.string.edit_project)) },
                     text = { Text(text = stringResource(id = R.string.edit_project)) },
+                    modifier = fabModifier
                 )
                 ExtendedFloatingActionButton(
                     onClick = {
@@ -119,88 +147,91 @@ fun ProjectScreen(
                     },
                     icon = { Icon(Icons.Filled.Add, stringResource(id = R.string.add_counter)) },
                     text = { Text(text = stringResource(id = R.string.add_counter)) },
+                    modifier = fabModifier
                 )
             }
         },
         bottomBar = {
-            BannerAd(location = BannerAdLocation.ProjectScreen)
+            BannerAd(
+                location = BannerAdLocation.ProjectScreen,
+                modifier = Modifier
+                    .navigationBarsPadding()
+                    .imePadding()
+            )
         },
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
     ) { contentPadding ->
-        Column(Modifier.padding(contentPadding)) {
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(Dimen.spacingQuad),
-                modifier = modifier
-                    .weight(1f)
-                    .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.background)
-                    .padding(horizontal = Dimen.spacingQuad)
-            ) {
-                items(projectState.counters) { counter ->
+        Column(
+            Modifier.padding(contentPadding)
+        ) {
+            if (showProjectEditMode) {
+                Surface(
+                    color = MaterialTheme.colorScheme.secondaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                ) {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(Dimen.spacing),
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(Dimen.spacingDouble)
+                    ) {
+                        OutlinedTextField(
+                            value = projectName,
+                            onValueChange = { projectName = it },
+                            isError = projectName.isBlank(),
+                            label = {
+                                Text(
+                                    stringResource(dev.veryniche.stitchcounter.mobile.R.string.label_project_name)
+                                )
+                            },
+                            placeholder = {
+                                Text(
+                                    stringResource(R.string.project_name_default)
+                                )
+                            },
+                            supportingText = {
+                                if (projectName.isBlank()) {
+                                    Text(
+                                        text = stringResource(
+                                            dev.veryniche.stitchcounter.mobile.R.string.validation_message_project_name
+                                        ),
+                                        color = MaterialTheme.colorScheme.error
+                                    )
+                                }
+                            },
+                            modifier = Modifier.weight(1f)
+                        )
+                        Icon(
+                            imageVector = Icons.Filled.Edit,
+                            contentDescription = stringResource(id = R.string.edit_project),
+                            modifier = Modifier.size(Dimen.mobileEditModeIconSize)
+                        )
+                    }
+                }
+            }
+            if (projectState.counters.isEmpty()) {
+                Text("TODO - EMPTY VIEW")
+            } else {
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(Dimen.spacingQuad),
+                    modifier = modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                        .padding(horizontal = Dimen.spacingQuad)
+                ) {
+                    item {
+                        // Spacer
+                    }
+                    items(projectState.counters) { counter ->
 //                    ProjectItem(project, onProjectClick, Modifier.fillMaxWidth())
+                    }
+                    item {
+                        // Spacer
+                    }
                 }
             }
         }
-//        Column(
-//            verticalArrangement = Arrangement.Center,
-//            horizontalAlignment = Alignment.CenterHorizontally,
-//            modifier = modifier.fillMaxSize().padding(contentPadding)
-//        ) {
-//            Row(
-//                verticalAlignment = Alignment.CenterVertically,
-//                modifier = Modifier.fillMaxWidth(0.85f)
-//            ) {
-//                OutlinedTextField(
-//                    value = projectName.orEmpty(),
-//                    onValueChange = { projectName = it },
-//                    isError = name.isNullOrBlank(),
-//                    label = { Text(stringResource(R.string.label_name)) },
-//                    supportingText = {
-//                        if (name.isNullOrBlank()) {
-//                            Text(
-//                                text = stringResource(R.string.validation_message_name),
-//                                color = MaterialTheme.colorScheme.error
-//                            )
-//                        }
-//                    }
-//                )
-//
-//                Text(text = projectName, Modifier.weight(1f))
-//                CompactButton(
-//                    onClick = { launcher.launch(intent) },
-//                    colors = ButtonDefaults.secondaryButtonColors()
-//                ) {
-//                    Icon(
-//                        imageVector = Icons.Filled.Edit,
-//                        contentDescription = stringResource(id = R.string.edit_project_name)
-//                    )
-//                }
-//            }
-//            Row(
-//                horizontalArrangement = Arrangement.Center,
-//                modifier = Modifier.fillMaxWidth(0.85f)
-//            ) {
-//                CompactButton(
-//                    onClick = { onClose.invoke() },
-//                    colors = ButtonDefaults.secondaryButtonColors()
-//                ) {
-//                    Icon(
-//                        imageVector = Icons.Filled.Close,
-//                        contentDescription = stringResource(id = R.string.cancel_edit_project)
-//                    )
-//                }
-//                if (initialName != null) {
-//                    CompactButton(
-//                        onClick = { showDeleteProjectDialog = true },
-//                        colors = ButtonDefaults.secondaryButtonColors()
-//                    ) {
-//                        Icon(
-//                            imageVector = Icons.Filled.Delete,
-//                            contentDescription = stringResource(id = R.string.delete_project)
-//                        )
-//                    }
-//                }
-//            }
     }
     if (showSaveProjectConfirmation) {
         SaveProjectConfirmation(
@@ -209,7 +240,7 @@ fun ProjectScreen(
                 trackEvent(AnalyticsConstants.Action.EditProjectSave)
                 onSave.invoke(projectState)
             },
-            onDismiss =  {
+            onDismiss = {
                 onBack.invoke()
             }
         )
@@ -220,74 +251,10 @@ fun ProjectScreen(
             onAccept = {
                 onDelete.invoke()
             },
-            onDismiss =  {
+            onDismiss = {
                 onBack.invoke()
             }
         )
-    }
-}
-
-@Composable
-fun SaveProjectConfirmation(projectName: String, onAccept: () -> Unit, onDismiss: () -> Unit) {
-    AlertDialog(
-        onDismissRequest = { onDismiss.invoke() },
-        title = { Text(projectName) },
-        text = { Text(stringResource(R.string.confirm_project_save)) },
-        confirmButton = {
-            TextButton(onClick = {
-                trackEvent(AnalyticsConstants.Action.EditProjectConfim)
-                onAccept.invoke()
-            }) {
-                Text(stringResource(R.string.confirm_changes_confirm))
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = {
-                onDismiss.invoke()
-            }) {
-                Text(stringResource(R.string.confirm_changes_dismiss))
-            }
-        }
-    )
-}
-
-@Composable
-fun DeleteProjectConfirmation(projectName: String, onAccept: () -> Unit, onDismiss: () -> Unit) {
-    AlertDialog(
-        onDismissRequest = { onDismiss.invoke() },
-        title = { Text(projectName) },
-        text = { Text(stringResource(R.string.confirm_project_delete)) },
-        confirmButton = {
-            TextButton(onClick = {
-                trackEvent(AnalyticsConstants.Action.DeleteProjectConfirm)
-                onAccept.invoke()
-            }) {
-                Text(stringResource(R.string.confirm_changes_confirm))
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = {
-                onDismiss.invoke()
-            }) {
-                Text(stringResource(R.string.confirm_changes_dismiss))
-            }
-        }
-    )
-}
-
-@PreviewComponent
-@Composable
-fun SaveProjectConfirmationPreview() {
-    StitchCounterTheme {
-        SaveProjectConfirmation("Project Name that is really long", {}, {})
-    }
-}
-
-@PreviewComponent
-@Composable
-fun DeleteProjectConfirmationPreview() {
-    StitchCounterTheme {
-        DeleteProjectConfirmation("Project Name that is really long", {}, {})
     }
 }
 

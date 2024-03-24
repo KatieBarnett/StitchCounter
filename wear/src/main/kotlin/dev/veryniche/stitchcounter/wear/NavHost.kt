@@ -44,7 +44,7 @@ fun NavHost(
                     navController.navigate("project/$projectId")
                 },
                 onAddProjectClick = {
-                    trackEvent(Analytics.Action.AddProject)
+                    trackEvent(AnalyticsConstants.Action.AddProject)
                     navController.navigate("edit_project")
                 },
                 onAboutClick = {

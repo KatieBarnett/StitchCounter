@@ -2,12 +2,19 @@ package dev.veryniche.stitchcounter.mobile
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import dev.veryniche.stitchcounter.core.AnalyticsConstants
+import dev.veryniche.stitchcounter.core.R
+import dev.veryniche.stitchcounter.data.models.Project
 import dev.veryniche.stitchcounter.mobile.purchase.PurchaseAction
 import dev.veryniche.stitchcounter.mobile.purchase.PurchaseStatus
 import dev.veryniche.stitchcounter.mobile.screens.AboutScreen
@@ -42,7 +49,38 @@ fun MobileNavHost(
                     navController.navigate("project/$projectId")
                 },
                 onAddProjectClick = {
-                    navController.navigate("edit_project")
+                    navController.navigate("project")
+                },
+                onAboutClick = {
+                    navController.navigate("about")
+                }
+            )
+        }
+        composable("project") {
+            val composableScope = rememberCoroutineScope()
+            val defaultProjectName = stringResource(R.string.project_name_default)
+            var projectState by remember { mutableStateOf(Project(name = defaultProjectName)) }
+            ProjectScreen(
+                project = projectState,
+                projectEditMode = true,
+                onSave = { updatedProject ->
+                    composableScope.launch {
+                        viewModel.saveProject(updatedProject)
+                        projectState = updatedProject
+                        navController.navigateUp()
+                    }
+                },
+                onDelete = {
+                    composableScope.launch {
+                        projectState.id?.let {
+                            trackEvent(AnalyticsConstants.Action.DeleteProject)
+                            viewModel.deleteProject(it)
+                        }
+                        navController.navigateUp()
+                    }
+                },
+                onBack = {
+                    navController.navigateUp()
                 },
                 onAboutClick = {
                     navController.navigate("about")

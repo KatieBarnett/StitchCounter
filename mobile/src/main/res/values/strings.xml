@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">Stitch Counter</string>
+
+    <string name="label_project_name">Project Name</string>
+    <string name="validation_message_project_name">Please enter a name for the project</string>
+
+    <string name="validation_error">Error</string>
+
+    <string name="confirm_project_save">Do you want to save your project changes?</string>
+
+    <string name="confirm_project_save_confirm">Yes</string>
+    <string name="confirm_project_save_dismiss">No</string>
+
 </resources>

@@ -2,6 +2,7 @@ package dev.veryniche.stitchcounter.mobile.ads
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -12,6 +13,7 @@ import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.LoadAdError
 import dev.veryniche.stitchcounter.core.AnalyticsConstants
+import dev.veryniche.stitchcounter.core.theme.Dimen
 import dev.veryniche.stitchcounter.mobile.trackAdClick
 import dev.veryniche.stitchcounter.mobile.trackEvent
 import timber.log.Timber
@@ -27,7 +29,7 @@ enum class BannerAdLocation(val adId: String) {
 fun BannerAd(location: BannerAdLocation, modifier: Modifier = Modifier) {
     val adRequest = AdRequest.Builder().build()
     val context = LocalContext.current
-    Box(modifier = modifier.fillMaxWidth()) {
+    Box(modifier = modifier.fillMaxWidth().height(Dimen.mobileBannerAdSize)) {
         if (adRequest.isTestDevice(context)) {
             BannerAd(adId = BannerAdLocation.Test.adId, screen = location.name)
         } else {
