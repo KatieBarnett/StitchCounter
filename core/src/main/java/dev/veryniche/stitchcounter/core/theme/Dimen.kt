@@ -7,6 +7,7 @@ object Dimen {
     val spacingHalf = 2.dp
     val spacing = 4.dp
     val spacingDouble = 8.dp
+    val spacingTriple = 12.dp
     val spacingQuad = 16.dp
 
     val spacingHuge = 30.dp

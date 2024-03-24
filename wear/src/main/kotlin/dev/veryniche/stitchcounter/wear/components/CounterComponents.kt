@@ -24,18 +24,21 @@ import dev.veryniche.stitchcounter.wear.previews.PreviewComponent
 import dev.veryniche.stitchcounter.wear.previews.PreviewScreen
 import dev.veryniche.stitchcounter.wear.theme.StitchCounterTheme
 
-
 @Composable
-fun CounterListItemComponent(counter: Counter,
-                             onCounterUpdate: (counter: Counter) -> Unit,
-                             onCounterClick: (counter: Counter) -> Unit,
-                             modifier: Modifier = Modifier) {
-    Row(verticalAlignment = Alignment.CenterVertically,
+fun CounterListItemComponent(
+    counter: Counter,
+    onCounterUpdate: (counter: Counter) -> Unit,
+    onCounterClick: (counter: Counter) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(Dimen.spacing),
-        modifier = modifier) {
+        modifier = modifier
+    ) {
         Button(
-            onClick = { 
-                if (counter.currentCount > 0) { 
+            onClick = {
+                if (counter.currentCount > 0) {
                     onCounterUpdate.invoke(counter.copy(currentCount = counter.currentCount - 1))
                 }
             },
@@ -70,9 +73,11 @@ fun CounterListItemComponent(counter: Counter,
 }
 
 @Composable
-fun CounterCentre(displayedCount: String,
-                  name: String,
-                  modifier: Modifier = Modifier) {
+fun CounterCentre(
+    displayedCount: String,
+    name: String,
+    modifier: Modifier = Modifier
+) {
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = modifier) {
         Text(text = displayedCount, textAlign = TextAlign.Center)
         Text(text = name, textAlign = TextAlign.Center)
@@ -118,7 +123,11 @@ fun CounterPreview() {
 fun CounterLongTextPreview() {
     StitchCounterTheme {
         Column(verticalArrangement = Arrangement.Center, modifier = Modifier.fillMaxSize()) {
-            CounterListItemComponent(Counter(id = 3, name = "pattern that is something super long", currentCount = 4000, maxCount = 1000), {}, {})
+            CounterListItemComponent(
+                Counter(id = 3, name = "pattern that is something super long", currentCount = 4000, maxCount = 1000),
+                {},
+                {}
+            )
         }
     }
 }
