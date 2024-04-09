@@ -1,6 +1,7 @@
 package dev.veryniche.stitchcounter.mobile.screens
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
@@ -39,6 +41,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import dev.veryniche.stitchcounter.core.AnalyticsConstants
 import dev.veryniche.stitchcounter.core.R
 import dev.veryniche.stitchcounter.core.theme.Dimen
@@ -48,6 +51,8 @@ import dev.veryniche.stitchcounter.mobile.TrackedScreen
 import dev.veryniche.stitchcounter.mobile.ads.BannerAd
 import dev.veryniche.stitchcounter.mobile.ads.BannerAdLocation
 import dev.veryniche.stitchcounter.mobile.components.AboutActionIcon
+import dev.veryniche.stitchcounter.mobile.components.CounterListItemComponent
+import dev.veryniche.stitchcounter.mobile.components.DeleteActionIcon
 import dev.veryniche.stitchcounter.mobile.components.DeleteProjectConfirmation
 import dev.veryniche.stitchcounter.mobile.components.EditActionIcon
 import dev.veryniche.stitchcounter.mobile.components.NavigationIcon
@@ -78,7 +83,6 @@ fun ProjectScreen(
     var projectName by remember { mutableStateOf(project.name) }
     var projectState by remember { mutableStateOf(project) }
     var showProjectEditMode by remember { mutableStateOf(projectEditMode) }
-    var showDeleteProjectDialog by remember { mutableStateOf(false) }
     var showDeleteProjectConfirmation by remember { mutableStateOf(false) }
     var showSaveProjectConfirmation by remember { mutableStateOf(false) }
     val isKeyboardOpen by keyboardAsState()
@@ -91,10 +95,8 @@ fun ProjectScreen(
             LargeTopAppBar(
                 title = {
                     Text(
-                        text = if (projectName.isBlank()) {
+                        text = projectName.ifBlank {
                             stringResource(R.string.project_name_default)
-                        } else {
-                            projectName
                         },
                         style = MaterialTheme.typography.headlineMedium,
                     )
@@ -104,6 +106,7 @@ fun ProjectScreen(
                     if (!showProjectEditMode) {
                         EditActionIcon { showProjectEditMode = true }
                     }
+                    DeleteActionIcon { showDeleteProjectConfirmation = true }
                     AboutActionIcon { onAboutClick.invoke() }
                 },
                 scrollBehavior = scrollBehavior,
@@ -124,7 +127,7 @@ fun ProjectScreen(
                 ExtendedFloatingActionButton(
                     onClick = {
                         trackEvent(AnalyticsConstants.Action.EditProjectSave)
-                        onSave.invoke(projectState)
+                        onSave.invoke(projectState.copy(name = projectName))
                         showProjectEditMode = false
                     },
                     icon = { Icon(Icons.Filled.Check, stringResource(id = R.string.add_project)) },
@@ -178,7 +181,7 @@ fun ProjectScreen(
                     ) {
                         OutlinedTextField(
                             value = projectName,
-                            onValueChange = { projectName = it },
+                            onValueChange = { projectName = it.trim() },
                             isError = projectName.isBlank(),
                             label = {
                                 Text(
@@ -211,7 +214,19 @@ fun ProjectScreen(
                 }
             }
             if (projectState.counters.isEmpty()) {
-                Text("TODO - EMPTY VIEW")
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                        .padding(horizontal = Dimen.spacingQuad)
+                ) {
+                    Text(
+                        text = stringResource(id = dev.veryniche.stitchcounter.mobile.R.string.counter_list_empty),
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                }
             } else {
                 LazyColumn(
                     verticalArrangement = Arrangement.spacedBy(Dimen.spacingQuad),
@@ -223,8 +238,15 @@ fun ProjectScreen(
                     item {
                         // Spacer
                     }
-                    items(projectState.counters) { counter ->
-//                    ProjectItem(project, onProjectClick, Modifier.fillMaxWidth())
+                    itemsIndexed(projectState.counters) { index, counter ->
+                        CounterListItemComponent(
+                            counter = counter,
+                            onCounterUpdate = {},
+                            onCounterDelete = {},
+                            defaultCounterName = stringResource(id = R.string.counter_name_default, index),
+                            inEditMode = projectEditMode,
+                            modifier = Modifier.fillMaxWidth()
+                        )
                     }
                     item {
                         // Spacer

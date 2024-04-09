@@ -67,7 +67,6 @@ fun MobileNavHost(
                     composableScope.launch {
                         viewModel.saveProject(updatedProject)
                         projectState = updatedProject
-                        navController.navigateUp()
                     }
                 },
                 onDelete = {
@@ -97,7 +96,6 @@ fun MobileNavHost(
                         onSave = { updatedProject ->
                             composableScope.launch {
                                 viewModel.saveProject(updatedProject)
-                                navController.navigateUp()
                             }
                         },
                         onDelete = {

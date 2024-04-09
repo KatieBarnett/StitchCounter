@@ -3,6 +3,7 @@ package dev.veryniche.stitchcounter.mobile.components
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -99,6 +100,18 @@ fun AboutActionIcon(onClick: () -> Unit) {
         Icon(
             imageVector = Icons.Filled.Info,
             contentDescription = stringResource(id = R.string.navigate_about)
+        )
+    }
+}
+
+@Composable
+fun DeleteActionIcon(onClick: () -> Unit) {
+    IconButton(
+        onClick = { onClick.invoke() }
+    ) {
+        Icon(
+            imageVector = Icons.Filled.Delete,
+            contentDescription = stringResource(id = R.string.delete_project)
         )
     }
 }

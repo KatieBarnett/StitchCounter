@@ -20,7 +20,7 @@
     <string name="cancel_edit_project">Cancel</string>
     <string name="delete_project">Delete Project</string>
     <string name="edit_project">Edit Project</string>
-    <string name="reset_project">Reset Counter</string>
+    <string name="reset_project">Reset Project</string>
     <string name="add_counter">Add Counter</string>
     <string name="edit_counter">Edit Counter</string>
     <string name="reset_counter">Reset Counter</string>

@@ -1,7 +1,7 @@
 package dev.veryniche.stitchcounter.mobile.screens
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -21,9 +21,11 @@ import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import dev.veryniche.stitchcounter.core.AnalyticsConstants
 import dev.veryniche.stitchcounter.core.R
 import dev.veryniche.stitchcounter.core.theme.Dimen
@@ -89,7 +91,19 @@ fun ProjectList(
     ) { contentPadding ->
         Column(Modifier.padding(contentPadding)) {
             if (projectList.isEmpty()) {
-                Text("TODO - EMPTY VIEW")
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                        .padding(horizontal = Dimen.spacingQuad)
+                ) {
+                    Text(
+                        text = stringResource(id = dev.veryniche.stitchcounter.mobile.R.string.project_list_empty),
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                }
             } else {
                 LazyColumn(
                     verticalArrangement = Arrangement.spacedBy(Dimen.spacingQuad),
