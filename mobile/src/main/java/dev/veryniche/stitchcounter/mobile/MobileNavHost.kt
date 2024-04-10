@@ -1,5 +1,6 @@
 package dev.veryniche.stitchcounter.mobile
 
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -25,6 +26,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun MobileNavHost(
     navController: NavHostController,
+    snackbarHostState: SnackbarHostState,
     viewModel: MainViewModel,
     purchaseStatus: PurchaseStatus,
     onPurchaseClick: (PurchaseAction) -> Unit,
@@ -38,6 +40,7 @@ fun MobileNavHost(
         composable("about") {
             AboutScreen(
                 purchaseStatus = purchaseStatus,
+                snackbarHostState = snackbarHostState,
                 onNavigateBack = { navController.navigateUp() },
                 onPurchaseClick = onPurchaseClick
             )
@@ -45,6 +48,7 @@ fun MobileNavHost(
         composable("project_list") {
             ProjectListScreen(
                 viewModel = viewModel,
+                snackbarHostState = snackbarHostState,
                 onProjectClick = { projectId ->
                     navController.navigate("project/$projectId")
                 },
@@ -62,6 +66,7 @@ fun MobileNavHost(
             var projectState by remember { mutableStateOf(Project(name = defaultProjectName)) }
             ProjectScreen(
                 project = projectState,
+                snackbarHostState = snackbarHostState,
                 projectEditMode = true,
                 onSave = { updatedProject ->
                     composableScope.launch {
@@ -93,6 +98,7 @@ fun MobileNavHost(
                     val composableScope = rememberCoroutineScope()
                     ProjectScreen(
                         project = project,
+                        snackbarHostState = snackbarHostState,
                         onSave = { updatedProject ->
                             composableScope.launch {
                                 viewModel.saveProject(updatedProject)

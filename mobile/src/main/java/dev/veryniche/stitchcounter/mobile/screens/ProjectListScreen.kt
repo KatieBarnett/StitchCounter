@@ -15,12 +15,15 @@ import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -48,10 +51,11 @@ fun ProjectListScreen(
     onProjectClick: (Int) -> Unit,
     onAddProjectClick: () -> Unit,
     onAboutClick: () -> Unit,
+    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
     modifier: Modifier = Modifier
 ) {
     val projects: List<Project> by viewModel.projects.collectAsState(initial = emptyList())
-    ProjectList(projects, onProjectClick, onAddProjectClick, onAboutClick, modifier)
+    ProjectList(projects, onProjectClick, onAddProjectClick, onAboutClick, snackbarHostState, modifier)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -61,6 +65,7 @@ fun ProjectList(
     onProjectClick: (Int) -> Unit,
     onAddProjectClick: () -> Unit,
     onAboutClick: () -> Unit,
+    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
     modifier: Modifier = Modifier
 ) {
     TrackedScreen {
@@ -83,6 +88,9 @@ fun ProjectList(
                 icon = { Icon(Icons.Filled.Add, stringResource(id = R.string.add_project)) },
                 text = { Text(text = stringResource(id = R.string.add_project)) },
             )
+        },
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
         },
         bottomBar = {
             BannerAd(location = BannerAdLocation.MainScreen, modifier = Modifier.navigationBarsPadding())
