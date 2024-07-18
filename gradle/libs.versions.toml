@@ -1,41 +1,48 @@
 [versions]
-activity-compose = "1.8.2"
 agp = "8.2.2"
+activity-compose = "1.9.0"
 androidx-lifecycle = "2.4.1"
 androidx-test = "1.4.0"
-compose-bom = "2024.01.00"
-compose-compiler = "1.5.8"
-datastore = '1.0.0'
-firebase-bom = "32.7.1"
-firebaseCrashlyticsPlugin = "2.9.9"
-googleServicesPlugin = "4.4.0"
-hilt = "2.48"
-hilt_androidx = '1.1.0'
-horologist = '0.5.20'
-kotlin = "1.9.22"
-kspPlugin = "1.9.10-1.0.13"
+compose-bom = "2024.06.00"
+datastore = "1.1.1"
+datastore-preferences = "1.1.1"
+desugar_jdk_libs = "2.0.4"
+firebase-bom = "33.1.2"
+firebaseCrashlyticsPlugin = "3.0.2"
+googleServicesPlugin = "4.4.2"
+hilt = "2.51.1"
+hilt_androidx = "1.2.0"
+horologist = "0.5.20"
+kotlin = "2.0.0"
+kotlinx-serialization = "2.0.0"
+kotlinx-serialization-json = "1.7.1"
+kspPlugin = "2.0.0-1.0.21"
 ktlint = "0.46.1"
-protobuf = '3.21.9'
+protobuf = "3.25.3"
 protobufPlugin = "0.9.4"
-splashscreen = "1.1.0-alpha02"
-wear-compose = "1.3.0"
+splashscreen = "1.1.0-rc01"
+timber = "5.0.1"
+wear-compose = "1.3.1"
 wear-input = "1.2.0-alpha02"
 wear-remote-interactions = '1.0.0'
 wear-tiles = "1.0.1"
 wear-watchface = "1.0.1"
 wearToolingPreview = "1.0.0"
+wear = "1.3.0"
+lifecycleRuntimeComposeAndroid = "2.8.3"
 
 [libraries]
 activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activity-compose" }
 android-lint-gradle = "com.android.tools.lint:lint-gradle:30.3.1"
 compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose-bom" }
-compose-compiler = { module = "androidx.compose.compiler:compiler", version.ref = "compose-compiler" }
 compose-material-iconscore = { module = "androidx.compose.material:material-icons-core" }
 compose-material-iconsext = { module = "androidx.compose.material:material-icons-extended" }
 compose-runtime-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata" }
 compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 datastore = { module = "androidx.datastore:datastore", version.ref = "datastore" }
+datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore-preferences" }
+desugar_jdk_libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar_jdk_libs" }
 firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics-ktx" }
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebase-bom" }
 firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics-ktx" }
@@ -43,26 +50,30 @@ hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt"
 hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hilt" }
 hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hilt_androidx" }
 horologist-composables = { group = "com.google.android.horologist", name = "horologist-composables", version.ref = "horologist" }
-junit = "junit:junit:4.13.2"
-playservices-wearable = "com.google.android.gms:play-services-wearable:18.0.0"
+horologist-compose-layout = { group = "com.google.android.horologist", name = "horologist-compose-layout", version.ref = "horologist" }
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinx-serialization-json" }
+playservices-wearable = "com.google.android.gms:play-services-wearable:18.2.0"
 protobuf-kotlin-lite = { group = "com.google.protobuf", name = "protobuf-kotlin-lite", version.ref = "protobuf" }
 protobuf-protoc = { group = "com.google.protobuf", name = "protoc", version.ref = "protobuf" }
 splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "splashscreen" }
-test-espresso-core = "androidx.test.espresso:espresso-core:3.4.0"
-test-ext-junit = "androidx.test.ext:junit:1.1.3"
+timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
 wear-compose-foundation = { module = "androidx.wear.compose:compose-foundation", version.ref = "wear-compose" }
 wear-compose-material = { module = "androidx.wear.compose:compose-material", version.ref = "wear-compose" }
 wear-compose-navigation = { module = "androidx.wear.compose:compose-navigation", version.ref = "wear-compose" }
 wear-input = { module = "androidx.wear:wear-input", version.ref = "wear-input" }
 wear-interactions = { module = "androidx.wear:wear-remote-interactions", version.ref = "wear-remote-interactions" }
 wear-tooling-preview = { group = "androidx.wear", name = "wear-tooling-preview", version.ref = "wearToolingPreview" }
+wear = { group = "androidx.wear", name = "wear", version.ref = "wear" }
+lifecycle-runtime-compose-android = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose-android", version.ref = "lifecycleRuntimeComposeAndroid" }
 
 [plugins]
-androidApplication = { id = "com.android.application", version.ref = "agp" }
-androidLibrary = { id = "com.android.library", version.ref = "agp" }
+android-application = { id = "com.android.application", version.ref = "agp" }
+android-library = { id = "com.android.library", version.ref = "agp" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 dagger-hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlyticsPlugin" }
 google-services = { id = "com.google.gms.google-services", version.ref = "googleServicesPlugin" }
-kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlinx-serialization" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "kspPlugin" }
 protobuf = { id = "com.google.protobuf", version.ref = "protobufPlugin" }

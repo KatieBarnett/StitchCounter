@@ -1,11 +1,11 @@
-@Suppress("DSL_SCOPE_VIOLATION") // TODO: Remove once KTIJ-19369 is fixed
 plugins {
-    alias(libs.plugins.androidApplication)
-    alias(libs.plugins.kotlinAndroid)
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.dagger.hilt.android)
     alias(libs.plugins.ksp)
     alias(libs.plugins.google.services)
     alias(libs.plugins.firebase.crashlytics)
+    alias(libs.plugins.compose.compiler)
 }
 
 android {
@@ -31,6 +31,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
     compileOptions {
@@ -45,9 +46,6 @@ android {
         compose = true
         buildConfig = true
     }
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
-    }
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -57,7 +55,9 @@ android {
 
 dependencies {
 
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
+    implementation(libs.wear)
+    implementation(libs.lifecycle.runtime.compose.android)
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
 
     implementation(project(":data"))
     implementation(project(":storage"))
@@ -85,6 +85,7 @@ dependencies {
     implementation(libs.hilt.navigation.compose)
 
     implementation(libs.horologist.composables)
+    implementation(libs.horologist.compose.layout)
 
     implementation(libs.splashscreen)
 
@@ -94,7 +95,9 @@ dependencies {
     implementation(libs.playservices.wearable)
 
     implementation(libs.compose.runtime.livedata)
-    
+
+    implementation(libs.timber)
+
     implementation(libs.hilt.android)
     implementation(libs.wear.tooling.preview)
     ksp(libs.hilt.compiler)
