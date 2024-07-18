@@ -143,24 +143,6 @@ fun AboutScreen(
             )
         }
         item {
-            val devLink = stringResource(id = R.string.about_developer_link)
-            Chip(colors = ChipDefaults.secondaryChipColors(),
-                modifier = Modifier.fillMaxWidth(),
-                label = {
-                    Text(stringResource(id = R.string.about_developer_link_text))
-                },
-                secondaryLabel = {
-                    Text(devLink)
-                },
-                onClick = {
-                    coroutineScope.launch {
-                        openUrlOnPhone(context, devLink)
-                        showLinkOpenedConfirmation = true
-                    }
-                }
-            )
-        }
-        item {
             val companyLink = stringResource(id = R.string.about_developer_company_link)
             Chip(colors = ChipDefaults.secondaryChipColors(),
                 modifier = Modifier.fillMaxWidth(),
