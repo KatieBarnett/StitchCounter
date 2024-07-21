@@ -42,7 +42,6 @@ dependencies {
     implementation(libs.datastore)
     implementation(libs.datastore.preferences)
     implementation(libs.protobuf.kotlin.lite)
-    implementation(libs.kotlinx.serialization.json)
 
     implementation(libs.timber)
 

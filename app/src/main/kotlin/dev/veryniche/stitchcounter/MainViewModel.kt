@@ -12,12 +12,14 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val savedProjectsRepository: ProjectsRepository
+    private val savedProjectsRepository: ProjectsRepository,
+    private val userPreferencesRepository: UserPreferencesRepository
 ) : ViewModel() {
 
     private val _pageContext = MutableLiveData<String?>(null)
     val pageContext: LiveData<String?> = _pageContext
     
+    private val userPreferencesFlow = userPreferencesRepository.userPreferencesFlow
     val projects = savedProjectsRepository.getProjects()
 
     fun getProject(id: Int) = savedProjectsRepository.getProject(id)
@@ -49,11 +51,14 @@ class MainViewModel @Inject constructor(
     }
 
     suspend fun saveCounter(projectId: Int, counterId: Int, counterName: String, counterMax: Int) {
-        saveCounter(projectId, Counter(
-            id = counterId,
-            name = counterName,
-            maxCount = counterMax
-        ))
+        saveCounter(
+            projectId,
+            Counter(
+                id = counterId,
+                name = counterName,
+                maxCount = counterMax
+            )
+        )
     }
 
     suspend fun saveCounter(projectId: Int, counter: Counter) {
@@ -70,7 +75,7 @@ class MainViewModel @Inject constructor(
     }
 
     suspend fun resetProject(project: Project) {
-        val updatedList = project.counters.map { 
+        val updatedList = project.counters.map {
             it.copy(currentCount = 0)
         }
         saveProject(project.copy(counters = updatedList))
