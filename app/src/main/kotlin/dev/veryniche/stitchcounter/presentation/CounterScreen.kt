@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -26,6 +27,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
@@ -39,11 +41,15 @@ import androidx.wear.compose.material.CircularProgressIndicator
 import androidx.wear.compose.material.CompactButton
 import androidx.wear.compose.material.Icon
 import androidx.wear.compose.material.MaterialTheme
+import androidx.wear.compose.material.OutlinedButton
+import androidx.wear.compose.material.OutlinedCompactButton
 import androidx.wear.compose.material.Text
 import androidx.wear.compose.material.dialog.Alert
 import com.google.android.horologist.annotations.ExperimentalHorologistApi
 import com.google.android.horologist.composables.ProgressIndicatorSegment
 import com.google.android.horologist.composables.SquareSegmentedProgressIndicator
+import com.google.android.horologist.compose.ambient.AmbientState
+import com.google.android.horologist.compose.ambient.AmbientStateUpdate
 import dev.veryniche.stitchcounter.MainViewModel
 import dev.veryniche.stitchcounter.R
 import dev.veryniche.stitchcounter.R.string
@@ -69,7 +75,8 @@ fun CounterScreen(
     onCounterEdit: (counterName: String, counterMax: Int) -> Unit,
     keepScreenOn: Boolean,
     onKeepScreenOnUpdate: (Boolean) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    ambientAwareState: AmbientStateUpdate
 ) {
     val composableScope = rememberCoroutineScope()
     val projectState = viewModel.getProject(projectId).collectAsState(initial = null)
@@ -92,6 +99,7 @@ fun CounterScreen(
                 },
                 onCounterEdit = { onCounterEdit.invoke(counter.name, counter.maxCount) },
                 keepScreenOn = keepScreenOn,
+                ambientAwareState = ambientAwareState,
                 onKeepScreenOnUpdate = onKeepScreenOnUpdate,
                 modifier = modifier
             )
@@ -157,10 +165,17 @@ fun CounterContent(
     onCounterEdit: () -> Unit,
     keepScreenOn: Boolean,
     onKeepScreenOnUpdate: (Boolean) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    ambientAwareState: AmbientStateUpdate
 ) {
     var useCompactButton by remember { mutableStateOf(false) }
     val isRound = LocalConfiguration.current.isScreenRound
+
+    val textAlpha = if (ambientAwareState.ambientState is AmbientState.Interactive) {
+        1f
+    } else {
+        0.5f
+    }
 
     Box(modifier = modifier.fillMaxSize()) {
         Column(
@@ -180,6 +195,7 @@ fun CounterContent(
                         fillMaxWidth()
                     })
                     .weight(1f)
+                    .alpha(textAlpha)
             ) {
                 Text(
                     text = if (counter.maxCount == 0) {
@@ -243,7 +259,9 @@ fun CounterContent(
                     text = counter.currentCount.toString(),
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.display3,
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier
+                        .weight(1f)
+                        .alpha(textAlpha),
                     onTextLayout = { textLayoutResult ->
                         if (!useCompactButton) {
                             useCompactButton = textLayoutResult.lineCount > 1
@@ -251,78 +269,106 @@ fun CounterContent(
                     }
                 )
                 if (useCompactButton) {
-                    CompactButton(
-                        onClick = { onCounterUpdate.invoke(counter.copy(currentCount = counter.currentCount + 1)) },
-                        colors = ButtonDefaults.primaryButtonColors()
-                    ) {
-                        Icon(
-                            imageVector = Filled.Add,
-                            contentDescription = stringResource(id = string.counter_add)
-                        )
+                    if (ambientAwareState.ambientState is AmbientState.Interactive) {
+                        CompactButton(
+                            onClick = { onCounterUpdate.invoke(counter.copy(currentCount = counter.currentCount + 1)) },
+                            colors = ButtonDefaults.primaryButtonColors()
+                        ) {
+                            Icon(
+                                imageVector = Filled.Add,
+                                contentDescription = stringResource(id = string.counter_add)
+                            )
+                        }
+                    } else {
+                        OutlinedCompactButton(
+                            onClick = { onCounterUpdate.invoke(counter.copy(currentCount = counter.currentCount + 1)) },
+                            colors = ButtonDefaults.outlinedButtonColors()
+                        ) {
+                            Icon(
+                                imageVector = Filled.Add,
+                                contentDescription = stringResource(id = string.counter_add)
+                            )
+                        }
                     }
                 } else {
-                    Button(
-                        onClick = { onCounterUpdate.invoke(counter.copy(currentCount = counter.currentCount + 1)) },
-                        colors = ButtonDefaults.primaryButtonColors()
-                    ) {
-                        Icon(
-                            imageVector = Filled.Add,
-                            contentDescription = stringResource(id = string.counter_add)
-                        )
+                    if (ambientAwareState.ambientState is AmbientState.Interactive) {
+                        Button(
+                            onClick = { onCounterUpdate.invoke(counter.copy(currentCount = counter.currentCount + 1)) },
+                            colors = ButtonDefaults.primaryButtonColors()
+                        ) {
+                            Icon(
+                                imageVector = Filled.Add,
+                                contentDescription = stringResource(id = string.counter_add)
+                            )
+                        }
+                    } else {
+                        OutlinedButton(
+                            onClick = { onCounterUpdate.invoke(counter.copy(currentCount = counter.currentCount + 1)) },
+                            colors = ButtonDefaults.outlinedButtonColors()
+                        ) {
+                            Icon(
+                                imageVector = Filled.Add,
+                                contentDescription = stringResource(id = string.counter_add)
+                            )
+                        }
                     }
                 }
             }
 
-            BoxWithConstraints(Modifier.weight(1f)) {
-                val density = LocalDensity.current
-                with(density) {
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceEvenly,
-                        verticalAlignment = Alignment.Top,
-                        modifier = Modifier
-                            .conditional(isRound, {
-                                conditional(constraints.maxWidth * 0.75f < 48.dp.toPx() * 3, {
-                                    fillMaxWidth(0.85f)
+            if (ambientAwareState.ambientState is AmbientState.Interactive) {
+                BoxWithConstraints(Modifier.weight(1f)) {
+                    val density = LocalDensity.current
+                    with(density) {
+                        Row(
+                            horizontalArrangement = Arrangement.SpaceEvenly,
+                            verticalAlignment = Alignment.Top,
+                            modifier = Modifier
+                                .conditional(isRound, {
+                                    conditional(constraints.maxWidth * 0.75f < 48.dp.toPx() * 3, {
+                                        fillMaxWidth(0.85f)
+                                    }, {
+                                        fillMaxWidth(0.75f)
+                                    })
                                 }, {
-                                    fillMaxWidth(0.75f)
+                                    fillMaxWidth()
                                 })
-                            }, {
-                                fillMaxWidth()
-                            })
-                    ) {
-                        CompactButton(
-                            onClick = { onCounterEdit.invoke() },
-                            colors = ButtonDefaults.secondaryButtonColors()
                         ) {
-                            Icon(
-                                imageVector = Filled.Edit,
-                                contentDescription = stringResource(id = string.edit_counter)
-                            )
-                        }
-                        CompactButton(
-                            onClick = { onKeepScreenOnUpdate.invoke(!keepScreenOn) },
-                            colors = ButtonDefaults.secondaryButtonColors()
-                        ) {
-                            Icon(
-                                imageVector = if (keepScreenOn) {
-                                    Filled.BrightnessHigh
-                                } else {
-                                    Filled.BrightnessLow
-                                },
-                                contentDescription = stringResource(id = string.keep_screen_on_toggle)
-                            )
-                        }
-                        CompactButton(
-                            onClick = { onCounterReset.invoke() },
-                            colors = ButtonDefaults.secondaryButtonColors()
-                        ) {
-                            Icon(
-                                imageVector = Filled.Refresh,
-                                contentDescription = stringResource(id = string.reset_counter)
-                            )
+                            CompactButton(
+                                onClick = { onCounterEdit.invoke() },
+                                colors = ButtonDefaults.secondaryButtonColors()
+                            ) {
+                                Icon(
+                                    imageVector = Filled.Edit,
+                                    contentDescription = stringResource(id = string.edit_counter)
+                                )
+                            }
+                            CompactButton(
+                                onClick = { onKeepScreenOnUpdate.invoke(!keepScreenOn) },
+                                colors = ButtonDefaults.secondaryButtonColors()
+                            ) {
+                                Icon(
+                                    imageVector = if (keepScreenOn) {
+                                        Filled.BrightnessHigh
+                                    } else {
+                                        Filled.BrightnessLow
+                                    },
+                                    contentDescription = stringResource(id = string.keep_screen_on_toggle)
+                                )
+                            }
+                            CompactButton(
+                                onClick = { onCounterReset.invoke() },
+                                colors = ButtonDefaults.secondaryButtonColors()
+                            ) {
+                                Icon(
+                                    imageVector = Filled.Refresh,
+                                    contentDescription = stringResource(id = string.reset_counter)
+                                )
+                            }
                         }
                     }
                 }
+            } else {
+                Spacer(Modifier.weight(1f))
             }
         }
         counter.getCounterProgress()?.let { progress ->
@@ -378,7 +424,29 @@ fun CounterContentPreview() {
             onCounterReset = {},
             onCounterEdit = {},
             keepScreenOn = true,
-            onKeepScreenOnUpdate = {}
+            onKeepScreenOnUpdate = {},
+            ambientAwareState = AmbientStateUpdate(ambientState = AmbientState.Interactive)
+        )
+    }
+}
+
+@PreviewScreen
+@Composable
+fun CounterContentAmbientPreview() {
+    StitchCounterTheme {
+        CounterContent(
+            counter = Counter(
+                id = 3,
+                name = "pattern",
+                currentCount = 40000,
+                maxCount = 50000,
+            ),
+            onCounterUpdate = {},
+            onCounterReset = {},
+            onCounterEdit = {},
+            keepScreenOn = true,
+            onKeepScreenOnUpdate = {},
+            ambientAwareState = AmbientStateUpdate(ambientState = AmbientState.Ambient())
         )
     }
 }

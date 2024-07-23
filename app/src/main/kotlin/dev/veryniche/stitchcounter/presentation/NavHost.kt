@@ -7,6 +7,7 @@ import androidx.navigation.NavHostController
 import androidx.wear.compose.foundation.lazy.ScalingLazyListState
 import androidx.wear.compose.navigation.SwipeDismissableNavHost
 import androidx.wear.compose.navigation.composable
+import com.google.android.horologist.compose.ambient.AmbientStateUpdate
 import dev.veryniche.stitchcounter.MainViewModel
 import dev.veryniche.stitchcounter.Screens
 import dev.veryniche.stitchcounter.data.models.ScreenOnState
@@ -22,6 +23,7 @@ fun NavHost(
     listState: ScalingLazyListState,
     screenOnState: ScreenOnState,
     onScreenOnStateUpdate: (ScreenOnState) -> Unit,
+    ambientAwareState: AmbientStateUpdate,
 ) {
     val coroutineScope = rememberCoroutineScope()
     SwipeDismissableNavHost(
@@ -60,6 +62,7 @@ fun NavHost(
                     viewModel = viewModel,
                     id = projectId,
                     listState = listState,
+                    ambientAwareState = ambientAwareState,
                     onCounterClick = { counter ->
                         navController.navigate("counter/$projectId/${counter.id}")
                     },
@@ -107,6 +110,7 @@ fun NavHost(
                     viewModel = viewModel,
                     projectId = projectId,
                     counterId = counterId,
+                    ambientAwareState = ambientAwareState,
                     keepScreenOn = screenOnState.counterScreenOn,
                     onKeepScreenOnUpdate = { update ->
                         onScreenOnStateUpdate.invoke(screenOnState.copy(counterScreenOn = update))

@@ -23,6 +23,8 @@ import androidx.wear.compose.material.Vignette
 import androidx.wear.compose.material.VignettePosition
 import androidx.wear.compose.material.curvedText
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
+import com.google.android.horologist.compose.ambient.AmbientAware
+import com.google.android.horologist.compose.ambient.AmbientState
 import dagger.hilt.android.AndroidEntryPoint
 import dev.veryniche.stitchcounter.MainViewModel
 import dev.veryniche.stitchcounter.Screens
@@ -64,52 +66,55 @@ fun StitchCounterWearApp(modifier: Modifier = Modifier) {
             lifecycleOwner = androidx.compose.ui.platform.LocalLifecycleOwner.current
         )
 
-//        AmbientAware(isAlwaysOnScreen = keepCurrentScreenOn) { ambientAwareUpdate ->
-        Scaffold(
-            timeText = {
-                if (!listState.isScrollInProgress && !listState.canScrollBackward) {
-                    val leadingTextStyle =
-                        TimeTextDefaults.timeTextStyle(color = MaterialTheme.colors.primary)
-                    currentScreen.pageContextDisplay?.let {
-                        val displayText = stringResource(it)
-                        TimeText(
-                            startLinearContent = {
-                                Text(
-                                    text = displayText,
-                                    style = leadingTextStyle
-                                )
-                            },
-                            startCurvedContent = {
-                                curvedText(
-                                    text = displayText,
-                                    style = CurvedTextStyle(leadingTextStyle)
-                                )
-                            },
-                        )
+        AmbientAware(isAlwaysOnScreen = keepCurrentScreenOn) { ambientAwareUpdate ->
+            Scaffold(
+                timeText = {
+                    if (!listState.isScrollInProgress && !listState.canScrollBackward &&
+                        ambientAwareUpdate.ambientState is AmbientState.Interactive
+                    ) {
+                        val leadingTextStyle =
+                            TimeTextDefaults.timeTextStyle(color = MaterialTheme.colors.primary)
+                        currentScreen.pageContextDisplay?.let {
+                            val displayText = stringResource(it)
+                            TimeText(
+                                startLinearContent = {
+                                    Text(
+                                        text = displayText,
+                                        style = leadingTextStyle
+                                    )
+                                },
+                                startCurvedContent = {
+                                    curvedText(
+                                        text = displayText,
+                                        style = CurvedTextStyle(leadingTextStyle)
+                                    )
+                                },
+                            )
+                        }
                     }
-                }
-            },
-            vignette = {
-                Vignette(vignettePosition = VignettePosition.TopAndBottom)
-            },
-            positionIndicator = {
-                PositionIndicator(
-                    scalingLazyListState = listState
-                )
-            },
-            modifier = modifier
-        ) {
-            NavHost(
-                navController = navController,
-                viewModel = viewModel,
-                listState = listState,
-                screenOnState = screenOnState,
-                onScreenOnStateUpdate = { newState ->
-                    viewModel.updateScreenOnState(newState)
                 },
-                modifier = Modifier.fillMaxSize()
-            )
+                vignette = {
+                    Vignette(vignettePosition = VignettePosition.TopAndBottom)
+                },
+                positionIndicator = {
+                    PositionIndicator(
+                        scalingLazyListState = listState
+                    )
+                },
+                modifier = modifier
+            ) {
+                NavHost(
+                    navController = navController,
+                    viewModel = viewModel,
+                    listState = listState,
+                    screenOnState = screenOnState,
+                    ambientAwareState = ambientAwareUpdate,
+                    onScreenOnStateUpdate = { newState ->
+                        viewModel.updateScreenOnState(newState)
+                    },
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
         }
     }
-//    }
 }

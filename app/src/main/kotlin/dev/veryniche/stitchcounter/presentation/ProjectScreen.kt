@@ -44,6 +44,8 @@ import androidx.wear.compose.material.ListHeader
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
 import androidx.wear.compose.material.dialog.Alert
+import com.google.android.horologist.compose.ambient.AmbientState
+import com.google.android.horologist.compose.ambient.AmbientStateUpdate
 import dev.veryniche.stitchcounter.MainViewModel
 import dev.veryniche.stitchcounter.R.string
 import dev.veryniche.stitchcounter.data.models.Counter
@@ -66,7 +68,8 @@ fun ProjectScreen(
     onCounterAdd: (counterId: Int) -> Unit,
     keepScreenOn: Boolean,
     onKeepScreenOnUpdate: (Boolean) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    ambientAwareState: AmbientStateUpdate
 ) {
     val composableScope = rememberCoroutineScope()
     val project = viewModel.getProject(id).collectAsState(initial = null)
@@ -90,6 +93,7 @@ fun ProjectScreen(
             },
             onProjectEdit = { onProjectEdit.invoke(id, project.name) },
             onCounterClick = onCounterClick,
+            ambientAwareState = ambientAwareState,
             keepScreenOn = keepScreenOn,
             onKeepScreenOnUpdate = onKeepScreenOnUpdate,
             modifier = modifier
@@ -124,7 +128,8 @@ fun ProjectContent(
     onProjectEdit: () -> Unit,
     keepScreenOn: Boolean,
     onKeepScreenOnUpdate: (Boolean) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    ambientAwareState: AmbientStateUpdate
 ) {
     val focusRequester = rememberActiveFocusRequester()
     val coroutineScope = rememberCoroutineScope()
@@ -157,53 +162,55 @@ fun ProjectContent(
                 Modifier
             )
         }
-        item {
-            FlowRow(
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                CompactButton(
-                    onClick = { onCounterAdd.invoke() },
-                    colors = ButtonDefaults.secondaryButtonColors()
+        if (ambientAwareState.ambientState is AmbientState.Interactive) {
+            item {
+                FlowRow(
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    modifier = Modifier
+                        .fillMaxWidth()
                 ) {
-                    Icon(
-                        imageVector = Filled.Add,
-                        contentDescription = stringResource(id = string.add_counter)
-                    )
-                }
-                CompactButton(
-                    onClick = {
-                        onProjectReset.invoke()
-                    },
-                    colors = ButtonDefaults.secondaryButtonColors()
-                ) {
-                    Icon(
-                        imageVector = Filled.Refresh,
-                        contentDescription = stringResource(id = string.reset_project)
-                    )
-                }
-                CompactButton(
-                    onClick = { onProjectEdit.invoke() },
-                    colors = ButtonDefaults.secondaryButtonColors()
-                ) {
-                    Icon(
-                        imageVector = Filled.Edit,
-                        contentDescription = stringResource(id = string.edit_project)
-                    )
-                }
-                CompactButton(
-                    onClick = { onKeepScreenOnUpdate.invoke(!keepScreenOn) },
-                    colors = ButtonDefaults.secondaryButtonColors()
-                ) {
-                    Icon(
-                        imageVector = if (keepScreenOn) {
-                            Filled.BrightnessHigh
-                        } else {
-                            Filled.BrightnessLow
+                    CompactButton(
+                        onClick = { onCounterAdd.invoke() },
+                        colors = ButtonDefaults.secondaryButtonColors()
+                    ) {
+                        Icon(
+                            imageVector = Filled.Add,
+                            contentDescription = stringResource(id = string.add_counter)
+                        )
+                    }
+                    CompactButton(
+                        onClick = {
+                            onProjectReset.invoke()
                         },
-                        contentDescription = stringResource(id = string.keep_screen_on_toggle)
-                    )
+                        colors = ButtonDefaults.secondaryButtonColors()
+                    ) {
+                        Icon(
+                            imageVector = Filled.Refresh,
+                            contentDescription = stringResource(id = string.reset_project)
+                        )
+                    }
+                    CompactButton(
+                        onClick = { onProjectEdit.invoke() },
+                        colors = ButtonDefaults.secondaryButtonColors()
+                    ) {
+                        Icon(
+                            imageVector = Filled.Edit,
+                            contentDescription = stringResource(id = string.edit_project)
+                        )
+                    }
+                    CompactButton(
+                        onClick = { onKeepScreenOnUpdate.invoke(!keepScreenOn) },
+                        colors = ButtonDefaults.secondaryButtonColors()
+                    ) {
+                        Icon(
+                            imageVector = if (keepScreenOn) {
+                                Filled.BrightnessHigh
+                            } else {
+                                Filled.BrightnessLow
+                            },
+                            contentDescription = stringResource(id = string.keep_screen_on_toggle)
+                        )
+                    }
                 }
             }
         }
@@ -277,7 +284,8 @@ fun ProjectContentPreview() {
         onProjectEdit = {},
         keepScreenOn = true,
         onKeepScreenOnUpdate = {},
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
+        ambientAwareState = AmbientStateUpdate(ambientState = AmbientState.Interactive)
     )
 }
 
@@ -298,6 +306,45 @@ fun ProjectContentEmptyPreview() {
         onProjectEdit = {},
         keepScreenOn = true,
         onKeepScreenOnUpdate = {},
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
+        ambientAwareState = AmbientStateUpdate(ambientState = AmbientState.Interactive)
+    )
+}
+
+@PreviewScreen
+@Composable
+fun ProjectContentAmbientPreview() {
+    ProjectContent(
+        project = Project(
+            id = 0,
+            name = "shawl",
+            counters = listOf(
+                Counter(
+                    id = 1,
+                    name = "pattern",
+                    currentCount = 7
+                ),
+                Counter(
+                    id = 2,
+                    name = "pattern that is very long",
+                    currentCount = 700
+                ),
+                Counter(
+                    id = 3,
+                    name = "plain",
+                    currentCount = 8
+                )
+            )
+        ),
+        listState = rememberScalingLazyListState(),
+        onCounterAdd = {},
+        onCounterUpdate = {},
+        onCounterClick = {},
+        onProjectReset = {},
+        onProjectEdit = {},
+        keepScreenOn = true,
+        onKeepScreenOnUpdate = {},
+        modifier = Modifier.fillMaxSize(),
+        ambientAwareState = AmbientStateUpdate(ambientState = AmbientState.Ambient())
     )
 }
