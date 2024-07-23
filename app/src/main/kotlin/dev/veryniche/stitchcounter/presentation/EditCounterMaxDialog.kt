@@ -1,5 +1,7 @@
 package dev.veryniche.stitchcounter.presentation
 
+import androidx.compose.foundation.gestures.animateScrollBy
+import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -12,6 +14,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.rotary.onRotaryScrollEvent
 import androidx.compose.ui.res.stringResource
 import androidx.wear.compose.material.Button
 import androidx.wear.compose.material.ButtonDefaults
@@ -49,13 +52,20 @@ fun EditCounterMaxDialog(
     ) {
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxSize()) {
             val items = (0..1000).toList()
-            val initialIndex = items.indexOf(initialValue).run { 
+            val initialIndex = items.indexOf(initialValue).run {
                 if (this == -1) { 0 } else { this }
             }
             val selectedValue = rememberPickerState(items.size, initialIndex)
             val contentDescription by remember { derivedStateOf { "${selectedValue.selectedOption}" } }
             Picker(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.weight(1f)
+                    .onRotaryScrollEvent {
+                        coroutineScope.launch {
+                            selectedValue.scrollBy(it.verticalScrollPixels)
+                            selectedValue.animateScrollBy(0f)
+                        }
+                        true
+                    },
                 state = selectedValue,
                 contentDescription = contentDescription,
             ) {
@@ -81,4 +91,3 @@ fun EditCounterMaxDialogPreview() {
         EditCounterMaxDialog(true, 67, {}, {})
     }
 }
-
