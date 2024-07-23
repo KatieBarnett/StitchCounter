@@ -6,7 +6,6 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -26,8 +25,8 @@ import androidx.wear.compose.material.curvedText
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import dagger.hilt.android.AndroidEntryPoint
 import dev.veryniche.stitchcounter.MainViewModel
-import dev.veryniche.stitchcounter.R
 import dev.veryniche.stitchcounter.Screens
+import dev.veryniche.stitchcounter.data.models.ScreenOnState
 import dev.veryniche.stitchcounter.presentation.theme.StitchCounterTheme
 
 @AndroidEntryPoint
@@ -56,11 +55,21 @@ fun StitchCounterWearApp(modifier: Modifier = Modifier) {
             Screens.ProjectList,
             lifecycleOwner = androidx.compose.ui.platform.LocalLifecycleOwner.current
         )
+        val screenOnState by viewModel.keepScreenOnState.collectAsStateWithLifecycle(
+            ScreenOnState(),
+            lifecycleOwner = androidx.compose.ui.platform.LocalLifecycleOwner.current
+        )
+        val keepCurrentScreenOn by viewModel.keepCurrentScreenOn.collectAsStateWithLifecycle(
+            false,
+            lifecycleOwner = androidx.compose.ui.platform.LocalLifecycleOwner.current
+        )
 
+//        AmbientAware(isAlwaysOnScreen = keepCurrentScreenOn) { ambientAwareUpdate ->
         Scaffold(
             timeText = {
                 if (!listState.isScrollInProgress && !listState.canScrollBackward) {
-                    val leadingTextStyle = TimeTextDefaults.timeTextStyle(color = MaterialTheme.colors.primary)
+                    val leadingTextStyle =
+                        TimeTextDefaults.timeTextStyle(color = MaterialTheme.colors.primary)
                     currentScreen.pageContextDisplay?.let {
                         val displayText = stringResource(it)
                         TimeText(
@@ -75,7 +84,6 @@ fun StitchCounterWearApp(modifier: Modifier = Modifier) {
                                     text = displayText,
                                     style = CurvedTextStyle(leadingTextStyle)
                                 )
-
                             },
                         )
                     }
@@ -91,7 +99,17 @@ fun StitchCounterWearApp(modifier: Modifier = Modifier) {
             },
             modifier = modifier
         ) {
-            NavHost(navController = navController, viewModel = viewModel, listState = listState, modifier = Modifier.fillMaxSize())
+            NavHost(
+                navController = navController,
+                viewModel = viewModel,
+                listState = listState,
+                screenOnState = screenOnState,
+                onScreenOnStateUpdate = { newState ->
+                    viewModel.updateScreenOnState(newState)
+                },
+                modifier = Modifier.fillMaxSize()
+            )
         }
     }
+//    }
 }

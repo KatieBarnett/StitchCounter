@@ -2,15 +2,16 @@ package dev.veryniche.stitchcounter.presentation
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons.Filled
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.BrightnessHigh
+import androidx.compose.material.icons.filled.BrightnessLow
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
@@ -27,9 +28,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
 import androidx.wear.compose.material.Button
 import androidx.wear.compose.material.ButtonDefaults
 import androidx.wear.compose.material.CircularProgressIndicator
@@ -53,6 +56,7 @@ import dev.veryniche.stitchcounter.presentation.theme.StitchCounterTheme
 import dev.veryniche.stitchcounter.previews.PreviewScreen
 import dev.veryniche.stitchcounter.util.Analytics
 import dev.veryniche.stitchcounter.util.TrackedScreen
+import dev.veryniche.stitchcounter.util.conditional
 import dev.veryniche.stitchcounter.util.trackEvent
 import dev.veryniche.stitchcounter.util.trackScreenView
 import kotlinx.coroutines.launch
@@ -63,6 +67,8 @@ fun CounterScreen(
     counterId: Int,
     viewModel: MainViewModel,
     onCounterEdit: (counterName: String, counterMax: Int) -> Unit,
+    keepScreenOn: Boolean,
+    onKeepScreenOnUpdate: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val composableScope = rememberCoroutineScope()
@@ -85,6 +91,8 @@ fun CounterScreen(
                     showResetCounterDialog = true
                 },
                 onCounterEdit = { onCounterEdit.invoke(counter.name, counter.maxCount) },
+                keepScreenOn = keepScreenOn,
+                onKeepScreenOnUpdate = onKeepScreenOnUpdate,
                 modifier = modifier
             )
             if (showResetCounterDialog) {
@@ -147,47 +155,14 @@ fun CounterContent(
     onCounterUpdate: (counter: Counter) -> Unit,
     onCounterReset: () -> Unit,
     onCounterEdit: () -> Unit,
+    keepScreenOn: Boolean,
+    onKeepScreenOnUpdate: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var useCompactButton by remember { mutableStateOf(false) }
     val isRound = LocalConfiguration.current.isScreenRound
 
     Box(modifier = modifier.fillMaxSize()) {
-        counter.getCounterProgress()?.let { progress ->
-            if (isRound) {
-                CircularProgressIndicator(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(all = Dimen.progressIndicatorPadding),
-                    progress = progress,
-                    indicatorColor = Pink,
-                    trackColor = Charcoal,
-                    strokeWidth = Dimen.progressIndicatorWidth,
-                    startAngle = 315f,
-                    endAngle = 225f
-                )
-            } else {
-                SquareSegmentedProgressIndicator(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(
-                            top = Dimen.progressIndicatorSquareTop,
-                            start = Dimen.progressIndicatorPadding,
-                            end = Dimen.progressIndicatorPadding,
-                            bottom = Dimen.progressIndicatorPadding
-                        ),
-                    progress = progress,
-                    trackSegments = listOf(
-                        ProgressIndicatorSegment(
-                            indicatorBrush = Brush.horizontalGradient(colors = listOf(Pink, Pink)),
-                            weight = 1f
-                        )
-                    ),
-                    trackColor = Charcoal,
-                    strokeWidth = Dimen.progressIndicatorWidth,
-                )
-            }
-        }
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
@@ -199,7 +174,11 @@ fun CounterContent(
                 horizontalArrangement = Arrangement.spacedBy(Dimen.spacing),
                 verticalAlignment = Alignment.Bottom,
                 modifier = Modifier
-                    .fillMaxWidth(0.75f)
+                    .conditional(isRound, {
+                        fillMaxWidth(0.75f)
+                    }, {
+                        fillMaxWidth()
+                    })
                     .weight(1f)
             ) {
                 Text(
@@ -225,7 +204,11 @@ fun CounterContent(
             Row(
                 horizontalArrangement = Arrangement.spacedBy(Dimen.spacing),
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth(0.95f)
+                modifier = Modifier.conditional(isRound, {
+                    fillMaxWidth(0.95f)
+                }, {
+                    fillMaxWidth()
+                })
             ) {
                 if (useCompactButton) {
                     CompactButton(
@@ -289,32 +272,92 @@ fun CounterContent(
                     }
                 }
             }
-            Row(
-                horizontalArrangement = Arrangement.SpaceAround,
-                verticalAlignment = Alignment.Top,
-                modifier = Modifier
-                    .fillMaxWidth(0.75f)
-                    .weight(1f)
-            ) {
-                CompactButton(
-                    onClick = { onCounterEdit.invoke() },
-                    colors = ButtonDefaults.secondaryButtonColors()
-                ) {
-                    Icon(
-                        imageVector = Filled.Edit,
-                        contentDescription = stringResource(id = string.edit_counter)
-                    )
+
+            BoxWithConstraints(Modifier.weight(1f)) {
+                val density = LocalDensity.current
+                with(density) {
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        verticalAlignment = Alignment.Top,
+                        modifier = Modifier
+                            .conditional(isRound, {
+                                conditional(constraints.maxWidth * 0.75f < 48.dp.toPx() * 3, {
+                                    fillMaxWidth(0.85f)
+                                }, {
+                                    fillMaxWidth(0.75f)
+                                })
+                            }, {
+                                fillMaxWidth()
+                            })
+                    ) {
+                        CompactButton(
+                            onClick = { onCounterEdit.invoke() },
+                            colors = ButtonDefaults.secondaryButtonColors()
+                        ) {
+                            Icon(
+                                imageVector = Filled.Edit,
+                                contentDescription = stringResource(id = string.edit_counter)
+                            )
+                        }
+                        CompactButton(
+                            onClick = { onKeepScreenOnUpdate.invoke(!keepScreenOn) },
+                            colors = ButtonDefaults.secondaryButtonColors()
+                        ) {
+                            Icon(
+                                imageVector = if (keepScreenOn) {
+                                    Filled.BrightnessHigh
+                                } else {
+                                    Filled.BrightnessLow
+                                },
+                                contentDescription = stringResource(id = string.keep_screen_on_toggle)
+                            )
+                        }
+                        CompactButton(
+                            onClick = { onCounterReset.invoke() },
+                            colors = ButtonDefaults.secondaryButtonColors()
+                        ) {
+                            Icon(
+                                imageVector = Filled.Refresh,
+                                contentDescription = stringResource(id = string.reset_counter)
+                            )
+                        }
+                    }
                 }
-                Spacer(modifier = Modifier.width(Dimen.spacing))
-                CompactButton(
-                    onClick = { onCounterReset.invoke() },
-                    colors = ButtonDefaults.secondaryButtonColors()
-                ) {
-                    Icon(
-                        imageVector = Filled.Refresh,
-                        contentDescription = stringResource(id = string.reset_counter)
-                    )
-                }
+            }
+        }
+        counter.getCounterProgress()?.let { progress ->
+            if (isRound) {
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(all = Dimen.progressIndicatorPadding),
+                    progress = progress,
+                    indicatorColor = Pink,
+                    trackColor = Charcoal,
+                    strokeWidth = Dimen.progressIndicatorWidth,
+                    startAngle = 315f,
+                    endAngle = 225f
+                )
+            } else {
+                SquareSegmentedProgressIndicator(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(
+                            top = Dimen.progressIndicatorSquareTop,
+                            start = Dimen.progressIndicatorPadding,
+                            end = Dimen.progressIndicatorPadding,
+                            bottom = Dimen.progressIndicatorPadding
+                        ),
+                    progress = progress,
+                    trackSegments = listOf(
+                        ProgressIndicatorSegment(
+                            indicatorBrush = Brush.horizontalGradient(colors = listOf(Pink, Pink)),
+                            weight = 1f
+                        )
+                    ),
+                    trackColor = Charcoal,
+                    strokeWidth = Dimen.progressIndicatorWidth,
+                )
             }
         }
     }
@@ -324,6 +367,18 @@ fun CounterContent(
 @Composable
 fun CounterContentPreview() {
     StitchCounterTheme {
-        CounterContent(Counter(id = 3, name = "pattern", currentCount = 40000, maxCount = 50000), {}, {}, {})
+        CounterContent(
+            counter = Counter(
+                id = 3,
+                name = "pattern",
+                currentCount = 40000,
+                maxCount = 50000,
+            ),
+            onCounterUpdate = {},
+            onCounterReset = {},
+            onCounterEdit = {},
+            keepScreenOn = true,
+            onKeepScreenOnUpdate = {}
+        )
     }
 }

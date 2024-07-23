@@ -3,14 +3,13 @@ package dev.veryniche.stitchcounter.presentation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import androidx.wear.compose.foundation.lazy.ScalingLazyListState
 import androidx.wear.compose.navigation.SwipeDismissableNavHost
 import androidx.wear.compose.navigation.composable
 import dev.veryniche.stitchcounter.MainViewModel
-import dev.veryniche.stitchcounter.R
 import dev.veryniche.stitchcounter.Screens
+import dev.veryniche.stitchcounter.data.models.ScreenOnState
 import dev.veryniche.stitchcounter.util.Analytics
 import dev.veryniche.stitchcounter.util.trackEvent
 import kotlinx.coroutines.launch
@@ -20,7 +19,9 @@ fun NavHost(
     navController: NavHostController,
     viewModel: MainViewModel,
     modifier: Modifier = Modifier,
-    listState: ScalingLazyListState
+    listState: ScalingLazyListState,
+    screenOnState: ScreenOnState,
+    onScreenOnStateUpdate: (ScreenOnState) -> Unit,
 ) {
     val coroutineScope = rememberCoroutineScope()
     SwipeDismissableNavHost(
@@ -67,7 +68,11 @@ fun NavHost(
                     },
                     onProjectEdit = { id, name ->
                         navController.navigate("edit_project/$id/$name")
-                    }
+                    },
+                    keepScreenOn = screenOnState.counterScreenOn,
+                    onKeepScreenOnUpdate = { update ->
+                        onScreenOnStateUpdate.invoke(screenOnState.copy(counterScreenOn = update))
+                    },
                 )
             }
         }
@@ -102,6 +107,10 @@ fun NavHost(
                     viewModel = viewModel,
                     projectId = projectId,
                     counterId = counterId,
+                    keepScreenOn = screenOnState.counterScreenOn,
+                    onKeepScreenOnUpdate = { update ->
+                        onScreenOnStateUpdate.invoke(screenOnState.copy(counterScreenOn = update))
+                    },
                     onCounterEdit = { counterName, counterMax ->
                         navController.navigate("edit_counter/$projectId/$counterId/$counterName/$counterMax")
                     }
@@ -138,7 +147,7 @@ fun NavHost(
                     counterName = counterName,
                     counterMax = counterMax
                 )
-            } 
+            }
         }
     }
 }

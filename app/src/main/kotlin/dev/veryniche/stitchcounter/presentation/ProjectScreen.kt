@@ -5,14 +5,15 @@ import androidx.compose.foundation.focusable
 import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material.icons.Icons.Filled
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.BrightnessHigh
+import androidx.compose.material.icons.filled.BrightnessLow
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
@@ -48,7 +49,6 @@ import dev.veryniche.stitchcounter.R.string
 import dev.veryniche.stitchcounter.data.models.Counter
 import dev.veryniche.stitchcounter.data.models.Project
 import dev.veryniche.stitchcounter.getNextCounterId
-import dev.veryniche.stitchcounter.presentation.theme.Dimen
 import dev.veryniche.stitchcounter.previews.PreviewScreen
 import dev.veryniche.stitchcounter.util.Analytics
 import dev.veryniche.stitchcounter.util.TrackedScreen
@@ -64,6 +64,8 @@ fun ProjectScreen(
     onCounterClick: (counter: Counter) -> Unit,
     onProjectEdit: (projectId: Int, projectName: String) -> Unit,
     onCounterAdd: (counterId: Int) -> Unit,
+    keepScreenOn: Boolean,
+    onKeepScreenOnUpdate: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val composableScope = rememberCoroutineScope()
@@ -88,6 +90,8 @@ fun ProjectScreen(
             },
             onProjectEdit = { onProjectEdit.invoke(id, project.name) },
             onCounterClick = onCounterClick,
+            keepScreenOn = keepScreenOn,
+            onKeepScreenOnUpdate = onKeepScreenOnUpdate,
             modifier = modifier
         )
         if (showResetProjectDialog) {
@@ -108,7 +112,7 @@ fun ProjectScreen(
     } // TODO - else display error
 }
 
-@OptIn(ExperimentalWearFoundationApi::class)
+@OptIn(ExperimentalWearFoundationApi::class, ExperimentalLayoutApi::class)
 @Composable
 fun ProjectContent(
     project: Project,
@@ -118,6 +122,8 @@ fun ProjectContent(
     onCounterClick: (counter: Counter) -> Unit,
     onProjectReset: () -> Unit,
     onProjectEdit: () -> Unit,
+    keepScreenOn: Boolean,
+    onKeepScreenOnUpdate: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val focusRequester = rememberActiveFocusRequester()
@@ -152,8 +158,8 @@ fun ProjectContent(
             )
         }
         item {
-            Row(
-                horizontalArrangement = Arrangement.Center,
+            FlowRow(
+                horizontalArrangement = Arrangement.SpaceEvenly,
                 modifier = Modifier
                     .fillMaxWidth()
             ) {
@@ -166,17 +172,6 @@ fun ProjectContent(
                         contentDescription = stringResource(id = string.add_counter)
                     )
                 }
-                Spacer(modifier = Modifier.width(Dimen.spacing))
-                CompactButton(
-                    onClick = { onProjectEdit.invoke() },
-                    colors = ButtonDefaults.secondaryButtonColors()
-                ) {
-                    Icon(
-                        imageVector = Filled.Edit,
-                        contentDescription = stringResource(id = string.edit_project)
-                    )
-                }
-                Spacer(modifier = Modifier.width(Dimen.spacing))
                 CompactButton(
                     onClick = {
                         onProjectReset.invoke()
@@ -186,6 +181,28 @@ fun ProjectContent(
                     Icon(
                         imageVector = Filled.Refresh,
                         contentDescription = stringResource(id = string.reset_project)
+                    )
+                }
+                CompactButton(
+                    onClick = { onProjectEdit.invoke() },
+                    colors = ButtonDefaults.secondaryButtonColors()
+                ) {
+                    Icon(
+                        imageVector = Filled.Edit,
+                        contentDescription = stringResource(id = string.edit_project)
+                    )
+                }
+                CompactButton(
+                    onClick = { onKeepScreenOnUpdate.invoke(!keepScreenOn) },
+                    colors = ButtonDefaults.secondaryButtonColors()
+                ) {
+                    Icon(
+                        imageVector = if (keepScreenOn) {
+                            Filled.BrightnessHigh
+                        } else {
+                            Filled.BrightnessLow
+                        },
+                        contentDescription = stringResource(id = string.keep_screen_on_toggle)
                     )
                 }
             }
@@ -253,11 +270,34 @@ fun ProjectContentPreview() {
             )
         ),
         listState = rememberScalingLazyListState(),
-        {},
-        {},
-        {},
-        {},
-        {},
-        Modifier.fillMaxSize()
+        onCounterAdd = {},
+        onCounterUpdate = {},
+        onCounterClick = {},
+        onProjectReset = {},
+        onProjectEdit = {},
+        keepScreenOn = true,
+        onKeepScreenOnUpdate = {},
+        modifier = Modifier.fillMaxSize()
+    )
+}
+
+@PreviewScreen
+@Composable
+fun ProjectContentEmptyPreview() {
+    ProjectContent(
+        project = Project(
+            id = 0,
+            name = "shawl",
+            counters = listOf()
+        ),
+        listState = rememberScalingLazyListState(),
+        onCounterAdd = {},
+        onCounterUpdate = {},
+        onCounterClick = {},
+        onProjectReset = {},
+        onProjectEdit = {},
+        keepScreenOn = true,
+        onKeepScreenOnUpdate = {},
+        modifier = Modifier.fillMaxSize()
     )
 }
