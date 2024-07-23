@@ -290,7 +290,7 @@ fun CounterContent(
                 }
             }
             Row(
-                horizontalArrangement = Arrangement.Center,
+                horizontalArrangement = Arrangement.SpaceAround,
                 verticalAlignment = Alignment.Top,
                 modifier = Modifier
                     .fillMaxWidth(0.75f)

@@ -1,13 +1,19 @@
 package dev.veryniche.stitchcounter
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.veryniche.stitchcounter.data.models.Counter
 import dev.veryniche.stitchcounter.data.models.Project
+import dev.veryniche.stitchcounter.data.models.ScreenOnState
 import dev.veryniche.stitchcounter.storage.ProjectsRepository
+import dev.veryniche.stitchcounter.storage.UserPreferencesRepository
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -16,10 +22,23 @@ class MainViewModel @Inject constructor(
     private val userPreferencesRepository: UserPreferencesRepository
 ) : ViewModel() {
 
-    private val _pageContext = MutableLiveData<String?>(null)
-    val pageContext: LiveData<String?> = _pageContext
-    
     private val userPreferencesFlow = userPreferencesRepository.userPreferencesFlow
+
+    val whatsNewLastSeen = userPreferencesFlow.map {
+        it.whatsNewLastSeen
+    }
+
+    val keepScreenOnState = userPreferencesFlow.map {
+        it.keepScreenOn
+    }
+
+    private val _currentScreen = MutableStateFlow<Screens>(Screens.ProjectList)
+    val currentScreen = _currentScreen.asStateFlow()
+
+    val keepCurrentScreenOn = currentScreen.combine(keepScreenOnState) { currentScreen, keepScreenOnState ->
+        currentScreen.showScreenAlwaysOn(keepScreenOnState)
+    }
+
     val projects = savedProjectsRepository.getProjects()
 
     fun getProject(id: Int) = savedProjectsRepository.getProject(id)
@@ -64,7 +83,7 @@ class MainViewModel @Inject constructor(
     suspend fun saveCounter(projectId: Int, counter: Counter) {
         savedProjectsRepository.saveCounter(projectId, counter)
     }
-    
+
     suspend fun updateCounter(project: Project, counter: Counter) {
         val counterIndex = project.counters.indexOfFirst { it.id == counter.id }
         if (counterIndex != -1) {
@@ -80,7 +99,7 @@ class MainViewModel @Inject constructor(
         }
         saveProject(project.copy(counters = updatedList))
     }
-    
+
     suspend fun resetCounter(project: Project, counter: Counter) {
         updateCounter(project, counter.copy(currentCount = 0))
     }
@@ -100,7 +119,15 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun updatePageContext(text: String?) {
-        _pageContext.postValue(text)
+    fun updateCurrentScreen(screen: Screens) {
+        viewModelScope.launch {
+            _currentScreen.emit(screen)
+        }
+    }
+
+    fun updateScreenOnState(sceenOnState: ScreenOnState) {
+        viewModelScope.launch {
+            userPreferencesRepository.updateKeepScreenOn(sceenOnState)
+        }
     }
 }

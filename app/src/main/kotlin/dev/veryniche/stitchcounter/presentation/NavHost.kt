@@ -10,6 +10,7 @@ import androidx.wear.compose.navigation.SwipeDismissableNavHost
 import androidx.wear.compose.navigation.composable
 import dev.veryniche.stitchcounter.MainViewModel
 import dev.veryniche.stitchcounter.R
+import dev.veryniche.stitchcounter.Screens
 import dev.veryniche.stitchcounter.util.Analytics
 import dev.veryniche.stitchcounter.util.trackEvent
 import kotlinx.coroutines.launch
@@ -28,11 +29,11 @@ fun NavHost(
         modifier = modifier
     ) {
         composable("about") {
-            viewModel.updatePageContext(stringResource(id = R.string.app_name))
+            viewModel.updateCurrentScreen(Screens.About)
             AboutScreen(listState = listState)
         }
         composable("project_list") {
-            viewModel.updatePageContext(stringResource(id = R.string.app_name))
+            viewModel.updateCurrentScreen(Screens.ProjectList)
             ProjectListScreen(
                 viewModel = viewModel,
                 listState = listState,
@@ -53,7 +54,7 @@ fun NavHost(
         }
         composable("project/{id}") {
             it.arguments?.getString("id")?.toIntOrNull()?.let { projectId ->
-                viewModel.updatePageContext(null)
+                viewModel.updateCurrentScreen(Screens.Project)
                 ProjectScreen(
                     viewModel = viewModel,
                     id = projectId,
@@ -71,7 +72,7 @@ fun NavHost(
             }
         }
         composable("edit_project") {
-            viewModel.updatePageContext(stringResource(id = R.string.context_project))
+            viewModel.updateCurrentScreen(Screens.EditProject)
             LoadEditProjectScreen(
                 navController = navController,
                 viewModel = viewModel,
@@ -83,7 +84,7 @@ fun NavHost(
             val projectId = it.arguments?.getString("id")?.toIntOrNull()
             val projectName = it.arguments?.getString("name")
             if (projectId != null && projectName != null) {
-                viewModel.updatePageContext(stringResource(id = R.string.context_project))
+                viewModel.updateCurrentScreen(Screens.EditProject)
                 LoadEditProjectScreen(
                     navController = navController,
                     viewModel = viewModel,
@@ -96,7 +97,7 @@ fun NavHost(
             val projectId = it.arguments?.getString("project_id")?.toIntOrNull()
             val counterId = it.arguments?.getString("counter_id")?.toIntOrNull()
             if (projectId != null && counterId != null) {
-                viewModel.updatePageContext(stringResource(id = R.string.context_counter))
+                viewModel.updateCurrentScreen(Screens.Counter)
                 CounterScreen(
                     viewModel = viewModel,
                     projectId = projectId,
@@ -111,7 +112,7 @@ fun NavHost(
             val projectId = it.arguments?.getString("project_id")?.toIntOrNull()
             val counterId = it.arguments?.getString("counter_id")?.toIntOrNull()
             if (projectId != null && counterId != null) {
-                viewModel.updatePageContext(stringResource(id = R.string.context_counter))
+                viewModel.updateCurrentScreen(Screens.EditCounter)
                 LoadEditCounterScreen(
                     navController = navController,
                     viewModel = viewModel,
@@ -128,7 +129,7 @@ fun NavHost(
             val counterName = it.arguments?.getString("counter_name")
             val counterMax = it.arguments?.getString("counter_max")?.toIntOrNull() ?: 0
             if (projectId != null && counterId != null) {
-                viewModel.updatePageContext(stringResource(id = R.string.context_counter))
+                viewModel.updateCurrentScreen(Screens.EditCounter)
                 LoadEditCounterScreen(
                     navController = navController,
                     viewModel = viewModel,

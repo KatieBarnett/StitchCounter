@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -27,13 +28,19 @@ import dev.veryniche.stitchcounter.previews.PreviewScreen
 import dev.veryniche.stitchcounter.util.Analytics
 import dev.veryniche.stitchcounter.util.TrackedScreen
 import dev.veryniche.stitchcounter.util.trackScreenView
+import kotlinx.coroutines.launch
 
 @Composable
-fun EditCounterMaxDialog(showDialog: Boolean, initialValue: Int = 0, onDismissRequest: () -> Unit, onDone: (maxCount: Int) -> Unit) {
-
+fun EditCounterMaxDialog(
+    showDialog: Boolean,
+    initialValue: Int = 0,
+    onDismissRequest: () -> Unit,
+    onDone: (maxCount: Int) -> Unit
+) {
     TrackedScreen {
         trackScreenView(name = Analytics.Screen.EditCounterMax)
     }
+    val coroutineScope = rememberCoroutineScope()
 
     Dialog(
         showDialog = showDialog,
