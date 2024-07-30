@@ -57,6 +57,7 @@ dependencies {
 
     implementation(libs.wear)
     implementation(libs.lifecycle.runtime.compose.android)
+    implementation(libs.tiles)
     coreLibraryDesugaring(libs.desugar.jdk.libs)
 
     implementation(project(":data"))
@@ -100,12 +101,19 @@ dependencies {
 
     implementation(libs.hilt.android)
     implementation(libs.wear.tooling.preview)
+    implementation(libs.wear.tiles.tooling.preview)
     ksp(libs.hilt.compiler)
 
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.crashlytics)
 
-    // Testing
+    implementation(libs.wear.protolayout)
+    implementation(libs.wear.protolayout.expression)
+    implementation(libs.wear.protolayout.material)
+    implementation(libs.horologist.tiles)
+
     debugImplementation(libs.compose.ui.tooling)
+    debugImplementation(libs.wear.tiles.renderer)
+    debugImplementation(libs.wear.tiles.tooling)
 }

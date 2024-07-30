@@ -18,8 +18,8 @@ ext {
 
     //34.113.00.00
 
-    extra["appVersionName"] = "1.1.10"
-    extra["appVersionCode"] = 342000010 // Should be this, but had to increase 341130000
+    extra["appVersionName"] = "1.2.0"
+    extra["appVersionCode"] = 342000011 // Should be this, but had to increase 341130000
     extra["compileSdk"] = 34
     extra["targetSdk"] = 33
     extra["minSdk"] = 26

@@ -83,6 +83,9 @@
     <string name="about_email_opened_confirmation">Email client opened on your phone.</string>
 
 
+    <string name="counter_tile_label">Stitch Counter</string>
+    <string name="counter_tile_description">Counter tile</string>
+
     
     
 </resources>

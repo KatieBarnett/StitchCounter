@@ -51,5 +51,39 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+<!--        <service-->
+<!--            android:name=".tiles.counter.MessagingTileService"-->
+<!--            android:description="@string/tile_description"-->
+<!--            android:exported="true"-->
+<!--            android:icon="@drawable/ic_message_24"-->
+<!--            android:label="@string/tile_label"-->
+<!--            android:permission="com.google.android.wearable.permission.BIND_TILE_PROVIDER">-->
+<!--            <intent-filter>-->
+<!--                <action android:name="androidx.wear.tiles.action.BIND_TILE_PROVIDER" />-->
+<!--            </intent-filter>-->
+
+<!--            &lt;!&ndash; The tile preview shown when configuring tiles on your phone &ndash;&gt;-->
+<!--            <meta-data-->
+<!--                android:name="androidx.wear.tiles.PREVIEW"-->
+<!--                android:resource="@drawable/tile_messaging" />-->
+<!--        </service>-->
+
+        <service
+            android:name=".tiles.counter.CounterTileService"
+            android:label="@string/counter_tile_label"
+            android:description="@string/counter_tile_description"
+            android:icon="@drawable/ic_launcher_foreground"
+            android:roundIcon="@drawable/ic_launcher_foreground"
+            android:exported="true"
+            android:permission="com.google.android.wearable.permission.BIND_TILE_PROVIDER">
+            <intent-filter>
+                <action android:name="androidx.wear.tiles.action.BIND_TILE_PROVIDER" />
+            </intent-filter>
+
+            <meta-data android:name="androidx.wear.tiles.PREVIEW"
+                android:resource="@mipmap/ic_launcher" />
+        </service>
+
     </application>
 </manifest>
