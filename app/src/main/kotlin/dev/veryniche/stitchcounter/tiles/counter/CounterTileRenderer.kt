@@ -1,29 +1,8 @@
-/*
- * Copyright 2022 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-// @file:OptIn(ExperimentalHorologistApi::class)
-
-// import com.google.android.horologist.compose.tools.buildDeviceParameters
-//
-// import com.example.wear.tiles.messaging.tile.MessagingTileRenderer.Companion.ID_IC_SEARCH
 import CounterTileRenderer.Companion.ID_IC_ADD
 import CounterTileRenderer.Companion.ID_IC_EDIT
 import CounterTileRenderer.Companion.ID_IC_REMOVE
 import CounterTileRenderer.Companion.ID_IC_RESET
 import android.content.Context
-import androidx.compose.ui.unit.dp
 import androidx.wear.protolayout.ActionBuilders
 import androidx.wear.protolayout.DeviceParametersBuilders
 import androidx.wear.protolayout.DimensionBuilders
@@ -44,7 +23,7 @@ import dev.veryniche.stitchcounter.tiles.counter.openSelectCounter
 
 @OptIn(ExperimentalHorologistApi::class)
 class CounterTileRenderer(context: Context) :
-    SingleTileLayoutRenderer<CounterTileState, Counter>(context) {
+    SingleTileLayoutRenderer<CounterTileState, Int>(context) {
 
     override fun renderTile(
         state: CounterTileState,
@@ -56,10 +35,8 @@ class CounterTileRenderer(context: Context) :
                 deviceParameters = deviceParameters,
                 projectName = state.project.name,
                 counter = state.counter,
-                clickablePositive = ModifiersBuilders.Clickable.Builder().build(),
-                clickableNegative = ModifiersBuilders.Clickable.Builder().build(),
-                clickableReset = ModifiersBuilders.Clickable.Builder()
-                    .setId("reset_counter")
+                clickablePositive = ModifiersBuilders.Clickable.Builder()
+                    .setId(ID_CLICKABLE_INCREMENT)
                     .setOnClick(
                         ActionBuilders.LoadAction.Builder()
                             .setRequestState(
@@ -67,19 +44,37 @@ class CounterTileRenderer(context: Context) :
                                     .build()
                             ).build()
                     ).build(),
-                clickableEdit = launchActivityClickable("select_counter", openSelectCounter()),
-            ).build()
+                clickableNegative = ModifiersBuilders.Clickable.Builder()
+                    .setId(ID_CLICKABLE_DECREMENT)
+                    .setOnClick(
+                        ActionBuilders.LoadAction.Builder()
+                            .setRequestState(
+                                StateBuilders.State.Builder()
+                                    .build()
+                            ).build()
+                    ).build(),
+                clickableReset = ModifiersBuilders.Clickable.Builder()
+                    .setId(ID_CLICKABLE_RESET)
+                    .setOnClick(
+                        ActionBuilders.LoadAction.Builder()
+                            .setRequestState(
+                                StateBuilders.State.Builder()
+                                    .build()
+                            ).build()
+                    ).build(),
+                clickableEdit = launchActivityClickable(ID_CLICKABLE_SELECT_COUNTER, openSelectCounter()),
+            )
         } else {
             emptyCounterTileLayout(
                 context = context,
                 deviceParameters = deviceParameters,
-                openApp = launchActivityClickable("select_counter", openSelectCounter()),
-            ).build()
+                openApp = launchActivityClickable(ID_CLICKABLE_SELECT_COUNTER, openSelectCounter()),
+            )
         }
     }
 
     override fun Resources.Builder.produceRequestedResources(
-        resourceState: Counter,
+        resourceState: Int,
         deviceParameters: DeviceParametersBuilders.DeviceParameters,
         resourceIds: List<String>,
     ) {
@@ -94,6 +89,11 @@ class CounterTileRenderer(context: Context) :
         internal const val ID_IC_REMOVE = "ic_remove"
         internal const val ID_IC_RESET = "ic_reset"
         internal const val ID_IC_EDIT = "ic_edit"
+
+        internal const val ID_CLICKABLE_INCREMENT = "increment_counter"
+        internal const val ID_CLICKABLE_DECREMENT = "decrement_counter"
+        internal const val ID_CLICKABLE_RESET = "reset_counter"
+        internal const val ID_CLICKABLE_SELECT_COUNTER = "select_counter"
 
         internal val BUTTON_SMALL_SIZE = DimensionBuilders.dp(40f)
         internal val BUTTON_EXTRA_SMALL_SIZE = DimensionBuilders.dp(32f)

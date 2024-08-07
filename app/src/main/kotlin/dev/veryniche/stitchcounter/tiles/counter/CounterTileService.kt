@@ -1,6 +1,9 @@
 package dev.veryniche.stitchcounter.tiles.counter
 
 import CounterTileRenderer
+import CounterTileRenderer.Companion.ID_CLICKABLE_DECREMENT
+import CounterTileRenderer.Companion.ID_CLICKABLE_INCREMENT
+import CounterTileRenderer.Companion.ID_CLICKABLE_RESET
 import androidx.lifecycle.lifecycleScope
 import androidx.wear.protolayout.ResourceBuilders
 import androidx.wear.tiles.RequestBuilders.ResourcesRequest
@@ -62,25 +65,43 @@ class CounterTileService @Inject constructor() : SuspendingTileService() {
     }
 
     override suspend fun tileRequest(requestParams: TileRequest): Tile {
-        val tileState = latestTileState()
+        var tileState = latestTileState()
+        tileState.let { currentState ->
+            if (currentState.project != null && currentState.counter != null) {
+                when (requestParams.currentState.lastClickableId) {
+                    ID_CLICKABLE_INCREMENT -> {
+                        updateCounter(
+                            currentState.project,
+                            currentState.counter.copy(currentCount = currentState.counter.currentCount + 1)
+                        )
+                        tileState = latestTileState()
+                    }
+                    ID_CLICKABLE_DECREMENT -> {
+                        updateCounter(
+                            currentState.project,
+                            currentState.counter.copy(currentCount = currentState.counter.currentCount - 1)
+                        )
+                        tileState = latestTileState()
+                    }
+                    ID_CLICKABLE_RESET -> {
+                        resetCounter(
+                            currentState.project,
+                            currentState.counter
+                        )
+                        tileState = latestTileState()
+                    }
+                }
+            }
+        }
+
         return renderer.renderTimeline(tileState, requestParams)
     }
 
-    /**
-     * Reads the latest state from the flow, and updates the data if there isn't any.
-     */
     private suspend fun latestTileState(): CounterTileState {
-        var tileState = tileStateFlow.filterNotNull().first()
-
-        // see `refreshData()` docs for more information
-//        if (tileState.contacts.isEmpty()) {
-//            refreshData()
-//            tileState = tileStateFlow.filterNotNull().first()
-//        }
-        return tileState
+        return tileStateFlow.filterNotNull().first()
     }
 
-    suspend fun updateCounter(project: Project, counter: Counter) {
+    private suspend fun updateCounter(project: Project, counter: Counter) {
         val counterIndex = project.counters.indexOfFirst { it.id == counter.id }
         if (counterIndex != -1) {
             val updatedList = project.counters.toMutableList()
@@ -89,11 +110,11 @@ class CounterTileService @Inject constructor() : SuspendingTileService() {
         }
     }
 
-    suspend fun resetCounter(project: Project, counter: Counter) {
+    private suspend fun resetCounter(project: Project, counter: Counter) {
         updateCounter(project, counter.copy(currentCount = 0))
     }
 
-    suspend fun saveProject(project: Project) {
+    private suspend fun saveProject(project: Project) {
         projectsRepository.saveProject(project)
     }
 
@@ -102,28 +123,9 @@ class CounterTileService @Inject constructor() : SuspendingTileService() {
         job.cancel()
     }
 
-    /**
-     * If our data source (the repository) is empty/has stale data, this is where we could perform
-     * an update. For this sample, we're updating the repository with fake data
-     * ([MessagingRepo.knownContacts]).
-     *
-     * In a more complete example, tiles, complications and the main app would
-     * share a common data source so it's less likely that an initial data refresh triggered by the
-     * tile would be necessary.
-     */
-    private suspend fun refreshData() {
-//        repo.updateContacts(MessagingRepo.knownContacts)
-    }
-
     override suspend fun resourcesRequest(requestParams: ResourcesRequest): ResourceBuilders.Resources {
-        // TODO change this
         return renderer.produceRequestedResources(
-            Counter(
-                id = 3,
-                name = "pattern",
-                currentCount = 40000,
-                maxCount = 50000,
-            ),
+            1,
             requestParams
         )
     }

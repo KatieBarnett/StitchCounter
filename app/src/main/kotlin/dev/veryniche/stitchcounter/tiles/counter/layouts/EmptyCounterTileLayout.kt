@@ -1,16 +1,12 @@
 package dev.veryniche.stitchcounter.tiles.counter.layouts
 
 import CounterTileRenderer
-import CounterTileRenderer.Companion.ID_IC_ADD
-import CounterTileRenderer.Companion.ID_IC_REMOVE
-import CounterTileRenderer.Companion.ID_IC_RESET
 import android.content.Context
 import androidx.annotation.OptIn
 import androidx.wear.protolayout.ColorBuilders.argb
 import androidx.wear.protolayout.DeviceParametersBuilders
 import androidx.wear.protolayout.LayoutElementBuilders
 import androidx.wear.protolayout.ModifiersBuilders
-import androidx.wear.protolayout.ResourceBuilders
 import androidx.wear.protolayout.expression.ProtoLayoutExperimental
 import androidx.wear.protolayout.material.ChipColors
 import androidx.wear.protolayout.material.CompactChip
@@ -18,7 +14,6 @@ import androidx.wear.protolayout.material.Text
 import androidx.wear.protolayout.material.Typography
 import androidx.wear.protolayout.material.layouts.PrimaryLayout
 import androidx.wear.tiles.tooling.preview.TilePreviewData
-import com.google.android.horologist.tiles.images.drawableResToImageResource
 import dev.veryniche.stitchcounter.R
 import dev.veryniche.stitchcounter.previews.PreviewTile
 import dev.veryniche.stitchcounter.tiles.counter.CounterTileState
@@ -57,7 +52,7 @@ fun emptyCounterTileLayout(
         )
             .setChipColors(ChipColors.primaryChipColors(StitchCounterTileTheme.colors))
             .build()
-    )
+    ).build()
 
 @PreviewTile
 fun emptyCounterTileLayoutPreview(context: Context): TilePreviewData {
