@@ -23,6 +23,8 @@ import androidx.wear.compose.material.Vignette
 import androidx.wear.compose.material.VignettePosition
 import androidx.wear.compose.material.curvedText
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
+import androidx.wear.tiles.TileService
+import com.google.android.horologist.annotations.ExperimentalHorologistApi
 import com.google.android.horologist.compose.ambient.AmbientAware
 import com.google.android.horologist.compose.ambient.AmbientState
 import dagger.hilt.android.AndroidEntryPoint
@@ -30,24 +32,47 @@ import dev.veryniche.stitchcounter.MainViewModel
 import dev.veryniche.stitchcounter.Screens
 import dev.veryniche.stitchcounter.data.models.ScreenOnState
 import dev.veryniche.stitchcounter.presentation.theme.StitchCounterTheme
+import dev.veryniche.stitchcounter.tiles.counter.CounterTileService
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
+    companion object {
+        internal const val EXTRA_JOURNEY = "journey"
+        internal const val EXTRA_JOURNEY_SELECT_COUNTER = "journey:select_counter"
+    }
+
+    @OptIn(ExperimentalHorologistApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         // Handle the splash screen transition.
         installSplashScreen()
 
         super.onCreate(savedInstanceState)
 
+        val startDestination = when (intent.extras?.getString(EXTRA_JOURNEY)) {
+            EXTRA_JOURNEY_SELECT_COUNTER -> "select_project_for_tile"
+            else -> "project_list"
+        }
+
         setContent {
-            StitchCounterWearApp()
+            StitchCounterWearApp(
+                startDestination = startDestination,
+                onTileStateUpdate = {
+                    TileService.getUpdater(this)
+                        .requestUpdate(CounterTileService::class.java)
+                    finish()
+                }
+            )
         }
     }
 }
 
 @Composable
-fun StitchCounterWearApp(modifier: Modifier = Modifier) {
+fun StitchCounterWearApp(
+    startDestination: String,
+    onTileStateUpdate: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     StitchCounterTheme {
         val listState = rememberScalingLazyListState()
         val viewModel: MainViewModel = hiltViewModel()
@@ -105,6 +130,7 @@ fun StitchCounterWearApp(modifier: Modifier = Modifier) {
             ) {
                 NavHost(
                     navController = navController,
+                    startDestination = startDestination,
                     viewModel = viewModel,
                     listState = listState,
                     screenOnState = screenOnState,
@@ -112,6 +138,7 @@ fun StitchCounterWearApp(modifier: Modifier = Modifier) {
                     onScreenOnStateUpdate = { newState ->
                         viewModel.updateScreenOnState(newState)
                     },
+                    onTileStateUpdate = onTileStateUpdate,
                     modifier = Modifier.fillMaxSize()
                 )
             }

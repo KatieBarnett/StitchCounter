@@ -26,6 +26,8 @@ object Analytics {
         const val EditCounter = "Edit Counter"
         const val EditCounterMax = "Edit Counter Max"
         const val About = "About"
+        const val SelectProjectForTile = "Select Project For Tile"
+        const val SelectCounterForTile = "Select Counter For Tile"
     }
 
     object Action {

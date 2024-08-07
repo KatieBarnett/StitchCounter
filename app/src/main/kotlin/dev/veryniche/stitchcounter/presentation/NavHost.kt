@@ -1,7 +1,11 @@
 package dev.veryniche.stitchcounter.presentation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.wear.compose.foundation.lazy.ScalingLazyListState
@@ -23,17 +27,45 @@ fun NavHost(
     listState: ScalingLazyListState,
     screenOnState: ScreenOnState,
     onScreenOnStateUpdate: (ScreenOnState) -> Unit,
+    onTileStateUpdate: () -> Unit,
     ambientAwareState: AmbientStateUpdate,
+    startDestination: String,
 ) {
     val coroutineScope = rememberCoroutineScope()
     SwipeDismissableNavHost(
         navController = navController,
-        startDestination = "project_list",
+        startDestination = startDestination,
         modifier = modifier
     ) {
         composable("about") {
             viewModel.updateCurrentScreen(Screens.About)
             AboutScreen(listState = listState)
+        }
+        composable("select_project_for_tile") {
+            viewModel.updateCurrentScreen(Screens.SelectProjectForTile)
+            SelectProjectForTileScreen(
+                viewModel = viewModel,
+                listState = listState,
+                onProjectClick = { projectId ->
+                    navController.navigate("select_counter_for_tile/$projectId")
+                }
+            )
+        }
+        composable("select_counter_for_tile/{id}") {
+            it.arguments?.getString("id")?.toIntOrNull()?.let { projectId ->
+                viewModel.updateCurrentScreen(Screens.SelectCounterForTile)
+                SelectCounterForTileScreen(
+                    projectId = projectId,
+                    viewModel = viewModel,
+                    listState = listState,
+                    onCounterClick = { counterId ->
+                        viewModel.updateTileState(projectId, counterId)
+                    },
+                    onConfirmationDialogClose = {
+                        onTileStateUpdate.invoke()
+                    }
+                )
+            }
         }
         composable("project_list") {
             viewModel.updateCurrentScreen(Screens.ProjectList)

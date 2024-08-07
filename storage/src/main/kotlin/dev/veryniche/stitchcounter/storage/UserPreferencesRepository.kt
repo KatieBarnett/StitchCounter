@@ -18,6 +18,8 @@ data class UserPreferences(
     val whatsNewLastSeen: Int,
     val keepScreenOn: ScreenOnState,
     val lastReviewDate: Long,
+    val tileProjectId: Int?,
+    val tileCounterId: Int?,
 )
 
 class UserPreferencesRepository @Inject constructor(
@@ -28,6 +30,8 @@ class UserPreferencesRepository @Inject constructor(
         val WHATS_NEW_LAST_SEEN = intPreferencesKey("whats_new_last_seen")
         val KEEP_SCREEN_ON_STATE = stringPreferencesKey("keep_screen_on_state")
         val LAST_REVIEW_DATE = longPreferencesKey("last_review_date")
+        val TILE_PROJECT_ID = intPreferencesKey("tile_project_id")
+        val TILE_COUNTER_ID = intPreferencesKey("tile_counter_id")
     }
 
     val userPreferencesFlow: Flow<UserPreferences> = dataStore.data
@@ -45,7 +49,9 @@ class UserPreferencesRepository @Inject constructor(
                 ScreenOnState.fromJsonString(it)
             } ?: ScreenOnState()
             val lastReviewDate = preferences[PreferencesKeys.LAST_REVIEW_DATE] ?: -1L
-            UserPreferences(whatsNewLastSeen, keepScreenOnState, lastReviewDate)
+            val tileProjectId = preferences[PreferencesKeys.TILE_PROJECT_ID]
+            val tileCounterId = preferences[PreferencesKeys.TILE_COUNTER_ID]
+            UserPreferences(whatsNewLastSeen, keepScreenOnState, lastReviewDate, tileProjectId, tileCounterId)
         }
 
     suspend fun updateWhatsNewLastSeen(whatsNewLastSeen: Int) {
@@ -63,6 +69,18 @@ class UserPreferencesRepository @Inject constructor(
     suspend fun updateLastReviewDate() {
         dataStore.edit { preferences ->
             preferences[PreferencesKeys.LAST_REVIEW_DATE] = System.currentTimeMillis()
+        }
+    }
+
+    suspend fun updateTileProjectId(id: Int) {
+        dataStore.edit { preferences ->
+            preferences[PreferencesKeys.TILE_PROJECT_ID] = id
+        }
+    }
+
+    suspend fun updateTileCounterId(id: Int) {
+        dataStore.edit { preferences ->
+            preferences[PreferencesKeys.TILE_COUNTER_ID] = id
         }
     }
 }

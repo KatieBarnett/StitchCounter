@@ -8,6 +8,8 @@
 
     <string name="context_project">Project</string>
     <string name="context_counter">Counter</string>
+    <string name="context_select_project_for_tile">Select Project</string>
+    <string name="context_select_counter_for_tile">Select Counter</string>
 
     <string name="project_title">Project</string>
     <string name="counter_title">Counter</string>
@@ -85,6 +87,9 @@
 
     <string name="counter_tile_label">Stitch Counter</string>
     <string name="counter_tile_description">Counter tile</string>
+    <string name="counter_tile_no_counter">Please select a counter to use</string>
+    <string name="counter_tile_open_app">Open app</string>
+    <string name="counter_tile_counter_selected">Counter selected for tile:</string>
 
     
     

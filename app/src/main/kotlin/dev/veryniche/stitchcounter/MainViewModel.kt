@@ -125,9 +125,16 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun updateScreenOnState(sceenOnState: ScreenOnState) {
+    fun updateScreenOnState(screenOnState: ScreenOnState) {
         viewModelScope.launch {
-            userPreferencesRepository.updateKeepScreenOn(sceenOnState)
+            userPreferencesRepository.updateKeepScreenOn(screenOnState)
+        }
+    }
+
+    fun updateTileState(projectId: Int, counterId: Int) {
+        viewModelScope.launch {
+            userPreferencesRepository.updateTileProjectId(projectId)
+            userPreferencesRepository.updateTileCounterId(counterId)
         }
     }
 }
