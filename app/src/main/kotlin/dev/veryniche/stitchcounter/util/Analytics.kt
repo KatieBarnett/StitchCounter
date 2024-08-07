@@ -72,13 +72,13 @@ fun TrackedScreen(
 fun trackScreenView(name: String) {
     Log.d(ANALYTICS_LOG_TAG, "Track screen: $name")
     Firebase.analytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW) {
-        param(FirebaseAnalytics.Param.SCREEN_NAME, name ?: "Unknown")
+        param(FirebaseAnalytics.Param.SCREEN_NAME, name.replace(" ", "_"))
     }
 }
 
 fun trackEvent(name: String) {
     Log.d(ANALYTICS_LOG_TAG, "Track action: $name")
-    Firebase.analytics.logEvent(name) {
+    Firebase.analytics.logEvent(name.replace(" ", "_")) {
     }
 }
 
