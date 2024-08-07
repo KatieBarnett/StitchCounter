@@ -32,6 +32,7 @@ import dev.veryniche.stitchcounter.MainViewModel
 import dev.veryniche.stitchcounter.Screens
 import dev.veryniche.stitchcounter.data.models.ScreenOnState
 import dev.veryniche.stitchcounter.presentation.theme.StitchCounterTheme
+import dev.veryniche.stitchcounter.presentation.whatsnew.WhatsNewDialog
 import dev.veryniche.stitchcounter.tiles.counter.CounterTileService
 
 @AndroidEntryPoint
@@ -91,6 +92,11 @@ fun StitchCounterWearApp(
             lifecycleOwner = androidx.compose.ui.platform.LocalLifecycleOwner.current
         )
 
+        val whatsNewToShow by viewModel.whatsNewToShow.collectAsStateWithLifecycle(
+            listOf(),
+            lifecycleOwner = androidx.compose.ui.platform.LocalLifecycleOwner.current
+        )
+
         AmbientAware(isAlwaysOnScreen = keepCurrentScreenOn) { ambientAwareUpdate ->
             Scaffold(
                 timeText = {
@@ -141,6 +147,10 @@ fun StitchCounterWearApp(
                     onTileStateUpdate = onTileStateUpdate,
                     modifier = Modifier.fillMaxSize()
                 )
+
+                if (whatsNewToShow.isNotEmpty()) {
+                    WhatsNewDialog(whatsNewToShow, {}, Modifier)
+                }
             }
         }
     }

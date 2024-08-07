@@ -6,6 +6,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.veryniche.stitchcounter.data.models.Counter
 import dev.veryniche.stitchcounter.data.models.Project
 import dev.veryniche.stitchcounter.data.models.ScreenOnState
+import dev.veryniche.stitchcounter.presentation.whatsnew.whatsNewData
 import dev.veryniche.stitchcounter.storage.ProjectsRepository
 import dev.veryniche.stitchcounter.storage.UserPreferencesRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,8 +25,10 @@ class MainViewModel @Inject constructor(
 
     private val userPreferencesFlow = userPreferencesRepository.userPreferencesFlow
 
-    val whatsNewLastSeen = userPreferencesFlow.map {
+    val whatsNewToShow = userPreferencesFlow.map {
         it.whatsNewLastSeen
+    }.map { lastSeenId ->
+        whatsNewData.filter { it.id > lastSeenId }.sortedBy { it.id }
     }
 
     val keepScreenOnState = userPreferencesFlow.map {

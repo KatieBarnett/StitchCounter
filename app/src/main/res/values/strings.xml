@@ -91,6 +91,7 @@
     <string name="counter_tile_open_app">Open app</string>
     <string name="counter_tile_counter_selected">Counter selected for tile:</string>
 
-    
+
+    <string name="whats_new_title">What\'s new?</string>
     
 </resources>
