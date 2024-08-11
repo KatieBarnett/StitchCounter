@@ -25,7 +25,9 @@ import androidx.wear.protolayout.material.Text
 import androidx.wear.protolayout.material.Typography
 import androidx.wear.protolayout.material.layouts.EdgeContentLayout
 import androidx.wear.protolayout.material.layouts.PrimaryLayout
+import androidx.wear.tiles.tooling.preview.Preview
 import androidx.wear.tiles.tooling.preview.TilePreviewData
+import androidx.wear.tooling.preview.devices.WearDevices
 import dev.veryniche.stitchcounter.data.models.Counter
 import dev.veryniche.stitchcounter.data.models.Project
 import dev.veryniche.stitchcounter.getCounterProgress
@@ -52,7 +54,7 @@ fun counterTileLayout(
     val extraSmallButtons = (
         showProgress &&
                 (deviceParameters.screenWidthDp < 195 &&
-            deviceParameters.fontScale >= 1.0f) || (deviceParameters.screenWidthDp < 195)
+            deviceParameters.fontScale > 1.0f) || (deviceParameters.screenWidthDp < 195)
         )
 
     return if (showProgress) {
@@ -122,8 +124,8 @@ fun counterWithProgress(
     .setEdgeContent(
         CircularProgressIndicator.Builder()
             .setProgress(counter.getCounterProgress() ?: 0f)
-            .setStartAngle(40f)
-            .setEndAngle(320f)
+            .setStartAngle(0f)
+            .setEndAngle(360f)
             .setStrokeWidth(3f)
             .setCircularProgressIndicatorColors(
                 ProgressIndicatorColors(
@@ -394,6 +396,27 @@ fun counterTileLayoutWithProgressPreview4Digits(context: Context): TilePreviewDa
                     name = "pattern",
                     currentCount = 8888,
                     maxCount = 1200,
+                )
+            ),
+            request
+        )
+    }
+}
+
+@Preview(name = "Screenshot", device = WearDevices.SMALL_ROUND, fontScale = 1.0f)
+fun counterTileLayoutWithProgressPreviewForScreenshot(context: Context): TilePreviewData {
+    return TilePreviewData({ previewResources() }) { request ->
+        CounterTileRenderer(context).renderTimeline(
+            CounterTileState(
+                project = Project(
+                    id = 1,
+                    name = "Jumper",
+                ),
+                counter = Counter(
+                    id = 3,
+                    name = "Sleeve",
+                    currentCount = 65,
+                    maxCount = 100,
                 )
             ),
             request
