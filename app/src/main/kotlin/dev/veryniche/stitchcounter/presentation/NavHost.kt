@@ -2,11 +2,10 @@ package dev.veryniche.stitchcounter.presentation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.wear.compose.foundation.lazy.ScalingLazyListState
 import androidx.wear.compose.navigation.SwipeDismissableNavHost
@@ -15,6 +14,7 @@ import com.google.android.horologist.compose.ambient.AmbientStateUpdate
 import dev.veryniche.stitchcounter.MainViewModel
 import dev.veryniche.stitchcounter.Screens
 import dev.veryniche.stitchcounter.data.models.ScreenOnState
+import dev.veryniche.stitchcounter.presentation.whatsnew.WhatsNewScreen
 import dev.veryniche.stitchcounter.util.Analytics
 import dev.veryniche.stitchcounter.util.trackEvent
 import kotlinx.coroutines.launch
@@ -40,6 +40,22 @@ fun NavHost(
         composable("about") {
             viewModel.updateCurrentScreen(Screens.About)
             AboutScreen(listState = listState)
+        }
+        composable("whats_new") {
+            viewModel.updateCurrentScreen(Screens.WhatsNew)
+
+            val whatsNewToShow by viewModel.whatsNewToShow.collectAsStateWithLifecycle(
+                listOf(),
+                lifecycleOwner = androidx.compose.ui.platform.LocalLifecycleOwner.current
+            )
+            WhatsNewScreen(
+                listState = listState,
+                data = whatsNewToShow,
+                onClose = {
+                    viewModel.updateWhatsNewLastSeen(whatsNewToShow.maxOf { it.id })
+                    navController.navigate("project_list")
+                }
+            )
         }
         composable("select_project_for_tile") {
             viewModel.updateCurrentScreen(Screens.SelectProjectForTile)

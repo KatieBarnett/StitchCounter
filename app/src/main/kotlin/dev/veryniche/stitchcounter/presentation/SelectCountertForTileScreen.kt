@@ -115,6 +115,13 @@ fun SelectCounterForTileList(
         items(counterList) { counter ->
             CounterChip(counter, onCounterClick)
         }
+        item {
+            Text(
+                text = stringResource(R.string.select_counter_for_tile_footer),
+                color = MaterialTheme.colors.onSecondary,
+                textAlign = TextAlign.Center
+            )
+        }
     }
 }
 

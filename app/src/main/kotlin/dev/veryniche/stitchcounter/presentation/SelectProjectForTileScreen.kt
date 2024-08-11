@@ -5,7 +5,6 @@ import androidx.compose.foundation.focusable
 import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -15,17 +14,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.rotary.onRotaryScrollEvent
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.wear.compose.foundation.ExperimentalWearFoundationApi
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.ScalingLazyListState
 import androidx.wear.compose.foundation.lazy.items
 import androidx.wear.compose.foundation.rememberActiveFocusRequester
-import androidx.wear.compose.material.ListHeader
 import androidx.wear.compose.material.MaterialTheme
+import androidx.wear.compose.material.Text
 import dev.veryniche.stitchcounter.MainViewModel
+import dev.veryniche.stitchcounter.R
 import dev.veryniche.stitchcounter.R.string
 import dev.veryniche.stitchcounter.data.models.Project
-import dev.veryniche.stitchcounter.presentation.theme.Dimen
 import dev.veryniche.stitchcounter.util.Analytics
 import dev.veryniche.stitchcounter.util.TrackedScreen
 import dev.veryniche.stitchcounter.util.trackScreenView
@@ -73,6 +73,13 @@ fun SelectProjectForTileList(
     ) {
         items(projectList) { project ->
             ProjectChip(project, onProjectClick)
+        }
+        item {
+            Text(
+                text = stringResource(R.string.select_project_for_tile_footer),
+                color = MaterialTheme.colors.onSecondary,
+                textAlign = TextAlign.Center
+            )
         }
     }
 }

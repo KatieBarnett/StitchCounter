@@ -31,8 +31,9 @@ import dagger.hilt.android.AndroidEntryPoint
 import dev.veryniche.stitchcounter.MainViewModel
 import dev.veryniche.stitchcounter.Screens
 import dev.veryniche.stitchcounter.data.models.ScreenOnState
+import dev.veryniche.stitchcounter.presentation.MainActivity.Companion.EXTRA_JOURNEY
+import dev.veryniche.stitchcounter.presentation.MainActivity.Companion.EXTRA_JOURNEY_SELECT_COUNTER
 import dev.veryniche.stitchcounter.presentation.theme.StitchCounterTheme
-import dev.veryniche.stitchcounter.presentation.whatsnew.WhatsNewDialog
 import dev.veryniche.stitchcounter.tiles.counter.CounterTileService
 
 @AndroidEntryPoint
@@ -50,14 +51,9 @@ class MainActivity : ComponentActivity() {
 
         super.onCreate(savedInstanceState)
 
-        val startDestination = when (intent.extras?.getString(EXTRA_JOURNEY)) {
-            EXTRA_JOURNEY_SELECT_COUNTER -> "select_project_for_tile"
-            else -> "project_list"
-        }
-
         setContent {
             StitchCounterWearApp(
-                startDestination = startDestination,
+                journey = intent.extras?.getString(EXTRA_JOURNEY),
                 onTileStateUpdate = {
                     TileService.getUpdater(this)
                         .requestUpdate(CounterTileService::class.java)
@@ -70,7 +66,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun StitchCounterWearApp(
-    startDestination: String,
+    journey: String?,
     onTileStateUpdate: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -96,6 +92,15 @@ fun StitchCounterWearApp(
             listOf(),
             lifecycleOwner = androidx.compose.ui.platform.LocalLifecycleOwner.current
         )
+
+        val startDestination = when (journey) {
+            EXTRA_JOURNEY_SELECT_COUNTER -> "select_project_for_tile"
+            else -> if (whatsNewToShow.isNotEmpty()) {
+                "whats_new"
+            } else {
+                "project_list"
+            }
+        }
 
         AmbientAware(isAlwaysOnScreen = keepCurrentScreenOn) { ambientAwareUpdate ->
             Scaffold(
@@ -136,7 +141,11 @@ fun StitchCounterWearApp(
             ) {
                 NavHost(
                     navController = navController,
-                    startDestination = startDestination,
+                    startDestination = if (whatsNewToShow.isNotEmpty()) {
+                        startDestination
+                    } else {
+                        startDestination
+                    },
                     viewModel = viewModel,
                     listState = listState,
                     screenOnState = screenOnState,
@@ -147,10 +156,6 @@ fun StitchCounterWearApp(
                     onTileStateUpdate = onTileStateUpdate,
                     modifier = Modifier.fillMaxSize()
                 )
-
-                if (whatsNewToShow.isNotEmpty()) {
-                    WhatsNewDialog(whatsNewToShow, {}, Modifier)
-                }
             }
         }
     }

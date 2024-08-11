@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -138,6 +139,12 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             userPreferencesRepository.updateTileProjectId(projectId)
             userPreferencesRepository.updateTileCounterId(counterId)
+        }
+    }
+
+    fun updateWhatsNewLastSeen(whatsNewLastSeen: Int) {
+        viewModelScope.launch {
+            userPreferencesRepository.updateWhatsNewLastSeen(whatsNewLastSeen)
         }
     }
 }

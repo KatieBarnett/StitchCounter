@@ -23,15 +23,15 @@ val whatsNewData = listOf(
             )
         )
     ),
-    WhatsNewData(
-        id = 2,
-        text = listOf(
-            AnnotatedString(
-                "Second"
-            ),
-            AnnotatedString(
-                "Secondb"
-            )
-        )
-    )
+//    WhatsNewData(
+//        id = 2,
+//        text = listOf(
+//            AnnotatedString(
+//                "Second"
+//            ),
+//            AnnotatedString(
+//                "Secondb"
+//            )
+//        )
+//    )
 )
