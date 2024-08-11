@@ -49,9 +49,11 @@ fun counterTileLayout(
 ): LayoutElementBuilders.LayoutElement {
     val showProgress = counter.maxCount > 0
 
-    val extraSmallButtons = (showProgress &&
-        deviceParameters.screenWidthDp < 195 &&
-        deviceParameters.fontScale >= 1.0f) //|| (showProgress && deviceParameters.fontScale >= 1.3f)
+    val extraSmallButtons = (
+        showProgress &&
+                (deviceParameters.screenWidthDp < 195 &&
+            deviceParameters.fontScale >= 1.0f) || (deviceParameters.screenWidthDp < 195)
+        )
 
     return if (showProgress) {
         counterWithProgress(
@@ -116,7 +118,7 @@ fun counterWithProgress(
     extraSmallButtons: Boolean,
 ) = EdgeContentLayout.Builder(deviceParameters)
     .setResponsiveContentInsetEnabled(true)
-    .setEdgeContentThickness(5f)
+    .setEdgeContentThickness(3f)
     .setEdgeContent(
         CircularProgressIndicator.Builder()
             .setProgress(counter.getCounterProgress() ?: 0f)
@@ -203,85 +205,96 @@ fun counterMainContent(
     extraSmallButtons: Boolean,
     clickablePositive: ModifiersBuilders.Clickable,
     clickableNegative: ModifiersBuilders.Clickable,
-) = LayoutElementBuilders.Box.Builder()
-    .setHorizontalAlignment(LayoutElementBuilders.HORIZONTAL_ALIGN_CENTER)
-    .setVerticalAlignment(LayoutElementBuilders.VERTICAL_ALIGN_CENTER)
-    .addContent(
-        LayoutElementBuilders.Row.Builder()
-            .setWidth(wrap())
-            .setHeight(wrap())
-            .setVerticalAlignment(LayoutElementBuilders.VERTICAL_ALIGN_CENTER)
-            .addContent(
-                Button.Builder(context, clickableNegative)
-                    .setContentDescription("Subtract 1")
-                    .setIconContent(ID_IC_REMOVE)
-                    .setSize(
-                        if (extraSmallButtons) {
-                            BUTTON_EXTRA_SMALL_SIZE
-                        } else {
-                            BUTTON_SMALL_SIZE
-                        }
-                    )
-                    .setButtonColors(ButtonDefaults.SECONDARY_COLORS)
-                    .build()
-            )
-            .addContent(
-                LayoutElementBuilders.Spacer.Builder()
-                    .setWidth(dp(8f))
-                    .build()
-            )
-            .addContent(
-                if (counter.maxCount == 0) {
-                    Text.Builder(context, counter.currentCount.toString())
-                        .setTypography(Typography.TYPOGRAPHY_DISPLAY3)
-                        .setColor(argb(stitchCounterColorPalette.onPrimary.toArgb()))
-                        .setOverflow(LayoutElementBuilders.TEXT_OVERFLOW_MARQUEE)
-                        .build()
-                } else {
-                    LayoutElementBuilders.Column.Builder()
-                        .addContent(
+): LayoutElementBuilders.LayoutElement {
+    var currentCountString = counter.currentCount.toString()
+
+    currentCountString = when (currentCountString.length) {
+        1 -> "    ${currentCountString}  "
+        2 -> "  ${currentCountString}  "
+        3 -> "  $currentCountString"
+        else -> currentCountString
+    }
+
+    return LayoutElementBuilders.Box.Builder()
+        .setHorizontalAlignment(LayoutElementBuilders.HORIZONTAL_ALIGN_CENTER)
+        .setVerticalAlignment(LayoutElementBuilders.VERTICAL_ALIGN_CENTER)
+        .addContent(
+            LayoutElementBuilders.Row.Builder()
+                .setWidth(wrap())
+                .setHeight(wrap())
+                .setVerticalAlignment(LayoutElementBuilders.VERTICAL_ALIGN_CENTER)
+                .addContent(
+                    Button.Builder(context, clickableNegative)
+                        .setContentDescription("Subtract 1")
+                        .setIconContent(ID_IC_REMOVE)
+                        .setSize(
                             if (extraSmallButtons) {
-                                Text.Builder(context, counter.currentCount.toString())
-                                    .setTypography(Typography.TYPOGRAPHY_TITLE1)
-                                    .setColor(argb(stitchCounterColorPalette.onPrimary.toArgb()))
-                                    .setOverflow(LayoutElementBuilders.TEXT_OVERFLOW_MARQUEE)
-                                    .build()
+                                BUTTON_EXTRA_SMALL_SIZE
                             } else {
-                                Text.Builder(context, counter.currentCount.toString())
-                                    .setTypography(Typography.TYPOGRAPHY_DISPLAY3)
-                                    .setColor(argb(stitchCounterColorPalette.onPrimary.toArgb()))
+                                BUTTON_SMALL_SIZE
+                            }
+                        )
+                        .setButtonColors(ButtonDefaults.SECONDARY_COLORS)
+                        .build()
+                )
+                .addContent(
+                    LayoutElementBuilders.Spacer.Builder()
+                        .setWidth(dp(8f))
+                        .build()
+                )
+                .addContent(
+                    if (counter.maxCount == 0) {
+                        Text.Builder(context, currentCountString)
+                            .setTypography(Typography.TYPOGRAPHY_DISPLAY3)
+                            .setColor(argb(stitchCounterColorPalette.onPrimary.toArgb()))
+                            .setOverflow(LayoutElementBuilders.TEXT_OVERFLOW_MARQUEE)
+                            .build()
+                    } else {
+                        LayoutElementBuilders.Column.Builder()
+                            .addContent(
+                                if (extraSmallButtons) {
+                                    Text.Builder(context, currentCountString)
+                                        .setTypography(Typography.TYPOGRAPHY_TITLE1)
+                                        .setColor(argb(stitchCounterColorPalette.onPrimary.toArgb()))
+                                        .setOverflow(LayoutElementBuilders.TEXT_OVERFLOW_MARQUEE)
+                                        .build()
+                                } else {
+                                    Text.Builder(context, currentCountString)
+                                        .setTypography(Typography.TYPOGRAPHY_DISPLAY3)
+                                        .setColor(argb(stitchCounterColorPalette.onPrimary.toArgb()))
+                                        .setOverflow(LayoutElementBuilders.TEXT_OVERFLOW_MARQUEE)
+                                        .build()
+                                }
+                            ).addContent(
+                                Text.Builder(context, "/" + counter.maxCount.toString())
+                                    .setTypography(Typography.TYPOGRAPHY_CAPTION2)
+                                    .setColor(argb(stitchCounterColorPalette.secondaryVariant.toArgb()))
                                     .setOverflow(LayoutElementBuilders.TEXT_OVERFLOW_MARQUEE)
                                     .build()
+                            ).build()
+                    }
+                )
+                .addContent(
+                    LayoutElementBuilders.Spacer.Builder()
+                        .setWidth(dp(8f))
+                        .build()
+                )
+                .addContent(
+                    Button.Builder(context, clickablePositive)
+                        .setContentDescription("Subtract 1")
+                        .setIconContent(ID_IC_ADD)
+                        .setSize(
+                            if (extraSmallButtons) {
+                                BUTTON_EXTRA_SMALL_SIZE
+                            } else {
+                                BUTTON_SMALL_SIZE
                             }
-                        ).addContent(
-                            Text.Builder(context, "/" + counter.maxCount.toString())
-                                .setTypography(Typography.TYPOGRAPHY_CAPTION2)
-                                .setColor(argb(stitchCounterColorPalette.secondaryVariant.toArgb()))
-                                .setOverflow(LayoutElementBuilders.TEXT_OVERFLOW_MARQUEE)
-                                .build()
-                        ).build()
-                }
-            )
-            .addContent(
-                LayoutElementBuilders.Spacer.Builder()
-                    .setWidth(dp(8f))
-                    .build()
-            )
-            .addContent(
-                Button.Builder(context, clickablePositive)
-                    .setContentDescription("Subtract 1")
-                    .setIconContent(ID_IC_ADD)
-                    .setSize(
-                        if (extraSmallButtons) {
-                            BUTTON_EXTRA_SMALL_SIZE
-                        } else {
-                            BUTTON_SMALL_SIZE
-                        }
-                    )
-                    .build()
-            )
-            .build()
-    ).build()
+                        )
+                        .build()
+                )
+                .build()
+        ).build()
+}
 
 @PreviewTile
 fun counterTileLayoutWithoutProgressPreview(context: Context): TilePreviewData {
@@ -305,7 +318,70 @@ fun counterTileLayoutWithoutProgressPreview(context: Context): TilePreviewData {
 }
 
 @PreviewTile
-fun counterTileLayoutWithProgressPreview(context: Context): TilePreviewData {
+fun counterTileLayoutWithProgressPreview1Digit(context: Context): TilePreviewData {
+    return TilePreviewData({ previewResources() }) { request ->
+        CounterTileRenderer(context).renderTimeline(
+            CounterTileState(
+                project = Project(
+                    id = 1,
+                    name = "project name",
+                ),
+                counter = Counter(
+                    id = 3,
+                    name = "pattern",
+                    currentCount = 8,
+                    maxCount = 8,
+                )
+            ),
+            request
+        )
+    }
+}
+
+@PreviewTile
+fun counterTileLayoutWithProgressPreview2Digits(context: Context): TilePreviewData {
+    return TilePreviewData({ previewResources() }) { request ->
+        CounterTileRenderer(context).renderTimeline(
+            CounterTileState(
+                project = Project(
+                    id = 1,
+                    name = "project name",
+                ),
+                counter = Counter(
+                    id = 3,
+                    name = "pattern",
+                    currentCount = 88,
+                    maxCount = 88,
+                )
+            ),
+            request
+        )
+    }
+}
+
+@PreviewTile
+fun counterTileLayoutWithProgressPreview3Digits(context: Context): TilePreviewData {
+    return TilePreviewData({ previewResources() }) { request ->
+        CounterTileRenderer(context).renderTimeline(
+            CounterTileState(
+                project = Project(
+                    id = 1,
+                    name = "project name",
+                ),
+                counter = Counter(
+                    id = 3,
+                    name = "pattern",
+                    currentCount = 888,
+                    maxCount = 888,
+                )
+            ),
+            request
+        )
+    }
+}
+
+@PreviewTile
+fun counterTileLayoutWithProgressPreview4Digits(context: Context): TilePreviewData {
     return TilePreviewData({ previewResources() }) { request ->
         CounterTileRenderer(context).renderTimeline(
             CounterTileState(
