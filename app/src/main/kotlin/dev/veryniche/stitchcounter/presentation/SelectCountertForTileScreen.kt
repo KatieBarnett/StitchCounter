@@ -4,10 +4,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.gestures.scrollBy
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material.icons.Icons
@@ -36,6 +38,7 @@ import androidx.wear.compose.foundation.rememberActiveFocusRequester
 import androidx.wear.compose.material.Chip
 import androidx.wear.compose.material.ChipDefaults
 import androidx.wear.compose.material.Icon
+import androidx.wear.compose.material.ListHeader
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
 import androidx.wear.compose.material.dialog.Confirmation
@@ -97,6 +100,7 @@ fun SelectCounterForTileList(
     val coroutineScope = rememberCoroutineScope()
 
     ScalingLazyColumn(
+        verticalArrangement = Arrangement.spacedBy(Dimen.spacingDouble),
         modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colors.background)
@@ -112,6 +116,14 @@ fun SelectCounterForTileList(
             .focusable(),
         state = listState,
     ) {
+        item {
+            ListHeader(Modifier) {
+                ListTitle(
+                    stringResource(R.string.select_counter_for_tile_header),
+                    modifier = Modifier.padding(top = Dimen.spacingQuad)
+                )
+            }
+        }
         items(counterList) { counter ->
             CounterChip(counter, onCounterClick)
         }
@@ -119,7 +131,8 @@ fun SelectCounterForTileList(
             Text(
                 text = stringResource(R.string.select_counter_for_tile_footer),
                 color = MaterialTheme.colors.onSecondary,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(Dimen.spacing)
             )
         }
     }

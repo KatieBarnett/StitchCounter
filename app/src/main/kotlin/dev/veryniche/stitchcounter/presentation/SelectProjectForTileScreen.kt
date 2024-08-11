@@ -4,7 +4,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.gestures.scrollBy
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -20,12 +22,14 @@ import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.ScalingLazyListState
 import androidx.wear.compose.foundation.lazy.items
 import androidx.wear.compose.foundation.rememberActiveFocusRequester
+import androidx.wear.compose.material.ListHeader
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
 import dev.veryniche.stitchcounter.MainViewModel
 import dev.veryniche.stitchcounter.R
 import dev.veryniche.stitchcounter.R.string
 import dev.veryniche.stitchcounter.data.models.Project
+import dev.veryniche.stitchcounter.presentation.theme.Dimen
 import dev.veryniche.stitchcounter.util.Analytics
 import dev.veryniche.stitchcounter.util.TrackedScreen
 import dev.veryniche.stitchcounter.util.trackScreenView
@@ -56,6 +60,7 @@ fun SelectProjectForTileList(
     val focusRequester = rememberActiveFocusRequester()
     val coroutineScope = rememberCoroutineScope()
     ScalingLazyColumn(
+        verticalArrangement = Arrangement.spacedBy(Dimen.spacingDouble),
         modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colors.background)
@@ -71,6 +76,14 @@ fun SelectProjectForTileList(
             .focusable(),
         state = listState,
     ) {
+        item {
+            ListHeader(Modifier) {
+                ListTitle(
+                    stringResource(R.string.select_project_for_tile_header),
+                    modifier = Modifier.padding(top = Dimen.spacingQuad)
+                )
+            }
+        }
         items(projectList) { project ->
             ProjectChip(project, onProjectClick)
         }
@@ -78,7 +91,8 @@ fun SelectProjectForTileList(
             Text(
                 text = stringResource(R.string.select_project_for_tile_footer),
                 color = MaterialTheme.colors.onSecondary,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(Dimen.spacing)
             )
         }
     }

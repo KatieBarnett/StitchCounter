@@ -8,10 +8,9 @@
 
     <string name="context_project">Project</string>
     <string name="context_counter">Counter</string>
-    <string name="context_select_project_for_tile">Select Project</string>
-    <string name="context_select_counter_for_tile">Select Counter</string>
 
-
+    <string name="select_project_for_tile_header">Select Project</string>
+    <string name="select_counter_for_tile_header">Select Counter</string>
     <string name="select_project_for_tile_footer">To add or edit projects, open the full app.</string>
     <string name="select_counter_for_tile_footer">To add or edit counters, open the full app.</string>
 

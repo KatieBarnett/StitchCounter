@@ -10,8 +10,8 @@ enum class Screens(val pageContextDisplay: Int?) {
     Counter(R.string.context_counter),
     EditProject(R.string.context_project),
     EditCounter(R.string.context_counter),
-    SelectProjectForTile(R.string.context_select_project_for_tile),
-    SelectCounterForTile(R.string.context_select_counter_for_tile)
+    SelectProjectForTile(R.string.app_name),
+    SelectCounterForTile(R.string.app_name)
 }
 
 fun Screens.showScreenAlwaysOn(screenOnState: ScreenOnState): Boolean {
