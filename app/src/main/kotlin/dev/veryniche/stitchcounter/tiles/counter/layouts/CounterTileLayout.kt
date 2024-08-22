@@ -18,6 +18,7 @@ import androidx.wear.protolayout.LayoutElementBuilders
 import androidx.wear.protolayout.ModifiersBuilders
 import androidx.wear.protolayout.expression.ProtoLayoutExperimental
 import androidx.wear.protolayout.material.Button
+import androidx.wear.protolayout.material.ButtonColors
 import androidx.wear.protolayout.material.ButtonDefaults
 import androidx.wear.protolayout.material.CircularProgressIndicator
 import androidx.wear.protolayout.material.ProgressIndicatorColors
@@ -129,7 +130,7 @@ fun counterWithProgress(
             .setStrokeWidth(3f)
             .setCircularProgressIndicatorColors(
                 ProgressIndicatorColors(
-                    argb(StitchCounterTileTheme.colors.primary),
+                    argb(stitchCounterColorPalette.primaryVariant.toArgb()),
                     argb(stitchCounterColorPalette.secondaryVariant.toArgb())
                 )
             )
@@ -292,6 +293,7 @@ fun counterMainContent(
                                 BUTTON_SMALL_SIZE
                             }
                         )
+                        .setButtonColors(ButtonColors(stitchCounterColorPalette.primary.toArgb(), stitchCounterColorPalette.onPrimary.toArgb()))
                         .build()
                 )
                 .build()
@@ -332,7 +334,7 @@ fun counterTileLayoutWithProgressPreview1Digit(context: Context): TilePreviewDat
                     id = 3,
                     name = "pattern",
                     currentCount = 8,
-                    maxCount = 8,
+                    maxCount = 9,
                 )
             ),
             request
@@ -353,7 +355,7 @@ fun counterTileLayoutWithProgressPreview2Digits(context: Context): TilePreviewDa
                     id = 3,
                     name = "pattern",
                     currentCount = 88,
-                    maxCount = 88,
+                    maxCount = 99,
                 )
             ),
             request
@@ -374,7 +376,7 @@ fun counterTileLayoutWithProgressPreview3Digits(context: Context): TilePreviewDa
                     id = 3,
                     name = "pattern",
                     currentCount = 888,
-                    maxCount = 888,
+                    maxCount = 999,
                 )
             ),
             request
@@ -395,7 +397,7 @@ fun counterTileLayoutWithProgressPreview4Digits(context: Context): TilePreviewDa
                     id = 3,
                     name = "pattern",
                     currentCount = 8888,
-                    maxCount = 1200,
+                    maxCount = 9999,
                 )
             ),
             request
