@@ -57,7 +57,7 @@ dependencies {
 
     implementation(libs.wear)
     implementation(libs.lifecycle.runtime.compose.android)
-    implementation(libs.tiles)
+    implementation(libs.wear.tiles)
     coreLibraryDesugaring(libs.desugar.jdk.libs)
 
     implementation(project(":data"))

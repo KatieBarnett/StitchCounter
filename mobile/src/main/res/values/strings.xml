@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">Stitch Counter</string>
+
+    <string name="label_project_name">Project Name</string>
+    <string name="validation_message_project_name">Please enter a name for the project</string>
+    <string name="validation_message_counter_name">Please enter a name for the counter</string>
+
+    <string name="label_counter_name">Counter Name</string>
+    <string name="label_counter_max_count">Maximum Counter Value</string>
+
+
+    <string name="save_counter_short">Save</string>
+    <string name="delete_counter_short">Delete</string>
+    <string name="reset_counter_short">Reset</string>
+
+    <string name="validation_error">Error</string>
+
+    <string name="confirm_project_save">Do you want to save your project changes?</string>
+
+    <string name="confirm_project_save_confirm">Yes</string>
+    <string name="confirm_project_save_dismiss">No</string>
+
+
+    <string name="project_list_empty">No projects</string>
+    <string name="counter_list_empty">No counters</string>
+
+</resources>
