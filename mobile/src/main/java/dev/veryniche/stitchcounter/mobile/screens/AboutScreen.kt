@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -27,17 +26,18 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.core.content.ContextCompat.startActivity
-import dev.veryniche.stitchcounter.core.AnalyticsConstants
+import dev.veryniche.stitchcounter.core.Analytics.Action
+import dev.veryniche.stitchcounter.core.Analytics.Screen
 import dev.veryniche.stitchcounter.core.R
+import dev.veryniche.stitchcounter.core.TrackedScreen
 import dev.veryniche.stitchcounter.core.theme.Dimen
+import dev.veryniche.stitchcounter.core.trackEvent
+import dev.veryniche.stitchcounter.core.trackScreenView
 import dev.veryniche.stitchcounter.mobile.BuildConfig
-import dev.veryniche.stitchcounter.mobile.TrackedScreen
 import dev.veryniche.stitchcounter.mobile.components.CollapsedTopAppBar
 import dev.veryniche.stitchcounter.mobile.previews.PreviewScreen
 import dev.veryniche.stitchcounter.mobile.purchase.PurchaseAction
 import dev.veryniche.stitchcounter.mobile.purchase.PurchaseStatus
-import dev.veryniche.stitchcounter.mobile.trackEvent
-import dev.veryniche.stitchcounter.mobile.trackScreenView
 import dev.veryniche.stitchcounter.mobile.ui.theme.StitchCounterTheme
 
 @Composable
@@ -71,7 +71,7 @@ fun AboutScreen(
     val scrollableState = rememberScrollState()
     val context = LocalContext.current
     TrackedScreen {
-        trackScreenView(name = AnalyticsConstants.Screen.About)
+        trackScreenView(name = Screen.About, isMobile = true)
     }
     Scaffold(
         topBar = {
@@ -127,7 +127,7 @@ fun AboutScreen(
                 fontWeight = FontWeight.Bold,
                 text = email,
                 modifier = Modifier.clickable {
-                    trackEvent(AnalyticsConstants.Action.AboutEmail)
+                    trackEvent(Action.AboutEmail, isMobile = true)
                     val intent = Intent(Intent.ACTION_SENDTO)
                     intent.setData(Uri.parse("mailto:")) // only email apps should handle this
                     intent.putExtra(Intent.EXTRA_EMAIL, email)
@@ -143,7 +143,7 @@ fun AboutScreen(
                 Button(content = {
                     Text(text = stringResource(id = R.string.about_get_remove_ads_version))
                 }, onClick = {
-                    trackEvent(AnalyticsConstants.Action.AboutRemoveAdsVersion)
+                    trackEvent(Action.AboutRemoveAdsVersion, isMobile = true)
                     onPurchaseClick.invoke(PurchaseAction.AD_REMOVAL)
                 })
             }
@@ -158,7 +158,7 @@ fun AboutScreen(
                 Button(content = {
                     Text(text = stringResource(id = R.string.about_get_sync_version))
                 }, onClick = {
-                    trackEvent(AnalyticsConstants.Action.AboutSyncVersion)
+                    trackEvent(Action.AboutSyncVersion, isMobile = true)
                     onPurchaseClick.invoke(PurchaseAction.SYNC)
                 })
             }
@@ -173,7 +173,7 @@ fun AboutScreen(
                 Button(content = {
                     Text(text = stringResource(id = R.string.about_get_bundle_version))
                 }, onClick = {
-                    trackEvent(AnalyticsConstants.Action.AboutBundleVersion)
+                    trackEvent(Action.AboutBundleVersion, isMobile = true)
                     onPurchaseClick.invoke(PurchaseAction.BUNDLE)
                 })
             }

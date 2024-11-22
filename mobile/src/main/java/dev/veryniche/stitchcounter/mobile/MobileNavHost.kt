@@ -13,8 +13,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import dev.veryniche.stitchcounter.core.AnalyticsConstants
+import dev.veryniche.stitchcounter.core.Analytics.Action
 import dev.veryniche.stitchcounter.core.R
+import dev.veryniche.stitchcounter.core.trackEvent
 import dev.veryniche.stitchcounter.data.models.Project
 import dev.veryniche.stitchcounter.mobile.purchase.PurchaseAction
 import dev.veryniche.stitchcounter.mobile.purchase.PurchaseStatus
@@ -77,7 +78,7 @@ fun MobileNavHost(
                 onDelete = {
                     composableScope.launch {
                         projectState.id?.let {
-                            trackEvent(AnalyticsConstants.Action.DeleteProject)
+                            trackEvent(Action.DeleteProject, isMobile = true)
                             viewModel.deleteProject(it)
                         }
                         navController.navigateUp()
@@ -88,6 +89,15 @@ fun MobileNavHost(
                 },
                 onAboutClick = {
                     navController.navigate("about")
+                },
+                onOpenCounter = {
+
+                },
+                onCounterUpdate = {
+
+                },
+                onCounterDelete = {
+
                 }
             )
         }
@@ -106,7 +116,7 @@ fun MobileNavHost(
                         },
                         onDelete = {
                             composableScope.launch {
-                                trackEvent(AnalyticsConstants.Action.DeleteProject)
+                                trackEvent(Action.DeleteProject, isMobile = true)
                                 viewModel.deleteProject(projectId)
                                 navController.navigateUp()
                             }
@@ -116,7 +126,16 @@ fun MobileNavHost(
                         },
                         onAboutClick = {
                             navController.navigate("about")
-                        }
+                        },
+                        onOpenCounter = {
+
+                        },
+                        onCounterDelete = {
+
+                        },
+                        onCounterUpdate = {
+
+                        },
                     )
                 }
             }

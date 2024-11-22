@@ -1,4 +1,4 @@
-package dev.veryniche.stitchcounter.wear.util
+package dev.veryniche.stitchcounter.core
 
 import android.util.Log
 import androidx.compose.runtime.Composable
@@ -14,29 +14,43 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.analytics.ktx.logEvent
 import com.google.firebase.ktx.Firebase
+import dev.veryniche.stitchcounter.core.Analytics.Action
+import timber.log.Timber
 
 private const val ANALYTICS_LOG_TAG = "Analytics"
 
 object Analytics {
     object Screen {
-        const val ProjectList = "Project List"
-        const val Project = "Project"
-        const val EditProject = "Edit Project"
+        const val About = "About"
         const val Counter = "Counter"
         const val EditCounter = "Edit Counter"
         const val EditCounterMax = "Edit Counter Max"
-        const val About = "About"
-        const val WhatsNew = "Whats New"
-        const val SelectProjectForTile = "Select Project For Tile"
+        const val EditProject = "Edit Project"
+        const val Project = "Project"
+        const val ProjectList = "Project List"
         const val SelectCounterForTile = "Select Counter For Tile"
+        const val SelectProjectForTile = "Select Project For Tile"
+        const val WhatsNew = "Whats New"
     }
 
     object Action {
+        const val AboutBundleVersion = "About bundle version"
+        const val AboutEmail = "About email"
+        const val AboutRemoveAdsVersion = "About remove ads version"
+        const val AboutSyncVersion = "About sync version"
+        const val AdClick = "AdClick"
+        const val AddCounter = "Add Counter"
         const val AddProject = "Add Project"
+        const val DeleteCounter = "Delete Counter"
+        const val DeleteCounterCounterScreen = "Delete Counter Counter Screen"
+        const val DeleteCounterProjectScreen = "Delete Counter Project Screen"
+        const val DeleteProject = "Delete Project"
+        const val DeleteProjectConfirm = "Delete Project Confirm"
+        const val EditProject = "Project Confirm"
+        const val EditProjectConfim = "Edit Project Confirm Save"
+        const val EditProjectSave = "Edit Project Save"
         const val ResetCounter = "Reset Counter"
         const val ResetProject = "Reset Project"
-        const val DeleteCounter = "Delete Counter"
-        const val DeleteProject = "Delete Project"
     }
 }
 
@@ -70,23 +84,50 @@ fun TrackedScreen(
     }
 }
 
-fun trackScreenView(name: String) {
-    Log.d(ANALYTICS_LOG_TAG, "Track screen: $name")
+fun trackScreenView(name: String, isMobile: Boolean) {
+    val name = if (isMobile) {
+        "Mobile $name"
+    } else {
+        "Wear $name"
+    }
+    Timber.d("Track screen: $name")
     Firebase.analytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW) {
         param(FirebaseAnalytics.Param.SCREEN_NAME, name.replace(" ", "_"))
     }
 }
 
-fun trackEvent(name: String) {
-    Log.d(ANALYTICS_LOG_TAG, "Track action: $name")
+fun trackEvent(name: String, isMobile: Boolean) {
+    val name = if (isMobile) {
+        "Mobile $name"
+    } else {
+        "Wear $name"
+    }
+    Timber.d("Track action: $name")
     Firebase.analytics.logEvent(name.replace(" ", "_")) {
     }
 }
 
-fun trackProjectScreenView(counterCount: Int) {
-    Log.d(ANALYTICS_LOG_TAG, "Track screen: ${Analytics.Screen.Project}")
+fun trackAdClick(screen: String, isMobile: Boolean) {
+    val screen = if (isMobile) {
+        "Mobile $screen"
+    } else {
+        "Wear $screen"
+    }
+    Timber.d("Track ad click: ${Action.AdClick}")
+    Firebase.analytics.logEvent(FirebaseAnalytics.Event.AD_IMPRESSION) {
+        param(FirebaseAnalytics.Param.SCREEN_NAME, screen.replace(" ", "_"))
+    }
+}
+
+fun trackProjectScreenView(counterCount: Int, isMobile: Boolean) {
+    val screen = if (isMobile) {
+        "Mobile ${Analytics.Screen.Project}"
+    } else {
+        "Wear ${Analytics.Screen.Project}"
+    }
+    Timber.d("Track screen: ${Analytics.Screen.Project}")
     Firebase.analytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW) {
-        param(FirebaseAnalytics.Param.SCREEN_NAME, Analytics.Screen.Project)
+        param(FirebaseAnalytics.Param.SCREEN_NAME, screen.replace(" ", "_"))
         param(FirebaseAnalytics.Param.ITEMS, counterCount.toDouble())
     }
 }

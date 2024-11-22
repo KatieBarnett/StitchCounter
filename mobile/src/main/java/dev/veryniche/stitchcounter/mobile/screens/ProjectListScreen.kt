@@ -29,20 +29,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import dev.veryniche.stitchcounter.core.AnalyticsConstants
+import dev.veryniche.stitchcounter.core.Analytics.Screen
 import dev.veryniche.stitchcounter.core.R
+import dev.veryniche.stitchcounter.core.TrackedScreen
 import dev.veryniche.stitchcounter.core.theme.Dimen
+import dev.veryniche.stitchcounter.core.trackScreenView
 import dev.veryniche.stitchcounter.data.models.Counter
 import dev.veryniche.stitchcounter.data.models.Project
 import dev.veryniche.stitchcounter.mobile.MainViewModel
-import dev.veryniche.stitchcounter.mobile.TrackedScreen
 import dev.veryniche.stitchcounter.mobile.ads.BannerAd
 import dev.veryniche.stitchcounter.mobile.ads.BannerAdLocation
 import dev.veryniche.stitchcounter.mobile.components.AboutActionIcon
 import dev.veryniche.stitchcounter.mobile.components.ExpandingTopAppBar
 import dev.veryniche.stitchcounter.mobile.components.ProjectItem
 import dev.veryniche.stitchcounter.mobile.previews.PreviewComponent
-import dev.veryniche.stitchcounter.mobile.trackScreenView
 import dev.veryniche.stitchcounter.mobile.ui.theme.StitchCounterTheme
 
 @Composable
@@ -69,7 +69,7 @@ fun ProjectList(
     modifier: Modifier = Modifier
 ) {
     TrackedScreen {
-        trackScreenView(name = AnalyticsConstants.Screen.ProjectList)
+        trackScreenView(name = Screen.ProjectList, isMobile = true)
     }
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     Scaffold(

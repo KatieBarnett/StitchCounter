@@ -5,6 +5,4 @@ data class Counter(
     val name: String,
     val currentCount: Int = 0,
     val maxCount: Int = 0
-) {
-
-}
+)

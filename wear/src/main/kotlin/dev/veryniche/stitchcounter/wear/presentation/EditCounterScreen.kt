@@ -43,15 +43,15 @@ import dev.veryniche.stitchcounter.R.string
 import dev.veryniche.stitchcounter.presentation.theme.Dimen
 import dev.veryniche.stitchcounter.presentation.theme.StitchCounterTheme
 import dev.veryniche.stitchcounter.previews.PreviewScreen
-import dev.veryniche.stitchcounter.util.Analytics
-import dev.veryniche.stitchcounter.util.TrackedScreen
-import dev.veryniche.stitchcounter.util.trackScreenView
+import dev.veryniche.stitchcounter.wear.util.Analytics
+import dev.veryniche.stitchcounter.wear.util.TrackedScreen
+import dev.veryniche.stitchcounter.wear.util.trackScreenView
 
 @Composable
 fun EditCounterScreen(
     counterId: Int,
     initialName: String?,
-    initialMax: Int,// = 0,
+    initialMax: Int, // = 0,
     onSave: (counterName: String, counterMax: Int) -> Unit,
     onDelete: () -> Unit,
     onClose: () -> Unit,
@@ -80,14 +80,14 @@ fun EditCounterScreen(
     )
 
     val launcher = rememberLauncherForActivityResult(
-            ActivityResultContracts.StartActivityForResult()
-        ) {
-            it.data?.let { data ->
-                val results: Bundle = RemoteInput.getResultsFromIntent(data)
-                val newInputText: CharSequence? = results.getCharSequence(inputTextKey)
-                counterName = newInputText.toString()
-            }
+        ActivityResultContracts.StartActivityForResult()
+    ) {
+        it.data?.let { data ->
+            val results: Bundle = RemoteInput.getResultsFromIntent(data)
+            val newInputText: CharSequence? = results.getCharSequence(inputTextKey)
+            counterName = newInputText.toString()
         }
+    }
 
     RemoteInputIntentHelper.putRemoteInputsExtra(intent, remoteInputs)
     Column(
@@ -96,8 +96,10 @@ fun EditCounterScreen(
         modifier = modifier.fillMaxSize()
     ) {
         Spacer(Modifier.height(Dimen.spacingExtraHuge))
-        Row(verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth(0.75f)) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth(0.75f)
+        ) {
             Text(text = counterName, Modifier.weight(1f))
             CompactButton(
                 onClick = { launcher.launch(intent) },
@@ -109,13 +111,18 @@ fun EditCounterScreen(
                 )
             }
         }
-        Row(verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth(0.95f)) {
-            Text(if (counterMax == 0) {
-                stringResource(R.string.counter_max_label_zero)
-            } else {
-                stringResource(R.string.counter_max_label_many, counterMax)
-            }, Modifier.weight(1f))
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth(0.95f)
+        ) {
+            Text(
+                if (counterMax == 0) {
+                    stringResource(R.string.counter_max_label_zero)
+                } else {
+                    stringResource(R.string.counter_max_label_many, counterMax)
+                },
+                Modifier.weight(1f)
+            )
             CompactButton(
                 onClick = { showEditCounterMaxDialog = true },
                 colors = ButtonDefaults.secondaryButtonColors()
@@ -126,8 +133,10 @@ fun EditCounterScreen(
                 )
             }
         }
-        Row(horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxWidth(0.75f)) {
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxWidth(0.75f)
+        ) {
             CompactButton(
                 onClick = { onClose.invoke() },
                 colors = ButtonDefaults.secondaryButtonColors()
@@ -149,8 +158,8 @@ fun EditCounterScreen(
                 }
             }
             CompactButton(
-                onClick = { 
-                    onSave.invoke(counterName, counterMax) 
+                onClick = {
+                    onSave.invoke(counterName, counterMax)
                 },
                 colors = ButtonDefaults.primaryButtonColors()
             ) {
@@ -166,7 +175,7 @@ fun EditCounterScreen(
         showDialog = showEditCounterMaxDialog,
         initialValue = counterMax,
         onDismissRequest = { showEditCounterMaxDialog = false },
-        onDone = { 
+        onDone = {
             counterMax = it
             showEditCounterMaxDialog = false
         }
@@ -247,6 +256,6 @@ fun DeleteCounterConfirmation(counterName: String, onTimeout: () -> Unit) {
 @Composable
 fun EditCounterScreenPreview() {
     StitchCounterTheme {
-        EditCounterScreen(1, "initial name that is really long", 450000, {_, _ -> }, {}, {})
+        EditCounterScreen(1, "initial name that is really long", 450000, { _, _ -> }, {}, {})
     }
 }

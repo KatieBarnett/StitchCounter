@@ -1,5 +1,7 @@
 package dev.veryniche.stitchcounter.mobile.screens
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,7 +14,6 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -34,22 +35,28 @@ import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import dev.veryniche.stitchcounter.core.AnalyticsConstants
+import dev.veryniche.stitchcounter.core.Analytics.Action
+import dev.veryniche.stitchcounter.core.Analytics.Screen
 import dev.veryniche.stitchcounter.core.R
+import dev.veryniche.stitchcounter.core.TrackedScreen
 import dev.veryniche.stitchcounter.core.theme.Dimen
+import dev.veryniche.stitchcounter.core.trackEvent
+import dev.veryniche.stitchcounter.core.trackScreenView
 import dev.veryniche.stitchcounter.data.models.Counter
 import dev.veryniche.stitchcounter.data.models.Project
-import dev.veryniche.stitchcounter.mobile.TrackedScreen
 import dev.veryniche.stitchcounter.mobile.ads.BannerAd
 import dev.veryniche.stitchcounter.mobile.ads.BannerAdLocation
 import dev.veryniche.stitchcounter.mobile.components.AboutActionIcon
@@ -61,8 +68,7 @@ import dev.veryniche.stitchcounter.mobile.components.NavigationIcon
 import dev.veryniche.stitchcounter.mobile.components.SaveProjectConfirmation
 import dev.veryniche.stitchcounter.mobile.components.topAppBarColors
 import dev.veryniche.stitchcounter.mobile.previews.PreviewScreen
-import dev.veryniche.stitchcounter.mobile.trackEvent
-import dev.veryniche.stitchcounter.mobile.trackScreenView
+import dev.veryniche.stitchcounter.mobile.snapshotStateListSaver
 import dev.veryniche.stitchcounter.mobile.ui.theme.StitchCounterTheme
 
 @Composable
@@ -71,7 +77,7 @@ fun keyboardAsState(): State<Boolean> {
     return rememberUpdatedState(isImeVisible)
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun ProjectScreen(
     project: Project,
@@ -80,17 +86,22 @@ fun ProjectScreen(
     onSave: (project: Project) -> Unit,
     onDelete: () -> Unit,
     onBack: () -> Unit,
+    onOpenCounter: (Counter) -> Unit,
+    onCounterUpdate: (Counter) -> Unit,
+    onCounterDelete: (Counter) -> Unit,
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
     modifier: Modifier = Modifier
 ) {
-    var projectName by remember { mutableStateOf(project.name) }
+    var projectName by rememberSaveable { mutableStateOf(project.name) }
     var projectState by remember { mutableStateOf(project) }
-    var showProjectEditMode by remember { mutableStateOf(projectEditMode) }
-    var showDeleteProjectConfirmation by remember { mutableStateOf(false) }
-    var showSaveProjectConfirmation by remember { mutableStateOf(false) }
+    var showProjectEditMode by rememberSaveable { mutableStateOf(projectEditMode) }
+    var showDeleteProjectConfirmation by rememberSaveable { mutableStateOf(false) }
+    var showSaveProjectConfirmation by rememberSaveable { mutableStateOf(false) }
+    val countersInEditMode = rememberSaveable(saver = snapshotStateListSaver()) { mutableStateListOf<Int>() }
+    val context = LocalContext.current
     val isKeyboardOpen by keyboardAsState()
     TrackedScreen {
-        trackScreenView(name = AnalyticsConstants.Screen.Project)
+        trackScreenView(name = Screen.Project, isMobile = true)
     }
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     Scaffold(
@@ -132,7 +143,7 @@ fun ProjectScreen(
             if (showProjectEditMode) {
                 ExtendedFloatingActionButton(
                     onClick = {
-                        trackEvent(AnalyticsConstants.Action.EditProjectSave)
+                        trackEvent(Action.EditProjectSave, isMobile = true)
                         onSave.invoke(projectState.copy(name = projectName))
                         showProjectEditMode = false
                     },
@@ -141,18 +152,29 @@ fun ProjectScreen(
                     modifier = fabModifier
                 )
             } else {
+//                ExtendedFloatingActionButton(
+//                    onClick = {
+//                        trackEvent(AnalyticsConstants.Action.EditProject)
+//                        showProjectEditMode = true
+//                    },
+//                    icon = { Icon(Icons.Filled.Edit, stringResource(id = R.string.edit_project)) },
+//                    text = { Text(text = stringResource(id = R.string.edit_project)) },
+//                    modifier = fabModifier
+//                )
                 ExtendedFloatingActionButton(
                     onClick = {
-                        trackEvent(AnalyticsConstants.Action.EditProject)
-                        showProjectEditMode = true
-                    },
-                    icon = { Icon(Icons.Filled.Edit, stringResource(id = R.string.edit_project)) },
-                    text = { Text(text = stringResource(id = R.string.edit_project)) },
-                    modifier = fabModifier
-                )
-                ExtendedFloatingActionButton(
-                    onClick = {
-                        trackEvent(AnalyticsConstants.Action.AddCounter)
+                        trackEvent(Action.AddCounter, isMobile = true)
+                        val nextId = projectState.counters.maxOfOrNull { it.id }?.plus(1) ?: 0
+                        val defaultCounterName = context.getString(R.string.counter_name_default, nextId)
+                        projectState = projectState.copy(
+                            counters = projectState.counters.plus(
+                                Counter(
+                                    id = nextId,
+                                    name = defaultCounterName
+                                )
+                            )
+                        )
+                        countersInEditMode.add(nextId)
                     },
                     icon = { Icon(Icons.Filled.Add, stringResource(id = R.string.add_counter)) },
                     text = { Text(text = stringResource(id = R.string.add_counter)) },
@@ -187,7 +209,7 @@ fun ProjectScreen(
                     ) {
                         OutlinedTextField(
                             value = projectName,
-                            onValueChange = { projectName = it.trim() },
+                            onValueChange = { projectName = it },
                             isError = projectName.isBlank(),
                             label = {
                                 Text(
@@ -247,11 +269,23 @@ fun ProjectScreen(
                     itemsIndexed(projectState.counters) { index, counter ->
                         CounterListItemComponent(
                             counter = counter,
-                            onCounterUpdate = {},
-                            onCounterDelete = {},
-                            defaultCounterName = stringResource(id = R.string.counter_name_default, index),
-                            inEditMode = projectEditMode,
-                            modifier = Modifier.fillMaxWidth()
+                            onCounterUpdate = {
+                                countersInEditMode.remove(counter.id)
+                                onCounterUpdate.invoke(counter)
+                            },
+                            onCounterDelete = {
+                                countersInEditMode.remove(counter.id)
+                                onCounterDelete.invoke(counter)
+                            },
+                            inEditMode = countersInEditMode.contains(counter.id),
+                            modifier = Modifier.fillMaxWidth().combinedClickable(
+                                onClick = {
+                                    onOpenCounter.invoke(counter)
+                                },
+                                onLongClick = {
+                                    countersInEditMode.add(counter.id)
+                                },
+                            )
                         )
                     }
                     item {
@@ -265,7 +299,7 @@ fun ProjectScreen(
         SaveProjectConfirmation(
             projectName = projectName,
             onAccept = {
-                trackEvent(AnalyticsConstants.Action.EditProjectSave)
+                trackEvent(Action.EditProjectSave, isMobile = true)
                 onSave.invoke(projectState)
             },
             onDismiss = {
@@ -298,7 +332,10 @@ fun ProjectScreenPreview() {
             onAboutClick = {},
             onSave = {},
             onDelete = {},
-            onBack = {}
+            onBack = {},
+            onOpenCounter = {},
+            onCounterDelete = {},
+            onCounterUpdate = {},
         )
     }
 }
@@ -318,7 +355,10 @@ fun ProjectScreenWithCountersPreview() {
             onAboutClick = {},
             onSave = {},
             onDelete = {},
-            onBack = {}
+            onBack = {},
+            onOpenCounter = {},
+            onCounterDelete = {},
+            onCounterUpdate = {},
         )
     }
 }
@@ -339,7 +379,10 @@ fun ProjectScreenEditModePreview() {
             onAboutClick = {},
             onSave = {},
             onDelete = {},
-            onBack = {}
+            onBack = {},
+            onOpenCounter = {},
+            onCounterDelete = {},
+            onCounterUpdate = {},
         )
     }
 }

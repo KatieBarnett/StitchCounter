@@ -12,10 +12,8 @@ import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.LoadAdError
-import dev.veryniche.stitchcounter.core.AnalyticsConstants
 import dev.veryniche.stitchcounter.core.theme.Dimen
-import dev.veryniche.stitchcounter.mobile.trackAdClick
-import dev.veryniche.stitchcounter.mobile.trackEvent
+import dev.veryniche.stitchcounter.core.trackAdClick
 import timber.log.Timber
 
 enum class BannerAdLocation(val adId: String) {
@@ -62,7 +60,7 @@ private fun BannerAd(adId: String, screen: String, modifier: Modifier = Modifier
                     override fun onAdClicked() {
                         super.onAdClicked()
                         Timber.d("Banner ad clicked")
-                        trackAdClick(screen)
+                        trackAdClick(screen, isMobile = true)
                     }
 
                     override fun onAdFailedToLoad(error: LoadAdError) {

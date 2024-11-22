@@ -1,5 +1,6 @@
 package dev.veryniche.stitchcounter.mobile.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -34,8 +35,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
+import dev.veryniche.stitchcounter.core.Analytics.Action
 import dev.veryniche.stitchcounter.core.R
 import dev.veryniche.stitchcounter.core.theme.Dimen
+import dev.veryniche.stitchcounter.core.trackEvent
 import dev.veryniche.stitchcounter.data.models.Counter
 import dev.veryniche.stitchcounter.mobile.previews.PreviewComponent
 import dev.veryniche.stitchcounter.mobile.ui.theme.StitchCounterTheme
@@ -44,7 +48,6 @@ import dev.veryniche.stitchcounter.mobile.ui.theme.StitchCounterTheme
 @Composable
 fun CounterListItemComponent(
     counter: Counter,
-    defaultCounterName: String,
     onCounterUpdate: (counter: Counter) -> Unit,
     onCounterDelete: (counter: Counter) -> Unit,
 //    onCounterClick: (counter: Counter) -> Unit,
@@ -60,7 +63,12 @@ fun CounterListItemComponent(
             contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
             disabledContainerColor = MaterialTheme.colorScheme.secondaryContainer,
             disabledContentColor = MaterialTheme.colorScheme.onSecondaryContainer,
-        )
+        ),
+        border = if (inEditMode) {
+            BorderStroke(width = Dp.Hairline, color = MaterialTheme.colorScheme.onBackground)
+        } else {
+            null
+        }
     ) {
         Column {
             Row(
@@ -103,20 +111,23 @@ fun CounterListItemComponent(
                 }
             }
             if (inEditMode) {
-                Surface() {
+                Surface {
                     Column {
-                        Row(modifier = Modifier.padding(start = Dimen.spacingTriple, end = Dimen.spacingTriple, top = Dimen.spacingTriple)) {
+                        Row(
+                            modifier = Modifier.padding(
+                                start = Dimen.spacingTriple,
+                                end = Dimen.spacingTriple,
+                                top = Dimen.spacingTriple
+                            )
+                        ) {
                             OutlinedTextField(
                                 value = counterName,
-                                onValueChange = { counterName = it.trim() },
+                                onValueChange = { counterName = it },
                                 isError = counterName.isBlank(),
                                 label = {
                                     Text(
                                         stringResource(dev.veryniche.stitchcounter.mobile.R.string.label_counter_name)
                                     )
-                                },
-                                placeholder = {
-                                    Text(defaultCounterName)
                                 },
                                 supportingText = {
                                     if (counterName.isBlank()) {
@@ -162,7 +173,11 @@ fun CounterListItemComponent(
                             )
                         ) {
                             Button(
-                                onClick = { /*TODO*/ },
+                                onClick = {
+                                    onCounterUpdate.invoke(
+                                        counter.copy(name = counterName, maxCount = counterMaxCount ?: 0)
+                                    )
+                                },
                                 colors = ButtonDefaults.buttonColors()
                             ) {
                                 Icon(
@@ -172,7 +187,10 @@ fun CounterListItemComponent(
                                 Text(stringResource(dev.veryniche.stitchcounter.mobile.R.string.save_counter_short))
                             }
                             Button(
-                                onClick = { /*TODO*/ },
+                                onClick = {
+                                    trackEvent(Action.ResetCounter, isMobile = true)
+                                    onCounterUpdate.invoke(counter.copy(currentCount = 0))
+                                },
                                 colors = ButtonDefaults.filledTonalButtonColors()
                             ) {
                                 Icon(
@@ -182,7 +200,10 @@ fun CounterListItemComponent(
                                 Text(stringResource(dev.veryniche.stitchcounter.mobile.R.string.reset_counter_short))
                             }
                             Button(
-                                onClick = { /*TODO*/ },
+                                onClick = {
+                                    trackEvent(Action.DeleteCounter, isMobile = true)
+                                    onCounterDelete.invoke(counter)
+                                },
                                 colors = ButtonDefaults.filledTonalButtonColors()
                             ) {
                                 Icon(
@@ -233,7 +254,6 @@ fun CounterPreview() {
     StitchCounterTheme {
         CounterListItemComponent(
             Counter(id = 3, name = "pattern", currentCount = 4),
-            defaultCounterName = "Counter 1",
             {},
             {},
         )
@@ -246,7 +266,6 @@ fun CounterEditPreview() {
     StitchCounterTheme {
         CounterListItemComponent(
             Counter(id = 3, name = "pattern", currentCount = 4),
-            defaultCounterName = "Counter 1",
             {},
             {},
             inEditMode = true
@@ -265,7 +284,6 @@ fun CounterLongTextPreview() {
                 currentCount = 4000,
                 maxCount = 1000
             ),
-            defaultCounterName = "Counter 1",
             onCounterUpdate = {},
             onCounterDelete = {}
         )

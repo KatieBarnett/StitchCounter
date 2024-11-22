@@ -5,10 +5,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
-import dev.veryniche.stitchcounter.core.AnalyticsConstants
+import dev.veryniche.stitchcounter.core.Analytics.Action
 import dev.veryniche.stitchcounter.core.R
+import dev.veryniche.stitchcounter.core.trackEvent
 import dev.veryniche.stitchcounter.mobile.previews.PreviewComponent
-import dev.veryniche.stitchcounter.mobile.trackEvent
 import dev.veryniche.stitchcounter.mobile.ui.theme.StitchCounterTheme
 
 @Composable
@@ -35,7 +35,7 @@ fun SaveProjectConfirmation(projectName: String, onAccept: () -> Unit, onDismiss
         text = { Text(stringResource(dev.veryniche.stitchcounter.mobile.R.string.confirm_project_save)) },
         confirmButton = {
             TextButton(onClick = {
-                trackEvent(AnalyticsConstants.Action.EditProjectConfim)
+                trackEvent(Action.EditProjectConfim, isMobile = true)
                 onAccept.invoke()
             }) {
                 Text(stringResource(dev.veryniche.stitchcounter.mobile.R.string.confirm_project_save_confirm))
@@ -59,7 +59,7 @@ fun DeleteProjectConfirmation(projectName: String, onAccept: () -> Unit, onDismi
         text = { Text(stringResource(R.string.confirm_project_delete)) },
         confirmButton = {
             TextButton(onClick = {
-                trackEvent(AnalyticsConstants.Action.DeleteProjectConfirm)
+                trackEvent(Action.DeleteProjectConfirm, isMobile = true)
                 onAccept.invoke()
             }) {
                 Text(stringResource(R.string.confirm_changes_confirm))
