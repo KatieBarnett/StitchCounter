@@ -6,9 +6,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.veryniche.stitchcounter.data.models.Counter
 import dev.veryniche.stitchcounter.data.models.Project
 import dev.veryniche.stitchcounter.data.models.ScreenOnState
-import dev.veryniche.stitchcounter.presentation.whatsnew.whatsNewData
 import dev.veryniche.stitchcounter.storage.ProjectsRepository
 import dev.veryniche.stitchcounter.storage.UserPreferencesRepository
+import dev.veryniche.stitchcounter.wear.presentation.whatsnew.whatsNewData
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine

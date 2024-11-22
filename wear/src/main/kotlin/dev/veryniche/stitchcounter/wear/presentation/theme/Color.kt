@@ -10,7 +10,7 @@ val Pink = Color(0xFFdd7596)
 val RubineRed = Color(0xFFcf1259)
 
 
-internal val stitchCounterColorPalette: Colors = Colors(
+val stitchCounterColorPalette: Colors = Colors(
     primary = RubineRed,
     primaryVariant = Pink,
     secondary = BlackCoral,

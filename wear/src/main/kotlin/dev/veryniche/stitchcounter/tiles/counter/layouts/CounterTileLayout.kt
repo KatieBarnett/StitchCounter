@@ -1,4 +1,4 @@
-package dev.veryniche.stitchcounter.wear.counter.layouts
+package dev.veryniche.stitchcounter.tiles.counter.layouts
 
 import CounterTileRenderer
 import CounterTileRenderer.Companion.BUTTON_EXTRA_SMALL_SIZE
@@ -31,10 +31,10 @@ import androidx.wear.tiles.tooling.preview.TilePreviewData
 import androidx.wear.tooling.preview.devices.WearDevices
 import dev.veryniche.stitchcounter.data.models.Counter
 import dev.veryniche.stitchcounter.data.models.Project
-import dev.veryniche.stitchcounter.wear.getCounterProgress
-import dev.veryniche.stitchcounter.presentation.theme.stitchCounterColorPalette
-import dev.veryniche.stitchcounter.previews.PreviewTile
 import dev.veryniche.stitchcounter.tiles.counter.CounterTileState
+import dev.veryniche.stitchcounter.wear.getCounterProgress
+import dev.veryniche.stitchcounter.wear.presentation.theme.stitchCounterColorPalette
+import dev.veryniche.stitchcounter.wear.previews.PreviewTile
 import previewResources
 
 @OptIn(ProtoLayoutExperimental::class)

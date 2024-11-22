@@ -1,5 +1,6 @@
 package dev.veryniche.stitchcounter.wear.presentation
 
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.gestures.animateScrollBy
@@ -46,16 +47,16 @@ import androidx.wear.compose.material.Text
 import androidx.wear.compose.material.dialog.Alert
 import com.google.android.horologist.compose.ambient.AmbientState
 import com.google.android.horologist.compose.ambient.AmbientStateUpdate
-import dev.veryniche.stitchcounter.wear.MainViewModel
 import dev.veryniche.stitchcounter.R.string
+import dev.veryniche.stitchcounter.core.Analytics
+import dev.veryniche.stitchcounter.core.TrackedScreen
+import dev.veryniche.stitchcounter.core.trackEvent
+import dev.veryniche.stitchcounter.core.trackProjectScreenView
 import dev.veryniche.stitchcounter.data.models.Counter
 import dev.veryniche.stitchcounter.data.models.Project
+import dev.veryniche.stitchcounter.wear.MainViewModel
 import dev.veryniche.stitchcounter.wear.getNextCounterId
-import dev.veryniche.stitchcounter.previews.PreviewScreen
-import dev.veryniche.stitchcounter.util.Analytics
-import dev.veryniche.stitchcounter.util.TrackedScreen
-import dev.veryniche.stitchcounter.util.trackEvent
-import dev.veryniche.stitchcounter.util.trackProjectScreenView
+import dev.veryniche.stitchcounter.wear.previews.PreviewScreen
 import kotlinx.coroutines.launch
 
 @Composable
@@ -76,7 +77,7 @@ fun ProjectScreen(
     var showResetProjectDialog by remember { mutableStateOf(false) }
     project.value?.let { project ->
         TrackedScreen {
-            trackProjectScreenView(project.counters.size)
+            trackProjectScreenView(project.counters.size, isMobile = false)
         }
         val nextCounterId = project.getNextCounterId()
         ProjectContent(
@@ -103,7 +104,7 @@ fun ProjectScreen(
                 projectName = project.name,
                 onConfirm = {
                     composableScope.launch {
-                        trackEvent(Analytics.Action.ResetProject)
+                        trackEvent(Analytics.Action.ResetProject, isMobile = false)
                         viewModel.resetProject(project)
                         showResetProjectDialog = false
                     }

@@ -1,5 +1,6 @@
 package dev.veryniche.stitchcounter.wear.presentation
 
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.gestures.animateScrollBy
@@ -40,16 +41,16 @@ import androidx.wear.compose.material.Icon
 import androidx.wear.compose.material.ListHeader
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
-import dev.veryniche.stitchcounter.wear.MainViewModel
 import dev.veryniche.stitchcounter.R
 import dev.veryniche.stitchcounter.R.string
+import dev.veryniche.stitchcounter.core.Analytics
+import dev.veryniche.stitchcounter.core.TrackedScreen
+import dev.veryniche.stitchcounter.core.trackScreenView
 import dev.veryniche.stitchcounter.data.models.Project
-import dev.veryniche.stitchcounter.presentation.theme.Dimen
-import dev.veryniche.stitchcounter.presentation.theme.StitchCounterTheme
-import dev.veryniche.stitchcounter.previews.PreviewComponent
-import dev.veryniche.stitchcounter.util.Analytics
-import dev.veryniche.stitchcounter.util.TrackedScreen
-import dev.veryniche.stitchcounter.util.trackScreenView
+import dev.veryniche.stitchcounter.wear.MainViewModel
+import dev.veryniche.stitchcounter.wear.presentation.theme.Dimen
+import dev.veryniche.stitchcounter.wear.presentation.theme.StitchCounterTheme
+import dev.veryniche.stitchcounter.wear.previews.PreviewComponent
 import kotlinx.coroutines.launch
 
 @Composable
@@ -76,7 +77,7 @@ fun ProjectList(
     modifier: Modifier = Modifier
 ) {
     TrackedScreen {
-        trackScreenView(name = Analytics.Screen.ProjectList)
+        trackScreenView(name = Analytics.Screen.ProjectList, isMobile = false)
     }
     val focusRequester = rememberActiveFocusRequester()
     val coroutineScope = rememberCoroutineScope()

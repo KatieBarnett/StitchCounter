@@ -1,5 +1,6 @@
 package dev.veryniche.stitchcounter.wear.presentation
 
+
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
@@ -11,12 +12,12 @@ import androidx.wear.compose.foundation.lazy.ScalingLazyListState
 import androidx.wear.compose.navigation.SwipeDismissableNavHost
 import androidx.wear.compose.navigation.composable
 import com.google.android.horologist.compose.ambient.AmbientStateUpdate
+import dev.veryniche.stitchcounter.core.Analytics
+import dev.veryniche.stitchcounter.core.trackEvent
+import dev.veryniche.stitchcounter.data.models.ScreenOnState
 import dev.veryniche.stitchcounter.wear.MainViewModel
 import dev.veryniche.stitchcounter.wear.Screens
-import dev.veryniche.stitchcounter.data.models.ScreenOnState
-import dev.veryniche.stitchcounter.presentation.whatsnew.WhatsNewScreen
-import dev.veryniche.stitchcounter.util.Analytics
-import dev.veryniche.stitchcounter.util.trackEvent
+import dev.veryniche.stitchcounter.wear.presentation.whatsnew.WhatsNewScreen
 import kotlinx.coroutines.launch
 
 @Composable
@@ -92,7 +93,7 @@ fun NavHost(
                     navController.navigate("project/$projectId")
                 },
                 onAddProjectClick = {
-                    trackEvent(Analytics.Action.AddProject)
+                    trackEvent(Analytics.Action.AddProject, isMobile = false)
                     navController.navigate("edit_project")
                 },
                 onAboutClick = {
@@ -223,7 +224,7 @@ fun LoadEditProjectScreen(
         onDelete = {
             composableScope.launch {
                 projectId?.let {
-                    trackEvent(Analytics.Action.DeleteProject)
+                    trackEvent(Analytics.Action.DeleteProject, isMobile = false)
                     viewModel.deleteProject(projectId)
                 }
                 navController.navigateUp()
@@ -257,7 +258,7 @@ fun LoadEditCounterScreen(
         },
         onDelete = {
             composableScope.launch {
-                trackEvent(Analytics.Action.DeleteCounter)
+                trackEvent(Analytics.Action.DeleteCounter, isMobile = false)
                 viewModel.deleteCounter(projectId, counterId)
                 navController.navigateUp()
             }

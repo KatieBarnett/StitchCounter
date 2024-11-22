@@ -1,8 +1,8 @@
-package dev.veryniche.stitchcounter.wear.counter
+package dev.veryniche.stitchcounter.tiles.counter
 
 import androidx.compose.ui.graphics.toArgb
 import androidx.wear.compose.material.Colors
-import dev.veryniche.stitchcounter.presentation.theme.stitchCounterColorPalette
+import dev.veryniche.stitchcounter.wear.presentation.theme.stitchCounterColorPalette
 
 object StitchCounterTileTheme {
     val colors = stitchCounterColorPalette.toTileColors()

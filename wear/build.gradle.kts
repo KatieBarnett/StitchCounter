@@ -62,6 +62,7 @@ dependencies {
 
     implementation(project(":data"))
     implementation(project(":storage"))
+    implementation(project(":core"))
 
     implementation(platform(libs.compose.bom))
     implementation(libs.activity.compose)

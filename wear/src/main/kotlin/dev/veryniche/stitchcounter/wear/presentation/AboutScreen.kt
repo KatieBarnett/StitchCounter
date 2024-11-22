@@ -38,13 +38,13 @@ import androidx.wear.compose.material.Text
 import androidx.wear.compose.material.dialog.Confirmation
 import dev.veryniche.stitchcounter.BuildConfig
 import dev.veryniche.stitchcounter.R
-import dev.veryniche.stitchcounter.presentation.theme.Dimen
-import dev.veryniche.stitchcounter.presentation.theme.StitchCounterTheme
-import dev.veryniche.stitchcounter.previews.PreviewScreen
-import dev.veryniche.stitchcounter.util.Analytics
-import dev.veryniche.stitchcounter.util.TrackedScreen
-import dev.veryniche.stitchcounter.util.openUrlOnPhone
-import dev.veryniche.stitchcounter.util.trackScreenView
+import dev.veryniche.stitchcounter.core.Analytics
+import dev.veryniche.stitchcounter.core.TrackedScreen
+import dev.veryniche.stitchcounter.core.trackScreenView
+import dev.veryniche.stitchcounter.wear.presentation.theme.Dimen
+import dev.veryniche.stitchcounter.wear.presentation.theme.StitchCounterTheme
+import dev.veryniche.stitchcounter.wear.previews.PreviewScreen
+import dev.veryniche.stitchcounter.wear.util.openUrlOnPhone
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalWearFoundationApi::class)
@@ -54,7 +54,7 @@ fun AboutScreen(
     modifier: Modifier = Modifier
 ) {
     TrackedScreen {
-        trackScreenView(name = Analytics.Screen.About)
+        trackScreenView(name = Analytics.Screen.About, isMobile = false)
     }
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()

@@ -1,4 +1,4 @@
-package dev.veryniche.stitchcounter.wear.counter.layouts
+package dev.veryniche.stitchcounter.tiles.counter.layouts
 
 import CounterTileRenderer
 import android.content.Context
@@ -15,9 +15,9 @@ import androidx.wear.protolayout.material.Typography
 import androidx.wear.protolayout.material.layouts.PrimaryLayout
 import androidx.wear.tiles.tooling.preview.TilePreviewData
 import dev.veryniche.stitchcounter.R
-import dev.veryniche.stitchcounter.previews.PreviewTile
 import dev.veryniche.stitchcounter.tiles.counter.CounterTileState
 import dev.veryniche.stitchcounter.tiles.counter.StitchCounterTileTheme
+import dev.veryniche.stitchcounter.wear.previews.PreviewTile
 import previewResources
 
 @OptIn(ProtoLayoutExperimental::class)

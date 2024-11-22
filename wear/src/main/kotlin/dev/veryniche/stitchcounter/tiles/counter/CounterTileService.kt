@@ -1,4 +1,4 @@
-package dev.veryniche.stitchcounter.wear.counter
+package dev.veryniche.stitchcounter.tiles.counter
 
 import CounterTileRenderer
 import CounterTileRenderer.Companion.ID_CLICKABLE_DECREMENT

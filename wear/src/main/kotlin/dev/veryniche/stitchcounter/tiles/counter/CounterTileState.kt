@@ -1,4 +1,4 @@
-package dev.veryniche.stitchcounter.wear.counter
+package dev.veryniche.stitchcounter.tiles.counter
 
 import dev.veryniche.stitchcounter.data.models.Counter
 import dev.veryniche.stitchcounter.data.models.Project

@@ -14,7 +14,6 @@ import com.google.android.horologist.annotations.ExperimentalHorologistApi
 import com.google.android.horologist.tiles.images.drawableResToImageResource
 import com.google.android.horologist.tiles.render.SingleTileLayoutRenderer
 import dev.veryniche.stitchcounter.R
-import dev.veryniche.stitchcounter.data.models.Counter
 import dev.veryniche.stitchcounter.tiles.counter.CounterTileState
 import dev.veryniche.stitchcounter.tiles.counter.launchActivityClickable
 import dev.veryniche.stitchcounter.tiles.counter.layouts.counterTileLayout

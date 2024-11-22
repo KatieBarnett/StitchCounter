@@ -40,12 +40,15 @@ import androidx.wear.input.RemoteInputIntentHelper
 import androidx.wear.input.wearableExtender
 import dev.veryniche.stitchcounter.R
 import dev.veryniche.stitchcounter.R.string
-import dev.veryniche.stitchcounter.presentation.theme.Dimen
-import dev.veryniche.stitchcounter.presentation.theme.StitchCounterTheme
-import dev.veryniche.stitchcounter.previews.PreviewScreen
-import dev.veryniche.stitchcounter.wear.util.Analytics
-import dev.veryniche.stitchcounter.wear.util.TrackedScreen
-import dev.veryniche.stitchcounter.wear.util.trackScreenView
+import dev.veryniche.stitchcounter.core.Analytics
+import dev.veryniche.stitchcounter.core.TrackedScreen
+import dev.veryniche.stitchcounter.core.trackScreenView
+import dev.veryniche.stitchcounter.wear.presentation.theme.Dimen
+import dev.veryniche.stitchcounter.wear.presentation.theme.StitchCounterTheme
+import dev.veryniche.stitchcounter.wear.previews.PreviewScreen
+
+
+
 
 @Composable
 fun EditCounterScreen(
@@ -65,7 +68,7 @@ fun EditCounterScreen(
     var showDeleteCounterConfirmation by remember { mutableStateOf(false) }
 
     TrackedScreen {
-        trackScreenView(name = Analytics.Screen.EditCounter)
+        trackScreenView(name = Analytics.Screen.EditCounter, isMobile = false)
     }
 
     val inputTextKey = "input_text"

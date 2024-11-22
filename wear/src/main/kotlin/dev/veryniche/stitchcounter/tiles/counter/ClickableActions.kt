@@ -1,8 +1,8 @@
-package dev.veryniche.stitchcounter.wear.counter
+package dev.veryniche.stitchcounter.tiles.counter
 
 import androidx.wear.protolayout.ActionBuilders
 import androidx.wear.protolayout.ModifiersBuilders
-import dev.veryniche.stitchcounter.presentation.MainActivity
+import dev.veryniche.stitchcounter.wear.presentation.MainActivity
 
 internal fun launchActivityClickable(
     clickableId: String,
@@ -26,5 +26,5 @@ internal fun openSelectCounter() = ActionBuilders.AndroidActivity.Builder()
 
 internal fun ActionBuilders.AndroidActivity.Builder.setAppActivity(): ActionBuilders.AndroidActivity.Builder {
     return setPackageName("dev.veryniche.stitchcounter")
-        .setClassName("dev.veryniche.stitchcounter.presentation.MainActivity")
+        .setClassName("dev.veryniche.stitchcounter.wear.presentation.MainActivity")
 }

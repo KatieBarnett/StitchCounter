@@ -1,7 +1,6 @@
 package dev.veryniche.stitchcounter.wear.previews
 
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewFontScale
 import androidx.wear.tooling.preview.devices.WearDevices
 
 @Preview(name = "small font", group = "Small Font", device = WearDevices.SMALL_ROUND, fontScale = 0.85f)

@@ -29,12 +29,12 @@ import com.google.android.horologist.annotations.ExperimentalHorologistApi
 import com.google.android.horologist.compose.ambient.AmbientAware
 import com.google.android.horologist.compose.ambient.AmbientState
 import dagger.hilt.android.AndroidEntryPoint
+import dev.veryniche.stitchcounter.data.models.ScreenOnState
+import dev.veryniche.stitchcounter.tiles.counter.CounterTileService
 import dev.veryniche.stitchcounter.wear.MainViewModel
 import dev.veryniche.stitchcounter.wear.Screens
-import dev.veryniche.stitchcounter.data.models.ScreenOnState
-import dev.veryniche.stitchcounter.presentation.MainActivity.Companion.EXTRA_JOURNEY_SELECT_COUNTER
-import dev.veryniche.stitchcounter.presentation.theme.StitchCounterTheme
-import dev.veryniche.stitchcounter.tiles.counter.CounterTileService
+import dev.veryniche.stitchcounter.wear.presentation.MainActivity.Companion.EXTRA_JOURNEY_SELECT_COUNTER
+import dev.veryniche.stitchcounter.wear.presentation.theme.StitchCounterTheme
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {

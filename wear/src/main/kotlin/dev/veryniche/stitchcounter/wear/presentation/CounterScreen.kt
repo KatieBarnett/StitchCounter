@@ -1,5 +1,6 @@
 package dev.veryniche.stitchcounter.wear.presentation
 
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -50,21 +51,21 @@ import com.google.android.horologist.composables.ProgressIndicatorSegment
 import com.google.android.horologist.composables.SquareSegmentedProgressIndicator
 import com.google.android.horologist.compose.ambient.AmbientState
 import com.google.android.horologist.compose.ambient.AmbientStateUpdate
-import dev.veryniche.stitchcounter.wear.MainViewModel
 import dev.veryniche.stitchcounter.R
 import dev.veryniche.stitchcounter.R.string
+import dev.veryniche.stitchcounter.core.Analytics
+import dev.veryniche.stitchcounter.core.TrackedScreen
+import dev.veryniche.stitchcounter.core.trackEvent
+import dev.veryniche.stitchcounter.core.trackScreenView
 import dev.veryniche.stitchcounter.data.models.Counter
+import dev.veryniche.stitchcounter.wear.MainViewModel
 import dev.veryniche.stitchcounter.wear.getCounterProgress
-import dev.veryniche.stitchcounter.presentation.theme.Charcoal
-import dev.veryniche.stitchcounter.presentation.theme.Dimen
-import dev.veryniche.stitchcounter.presentation.theme.Pink
-import dev.veryniche.stitchcounter.presentation.theme.StitchCounterTheme
-import dev.veryniche.stitchcounter.previews.PreviewScreen
-import dev.veryniche.stitchcounter.util.Analytics
-import dev.veryniche.stitchcounter.util.TrackedScreen
-import dev.veryniche.stitchcounter.util.conditional
-import dev.veryniche.stitchcounter.util.trackEvent
-import dev.veryniche.stitchcounter.util.trackScreenView
+import dev.veryniche.stitchcounter.wear.presentation.theme.Charcoal
+import dev.veryniche.stitchcounter.wear.presentation.theme.Dimen
+import dev.veryniche.stitchcounter.wear.presentation.theme.Pink
+import dev.veryniche.stitchcounter.wear.presentation.theme.StitchCounterTheme
+import dev.veryniche.stitchcounter.wear.previews.PreviewScreen
+import dev.veryniche.stitchcounter.wear.util.conditional
 import kotlinx.coroutines.launch
 
 @Composable
@@ -85,7 +86,7 @@ fun CounterScreen(
         val counter = project.counters.firstOrNull { it.id == counterId }
         counter?.let {
             TrackedScreen {
-                trackScreenView(name = Analytics.Screen.Counter)
+                trackScreenView(name = Analytics.Screen.Counter, isMobile = false)
             }
             CounterContent(
                 counter = it,
@@ -108,7 +109,7 @@ fun CounterScreen(
                     counterName = counter.name,
                     onConfirm = {
                         composableScope.launch {
-                            trackEvent(Analytics.Action.ResetCounter)
+                            trackEvent(Analytics.Action.ResetCounter, isMobile = false)
                             viewModel.resetCounter(project, counter)
                             showResetCounterDialog = false
                         }

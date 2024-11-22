@@ -1,6 +1,5 @@
 package dev.veryniche.stitchcounter.core
 
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
