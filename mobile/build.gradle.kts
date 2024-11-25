@@ -90,8 +90,12 @@ dependencies {
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.crashlytics)
 
+    implementation(libs.kotlinx.serialization.json)
+
     implementation(libs.play.app.update)
     implementation(libs.play.app.update.ktx)
+
+    implementation(libs.playservices.wearable)
 
     debugImplementation(libs.compose.ui.tooling)
     debugImplementation(libs.ui.test.manifest)

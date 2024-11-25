@@ -89,6 +89,8 @@ dependencies {
     implementation(libs.horologist.composables)
     implementation(libs.horologist.compose.layout)
 
+    implementation(libs.kotlinx.serialization.json)
+
     implementation(libs.splashscreen)
 
     implementation(libs.wear.input)

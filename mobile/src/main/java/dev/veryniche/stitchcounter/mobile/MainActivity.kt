@@ -5,26 +5,36 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
 import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.wearable.PutDataMapRequest
+import com.google.android.gms.wearable.Wearable
 import dagger.hilt.android.AndroidEntryPoint
 import dev.veryniche.stitchcounter.mobile.purchase.PurchaseStatus
 import dev.veryniche.stitchcounter.mobile.ui.theme.StitchCounterTheme
 import dev.veryniche.stitchcounter.mobile.update.AppUpdateHelper
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     lateinit var appUpdateHelper: AppUpdateHelper
+
+    private val dataClient by lazy { Wearable.getDataClient(this) }
+    val viewModel: MainViewModel by viewModels<MainViewModel>()
 
     private val updateLauncher = registerForActivityResult(
         ActivityResultContracts.StartIntentSenderForResult()
@@ -51,12 +61,30 @@ class MainActivity : ComponentActivity() {
             Timber.d("AdMob init: ${initializationStatus.adapterStatusMap}")
         }
         setContent {
+            val dataSyncState by viewModel.eventsToWatch.collectAsStateWithLifecycle()
+            LaunchedEffect(dataSyncState) {
+                dataSyncState?.let {
+                    try {
+                        val request = PutDataMapRequest.create(it.path).apply {
+                            dataMap.putString(it.key, it.data)
+                        }
+                            .asPutDataRequest()
+                            .setUrgent()
+                        val result = dataClient.putDataItem(request).await()
+                        Timber.d("DataItem $it synced: $result")
+                    } catch (cancellationException: CancellationException) {
+                        throw cancellationException
+                    } catch (exception: Exception) {
+                        Timber.d("Syncing DataItem failed: $exception")
+                    }
+                }
+            }
             StitchCounterTheme {
                 val snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }
                 val coroutineScope = rememberCoroutineScope()
                 appUpdateHelper = AppUpdateHelper(this, updateLauncher, snackbarHostState, coroutineScope)
                 appUpdateHelper.checkForUpdates()
-                StitchCounterMobileApp(snackbarHostState)
+                StitchCounterMobileApp(viewModel, snackbarHostState)
             }
         }
     }
@@ -66,15 +94,21 @@ class MainActivity : ComponentActivity() {
         if (this::appUpdateHelper.isInitialized) {
             appUpdateHelper.checkUpdateStatus()
         }
+//        dataClient.addListener(viewModel)
     }
-}
 
-@Composable
-fun StitchCounterMobileApp(snackbarHostState: SnackbarHostState, modifier: Modifier = Modifier) {
-    StitchCounterTheme {
-        val viewModel: MainViewModel = hiltViewModel()
+    override fun onPause() {
+        super.onPause()
+//        dataClient.removeListener(viewModel)
+    }
+
+    @Composable
+    fun StitchCounterMobileApp(
+        viewModel: MainViewModel,
+        snackbarHostState: SnackbarHostState,
+        modifier: Modifier = Modifier,
+    ) {
         val navController = rememberNavController()
-
         MobileNavHost(
             navController = navController,
             viewModel = viewModel,

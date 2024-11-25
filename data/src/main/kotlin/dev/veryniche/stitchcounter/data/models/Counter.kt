@@ -1,5 +1,9 @@
 package dev.veryniche.stitchcounter.data.models
 
+import kotlinx.serialization.InternalSerializationApi
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class Counter(
     val id: Int,
     val name: String,

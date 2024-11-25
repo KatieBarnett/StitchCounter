@@ -3,14 +3,15 @@ package dev.veryniche.stitchcounter.wear.presentation
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.wear.compose.foundation.CurvedTextStyle
 import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
@@ -25,6 +26,8 @@ import androidx.wear.compose.material.VignettePosition
 import androidx.wear.compose.material.curvedText
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import androidx.wear.tiles.TileService
+import com.google.android.gms.wearable.PutDataMapRequest
+import com.google.android.gms.wearable.Wearable
 import com.google.android.horologist.annotations.ExperimentalHorologistApi
 import com.google.android.horologist.compose.ambient.AmbientAware
 import com.google.android.horologist.compose.ambient.AmbientState
@@ -35,6 +38,10 @@ import dev.veryniche.stitchcounter.wear.MainViewModel
 import dev.veryniche.stitchcounter.wear.Screens
 import dev.veryniche.stitchcounter.wear.presentation.MainActivity.Companion.EXTRA_JOURNEY_SELECT_COUNTER
 import dev.veryniche.stitchcounter.wear.presentation.theme.StitchCounterTheme
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.tasks.await
+import timber.log.Timber
+import kotlin.getValue
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -44,6 +51,9 @@ class MainActivity : ComponentActivity() {
         internal const val EXTRA_JOURNEY_SELECT_COUNTER = "journey:select_counter"
     }
 
+    private val dataClient by lazy { Wearable.getDataClient(this) }
+    val viewModel by viewModels<MainViewModel>()
+
     @OptIn(ExperimentalHorologistApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         // Handle the splash screen transition.
@@ -52,7 +62,26 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
+            val dataSyncState by viewModel.eventsToMobile.collectAsStateWithLifecycle()
+            LaunchedEffect(dataSyncState) {
+                dataSyncState?.let {
+                    try {
+                        val request = PutDataMapRequest.create(it.path).apply {
+                            dataMap.putString(it.key, it.data)
+                        }
+                            .asPutDataRequest()
+                            .setUrgent()
+                        val result = dataClient.putDataItem(request).await()
+                        Timber.d("DataItem $it synced: $result")
+                    } catch (cancellationException: CancellationException) {
+                        throw cancellationException
+                    } catch (exception: Exception) {
+                        Timber.d("Syncing DataItem failed: $exception")
+                    }
+                }
+            }
             StitchCounterWearApp(
+                viewModel = viewModel,
                 journey = intent.extras?.getString(EXTRA_JOURNEY),
                 onTileStateUpdate = {
                     TileService.getUpdater(this)
@@ -62,17 +91,27 @@ class MainActivity : ComponentActivity() {
             )
         }
     }
+
+//    override fun onResume() {
+//        super.onResume()
+//        dataClient.addListener(viewModel)
+//    }
+//
+//    override fun onPause() {
+//        super.onPause()
+//        dataClient.removeListener(viewModel)
+//    }
 }
 
 @Composable
 fun StitchCounterWearApp(
+    viewModel: MainViewModel,
     journey: String?,
     onTileStateUpdate: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     StitchCounterTheme {
         val listState = rememberScalingLazyListState()
-        val viewModel: MainViewModel = hiltViewModel()
         val navController = rememberSwipeDismissableNavController()
 
         val currentScreen by viewModel.currentScreen.collectAsStateWithLifecycle(

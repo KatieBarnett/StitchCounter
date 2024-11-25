@@ -5,6 +5,7 @@ import dev.veryniche.stitchcounter.data.models.Project
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -21,32 +22,20 @@ class ProjectsRepository @Inject constructor(
         return getProjects().map { it.firstOrNull { it.id == id } }
     }
 
-    suspend fun saveProjectName(updatedProject: Project) {
-        updatedProject.id?.let {
+    suspend fun saveProjectName(project: Project): Project {
+        val updatedProject = project.id?.let {
             getProject(it).firstOrNull()?.let { project ->
-                projectsDataSource.saveProject(
-                    project.copy(name = updatedProject.name, lastModified = System.currentTimeMillis())
-                )
-            } ?: projectsDataSource.saveProject(
-                updatedProject.copy(name = updatedProject.name, lastModified = System.currentTimeMillis())
-            )
-        } ?: projectsDataSource.saveProject(
-            updatedProject.copy(name = updatedProject.name, lastModified = System.currentTimeMillis())
-        )
+                project.copy(name = project.name, lastModified = System.currentTimeMillis())
+            }
+        } ?: project.copy(name = project.name, lastModified = System.currentTimeMillis())
+        projectsDataSource.saveProject(updatedProject)
+        return updatedProject
     }
 
-    suspend fun saveProject(updatedProject: Project) {
-        updatedProject.id?.let {
-            getProject(it).firstOrNull()?.let { project ->
-                projectsDataSource.saveProject(
-                    updatedProject.copy(lastModified = System.currentTimeMillis())
-                )
-            } ?: projectsDataSource.saveProject(
-                updatedProject.copy(lastModified = System.currentTimeMillis())
-            )
-        } ?: projectsDataSource.saveProject(
-            updatedProject.copy(lastModified = System.currentTimeMillis())
-        )
+    suspend fun saveProject(project: Project): Project {
+        val updatedProject = project.copy(lastModified = System.currentTimeMillis())
+        projectsDataSource.saveProject(updatedProject)
+        return updatedProject
     }
 
     suspend fun saveCounter(projectId: Int, counter: Counter) {

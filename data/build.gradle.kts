@@ -39,4 +39,5 @@ dependencies {
     ksp(libs.hilt.compiler)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.timber)
+    implementation(libs.playservices.wearable)
 }
