@@ -115,7 +115,7 @@ class CounterTileService @Inject constructor() : SuspendingTileService() {
     }
 
     private suspend fun saveProject(project: Project) {
-        projectsRepository.saveProject(project)
+        projectsRepository.saveProject(project, isMobile = false)
     }
 
     override fun onDestroy() {

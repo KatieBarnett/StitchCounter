@@ -46,7 +46,14 @@ class DataLayerListenerService : WearableListenerService() {
                                             .getString(KEY_PROJECT)
                                         if (dataString != null) {
                                             val syncedProject = Json.Default.decodeFromString<Project>(dataString)
-                                            savedProjectsRepository.saveProject(syncedProject)
+                                            if (syncedProject.id == null) {
+                                                Timber.e("Error - project id is null")
+                                            }
+                                            // isMobile doesn't matter here - id should always be not null
+                                            savedProjectsRepository.saveProject(
+                                                syncedProject,
+                                                isMobile = false
+                                            )
                                             Timber.d("Updated data: $dataString")
                                         } else {
                                             Timber.e("Data sync fail because it is null")

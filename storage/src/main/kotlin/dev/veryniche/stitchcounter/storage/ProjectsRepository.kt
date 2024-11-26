@@ -5,7 +5,6 @@ import dev.veryniche.stitchcounter.data.models.Project
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
-import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -22,18 +21,23 @@ class ProjectsRepository @Inject constructor(
         return getProjects().map { it.firstOrNull { it.id == id } }
     }
 
-    suspend fun saveProjectName(project: Project): Project {
+    suspend fun saveProjectName(project: Project, isMobile: Boolean): Project {
         val updatedProject = project.id?.let {
-            getProject(it).firstOrNull()?.let { project ->
-                project.copy(name = project.name, lastModified = System.currentTimeMillis())
-            }
-        } ?: project.copy(name = project.name, lastModified = System.currentTimeMillis())
+            getProject(it).firstOrNull()?.copy(name = project.name, lastModified = System.currentTimeMillis())
+        } ?: project.copy(
+            id = projectsDataSource.getNextId(isMobile),
+            lastModified = System.currentTimeMillis()
+        )
         projectsDataSource.saveProject(updatedProject)
         return updatedProject
     }
-
-    suspend fun saveProject(project: Project): Project {
-        val updatedProject = project.copy(lastModified = System.currentTimeMillis())
+    suspend fun saveProject(project: Project, isMobile: Boolean): Project {
+        val updatedProject = project.id?.let {
+            project.copy(lastModified = System.currentTimeMillis())
+        } ?: project.copy(
+            id = projectsDataSource.getNextId(isMobile),
+            lastModified = System.currentTimeMillis()
+        )
         projectsDataSource.saveProject(updatedProject)
         return updatedProject
     }
@@ -47,7 +51,12 @@ class ProjectsRepository @Inject constructor(
             } else {
                 counters.add(counter)
             }
-            projectsDataSource.saveProject(project.copy(counters = counters, lastModified = System.currentTimeMillis()))
+            projectsDataSource.saveProject(
+                project.copy(
+                    counters = counters,
+                    lastModified = System.currentTimeMillis()
+                ),
+            )
         }
     }
 

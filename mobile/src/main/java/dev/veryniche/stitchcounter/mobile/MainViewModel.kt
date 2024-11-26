@@ -37,7 +37,7 @@ class MainViewModel @Inject constructor(
     }
 
     suspend fun saveProject(project: Project) {
-        val updatedProject = savedProjectsRepository.saveProject(project)
+        val updatedProject = savedProjectsRepository.saveProject(project, isMobile = true)
         eventsToWatch.emit(updatedProject.toUpdateEvent())
     }
 
