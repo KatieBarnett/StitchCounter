@@ -63,7 +63,16 @@ fun ProjectListScreen(
     modifier: Modifier = Modifier
 ) {
     val projects: List<Project> by viewModel.projects.collectAsState(initial = emptyList())
-    ProjectList(projects, listState, onProjectClick, onAddProjectClick, onAboutClick, modifier)
+    ProjectList(
+        projects.sortedByDescending {
+            it.lastModified
+        },
+        listState,
+        onProjectClick,
+        onAddProjectClick,
+        onAboutClick,
+        modifier
+    )
 }
 
 @OptIn(ExperimentalWearFoundationApi::class)
