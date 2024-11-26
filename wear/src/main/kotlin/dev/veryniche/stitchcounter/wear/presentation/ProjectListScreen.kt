@@ -1,6 +1,5 @@
 package dev.veryniche.stitchcounter.wear.presentation
 
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.gestures.animateScrollBy
@@ -41,6 +40,7 @@ import androidx.wear.compose.material.Icon
 import androidx.wear.compose.material.ListHeader
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
+import dev.veryniche.stitchcounter.BuildConfig
 import dev.veryniche.stitchcounter.R
 import dev.veryniche.stitchcounter.R.string
 import dev.veryniche.stitchcounter.core.Analytics
@@ -134,7 +134,11 @@ fun ProjectChip(project: Project, onProjectClick: (Int) -> Unit, modifier: Modif
         modifier = modifier.fillMaxWidth().height(IntrinsicSize.Min),
         label = {
             Text(
-                text = project.name,
+                text = if (BuildConfig.SHOW_IDS) {
+                    "${project.name} (${project.id})"
+                } else {
+                    project.name
+                },
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )

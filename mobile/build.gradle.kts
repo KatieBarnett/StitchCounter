@@ -27,10 +27,12 @@ android {
     buildTypes {
         debug {
             versionNameSuffix = ".debug"
+            buildConfigField("boolean", "SHOW_IDS", "true")
         }
         release {
             isMinifyEnabled = true
             isShrinkResources = true
+            buildConfigField("boolean", "SHOW_IDS", "false")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"

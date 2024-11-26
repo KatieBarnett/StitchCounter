@@ -14,6 +14,7 @@ import dev.veryniche.stitchcounter.core.R
 import dev.veryniche.stitchcounter.core.theme.Dimen
 import dev.veryniche.stitchcounter.data.models.Counter
 import dev.veryniche.stitchcounter.data.models.Project
+import dev.veryniche.stitchcounter.mobile.BuildConfig
 import dev.veryniche.stitchcounter.mobile.previews.PreviewComponent
 import dev.veryniche.stitchcounter.mobile.ui.theme.StitchCounterTheme
 
@@ -30,7 +31,11 @@ fun ProjectItem(project: Project, onProjectClick: (Int) -> Unit, modifier: Modif
     ) {
         Column(Modifier.padding(Dimen.spacingQuad)) {
             Text(
-                text = project.name,
+                text = if (BuildConfig.SHOW_IDS) {
+                    "${project.name} (${project.id})"
+                } else {
+                    project.name
+                },
                 style = MaterialTheme.typography.headlineMedium
             )
             Text(

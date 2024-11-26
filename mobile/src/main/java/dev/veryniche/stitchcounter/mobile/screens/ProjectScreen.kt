@@ -57,6 +57,7 @@ import dev.veryniche.stitchcounter.core.trackEvent
 import dev.veryniche.stitchcounter.core.trackScreenView
 import dev.veryniche.stitchcounter.data.models.Counter
 import dev.veryniche.stitchcounter.data.models.Project
+import dev.veryniche.stitchcounter.mobile.BuildConfig
 import dev.veryniche.stitchcounter.mobile.ads.BannerAd
 import dev.veryniche.stitchcounter.mobile.ads.BannerAdLocation
 import dev.veryniche.stitchcounter.mobile.components.AboutActionIcon
@@ -92,7 +93,14 @@ fun ProjectScreen(
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
     modifier: Modifier = Modifier
 ) {
-    var projectName by rememberSaveable { mutableStateOf(project.name) }
+    val projectNameDefault = stringResource(R.string.project_name_default)
+    var projectName by rememberSaveable {
+        mutableStateOf(
+            project.name.ifBlank {
+                projectNameDefault
+            }
+        )
+    }
     var projectState by remember { mutableStateOf(project) }
     var showProjectEditMode by rememberSaveable { mutableStateOf(projectEditMode) }
     var showDeleteProjectConfirmation by rememberSaveable { mutableStateOf(false) }
@@ -109,8 +117,10 @@ fun ProjectScreen(
             LargeTopAppBar(
                 title = {
                     Text(
-                        text = projectName.ifBlank {
-                            stringResource(R.string.project_name_default)
+                        text = if (BuildConfig.SHOW_IDS) {
+                            "$projectName (${project.id})"
+                        } else {
+                            projectName
                         },
                         style = MaterialTheme.typography.headlineMedium,
                     )

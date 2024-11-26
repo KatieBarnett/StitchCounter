@@ -1,6 +1,5 @@
 package dev.veryniche.stitchcounter.wear.presentation
 
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.gestures.animateScrollBy
@@ -47,6 +46,7 @@ import androidx.wear.compose.material.Text
 import androidx.wear.compose.material.dialog.Alert
 import com.google.android.horologist.compose.ambient.AmbientState
 import com.google.android.horologist.compose.ambient.AmbientStateUpdate
+import dev.veryniche.stitchcounter.BuildConfig
 import dev.veryniche.stitchcounter.R.string
 import dev.veryniche.stitchcounter.core.Analytics
 import dev.veryniche.stitchcounter.core.TrackedScreen
@@ -152,7 +152,13 @@ fun ProjectContent(
     ) {
         item {
             ListHeader {
-                ListTitle(project.name)
+                ListTitle(
+                    if (BuildConfig.SHOW_IDS) {
+                        "${project.name} (${project.id})"
+                    } else {
+                        project.name
+                    }
+                )
             }
         }
         items(project.counters) { counter ->
