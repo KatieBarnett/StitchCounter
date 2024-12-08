@@ -16,6 +16,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.rememberNavController
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.wearable.PutDataMapRequest
@@ -25,6 +26,7 @@ import dev.veryniche.stitchcounter.mobile.purchase.PurchaseStatus
 import dev.veryniche.stitchcounter.mobile.ui.theme.StitchCounterTheme
 import dev.veryniche.stitchcounter.mobile.update.AppUpdateHelper
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 
@@ -50,6 +52,14 @@ class MainActivity : ComponentActivity() {
             // you can request to start the update again.
         } else {
             Timber.d("In app update succeeded")
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        lifecycleScope.launch {
+            Timber.d("Syncing all projects")
+            viewModel.syncAllProjects()
         }
     }
 
@@ -94,12 +104,10 @@ class MainActivity : ComponentActivity() {
         if (this::appUpdateHelper.isInitialized) {
             appUpdateHelper.checkUpdateStatus()
         }
-//        dataClient.addListener(viewModel)
     }
 
     override fun onPause() {
         super.onPause()
-//        dataClient.removeListener(viewModel)
     }
 
     @Composable

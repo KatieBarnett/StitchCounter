@@ -13,6 +13,7 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.wear.compose.foundation.CurvedTextStyle
 import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
 import androidx.wear.compose.material.MaterialTheme
@@ -39,9 +40,9 @@ import dev.veryniche.stitchcounter.wear.Screens
 import dev.veryniche.stitchcounter.wear.presentation.MainActivity.Companion.EXTRA_JOURNEY_SELECT_COUNTER
 import dev.veryniche.stitchcounter.wear.presentation.theme.StitchCounterTheme
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
-import kotlin.getValue
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -92,15 +93,13 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-//    override fun onResume() {
-//        super.onResume()
-//        dataClient.addListener(viewModel)
-//    }
-//
-//    override fun onPause() {
-//        super.onPause()
-//        dataClient.removeListener(viewModel)
-//    }
+    override fun onStart() {
+        super.onStart()
+        lifecycleScope.launch {
+            Timber.d("Syncing all projects")
+            viewModel.syncAllProjects()
+        }
+    }
 }
 
 @Composable

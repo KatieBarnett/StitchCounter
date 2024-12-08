@@ -1,7 +1,9 @@
 package dev.veryniche.stitchcounter.storage.datasync
 
 import dev.veryniche.stitchcounter.data.models.Project
+import dev.veryniche.stitchcounter.storage.datasync.DataLayerListenerService.Companion.ALL_PROJECT_SYNC_PATH
 import dev.veryniche.stitchcounter.storage.datasync.DataLayerListenerService.Companion.KEY_PROJECT
+import dev.veryniche.stitchcounter.storage.datasync.DataLayerListenerService.Companion.KEY_PROJECTS
 import dev.veryniche.stitchcounter.storage.datasync.DataLayerListenerService.Companion.KEY_PROJECT_ID
 import dev.veryniche.stitchcounter.storage.datasync.DataLayerListenerService.Companion.PROJECT_DELETE_PATH
 import dev.veryniche.stitchcounter.storage.datasync.DataLayerListenerService.Companion.PROJECT_UPDATE_PATH
@@ -24,4 +26,10 @@ fun Int.toDeleteEvent() = Event(
     path = PROJECT_DELETE_PATH,
     key = KEY_PROJECT_ID,
     data = this.toString()
+)
+
+fun List<Project>.toUpdateAllEvent() = Event(
+    path = ALL_PROJECT_SYNC_PATH,
+    key = KEY_PROJECTS,
+    data = Json.encodeToString<List<Project>>(this)
 )

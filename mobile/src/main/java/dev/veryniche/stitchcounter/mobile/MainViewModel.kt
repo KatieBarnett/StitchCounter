@@ -8,9 +8,11 @@ import dev.veryniche.stitchcounter.data.models.Project
 import dev.veryniche.stitchcounter.storage.ProjectsRepository
 import dev.veryniche.stitchcounter.storage.datasync.Event
 import dev.veryniche.stitchcounter.storage.datasync.toDeleteEvent
+import dev.veryniche.stitchcounter.storage.datasync.toUpdateAllEvent
 import dev.veryniche.stitchcounter.storage.datasync.toUpdateEvent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -39,6 +41,11 @@ class MainViewModel @Inject constructor(
     suspend fun saveProject(project: Project) {
         val updatedProject = savedProjectsRepository.saveProject(project, isMobile = true)
         eventsToWatch.emit(updatedProject.toUpdateEvent())
+    }
+
+    suspend fun syncAllProjects() {
+        val projects = projects.first()
+        eventsToWatch.emit(projects.toUpdateAllEvent())
     }
 
     suspend fun saveCounter(projectId: Int, counterId: Int, counterName: String, counterMax: Int) {

@@ -10,18 +10,19 @@ import dev.veryniche.stitchcounter.storage.ProjectsRepository
 import dev.veryniche.stitchcounter.storage.UserPreferencesRepository
 import dev.veryniche.stitchcounter.storage.datasync.Event
 import dev.veryniche.stitchcounter.storage.datasync.toDeleteEvent
+import dev.veryniche.stitchcounter.storage.datasync.toUpdateAllEvent
 import dev.veryniche.stitchcounter.storage.datasync.toUpdateEvent
 import dev.veryniche.stitchcounter.wear.presentation.whatsnew.whatsNewData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
-import kotlin.collections.map
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
@@ -77,6 +78,11 @@ class MainViewModel @Inject constructor(
     suspend fun saveProject(project: Project) {
         val updatedProject = savedProjectsRepository.saveProject(project, isMobile = false)
         eventsToMobile.emit(updatedProject.toUpdateEvent())
+    }
+
+    suspend fun syncAllProjects() {
+        val projects = projects.first()
+        eventsToMobile.emit(projects.toUpdateAllEvent())
     }
 
     suspend fun saveCounter(projectId: Int, counterId: Int, counterName: String, counterMax: Int) {

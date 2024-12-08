@@ -5,6 +5,7 @@ import dev.veryniche.stitchcounter.data.models.Project
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -31,6 +32,7 @@ class ProjectsRepository @Inject constructor(
         projectsDataSource.saveProject(updatedProject)
         return updatedProject
     }
+
     suspend fun saveProject(project: Project, isMobile: Boolean): Project {
         val updatedProject = project.id?.let {
             project.copy(lastModified = System.currentTimeMillis())
@@ -40,6 +42,19 @@ class ProjectsRepository @Inject constructor(
         )
         projectsDataSource.saveProject(updatedProject)
         return updatedProject
+    }
+
+
+    suspend fun syncProject(project: Project) {
+        projectsDataSource.saveProject(project)
+    }
+
+    suspend fun syncAllProjects(projects: List<Project>) {
+        projects.forEach {
+            // Don't change the project
+            projectsDataSource.saveProject(it)
+        }
+        Timber.d("Saved ${projects.size} projects")
     }
 
     suspend fun saveCounter(projectId: Int, counter: Counter) {

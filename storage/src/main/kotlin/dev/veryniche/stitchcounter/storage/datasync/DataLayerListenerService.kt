@@ -38,30 +38,24 @@ class DataLayerListenerService : WearableListenerService() {
                 scope.launch {
                     when (uri.path) {
                         PROJECT_UPDATE_PATH -> {
-                            scope.launch {
-                                when (frozenEvent.type) {
-                                    DataEvent.TYPE_CHANGED -> {
-                                        val dataString = DataMapItem.fromDataItem(frozenEvent.dataItem)
-                                            .dataMap
-                                            .getString(KEY_PROJECT)
-                                        if (dataString != null) {
-                                            val syncedProject = Json.Default.decodeFromString<Project>(dataString)
-                                            if (syncedProject.id == null) {
-                                                Timber.e("Error - project id is null")
-                                            }
-                                            // isMobile doesn't matter here - id should always be not null
-                                            savedProjectsRepository.saveProject(
-                                                syncedProject,
-                                                isMobile = false
-                                            )
-                                            Timber.d("Updated data: $dataString")
-                                        } else {
-                                            Timber.e("Data sync fail because it is null")
+                            when (frozenEvent.type) {
+                                DataEvent.TYPE_CHANGED -> {
+                                    val dataString = DataMapItem.fromDataItem(frozenEvent.dataItem)
+                                        .dataMap
+                                        .getString(KEY_PROJECT)
+                                    if (dataString != null) {
+                                        val syncedProject = Json.Default.decodeFromString<Project>(dataString)
+                                        if (syncedProject.id == null) {
+                                            Timber.e("Error - project id is null")
                                         }
+                                        savedProjectsRepository.syncProject(syncedProject)
+                                        Timber.d("Updated data: $dataString")
+                                    } else {
+                                        Timber.e("Data sync fail because it is null")
                                     }
-                                    else -> {
-                                        Timber.e("Data sync fail because the type is unknown")
-                                    }
+                                }
+                                else -> {
+                                    Timber.e("Data sync fail because the type is unknown")
                                 }
                             }
                         }
@@ -77,6 +71,24 @@ class DataLayerListenerService : WearableListenerService() {
                                         Timber.d("Deleted project: $projectId")
                                     } else {
                                         Timber.e("Data sync fail because it is null or not an int")
+                                    }
+                                }
+                                else -> {
+                                    Timber.e("Data sync fail because the type is unknown")
+                                }
+                            }
+                        }
+                        ALL_PROJECT_SYNC_PATH -> {
+                            when (frozenEvent.type) {
+                                DataEvent.TYPE_CHANGED -> {
+                                    val dataString = DataMapItem.fromDataItem(frozenEvent.dataItem)
+                                        .dataMap
+                                        .getString(KEY_PROJECTS)
+                                    if (dataString != null) {
+                                        val syncedProjectList = Json.Default.decodeFromString<List<Project>>(dataString)
+                                        savedProjectsRepository.syncAllProjects(syncedProjectList)
+                                    } else {
+                                        Timber.e("Data sync fail because it is null")
                                     }
                                 }
                                 else -> {
@@ -116,10 +128,12 @@ class DataLayerListenerService : WearableListenerService() {
         super.onDestroy()
         scope.cancel()
     }
-    
+
     companion object {
         const val PROJECT_UPDATE_PATH = "/projectUpdate"
         const val PROJECT_DELETE_PATH = "/projectDelete"
+        const val ALL_PROJECT_SYNC_PATH = "/allProjectSync"
+        const val KEY_PROJECTS = "projects"
         const val KEY_PROJECT = "project"
         const val KEY_PROJECT_ID = "projectId"
     }
