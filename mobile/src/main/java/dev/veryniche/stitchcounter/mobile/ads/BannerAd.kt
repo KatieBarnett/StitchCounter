@@ -20,6 +20,7 @@ enum class BannerAdLocation(val adId: String) {
     Test(adId = "ca-app-pub-3940256099942544/6300978111"),
     MainScreen(adId = "ca-app-pub-4584531662076255/2206758646"),
     ProjectScreen(adId = "ca-app-pub-4584531662076255/5850490185"),
+    CounterScreen(adId = "ca-app-pub-4584531662076255/4881589373"),
     AboutScreen(adId = "ca-app-pub-4584531662076255/5619497845"),
 }
 

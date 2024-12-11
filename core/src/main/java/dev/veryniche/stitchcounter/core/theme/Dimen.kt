@@ -24,4 +24,6 @@ object Dimen {
     val mobileEditModeIconSize = 40.dp
     val mobileBannerAdSize = 50.dp
     val mobileListCounterButtonWidth = 80.dp
+
+    val mobileCounterButtonCornerRadius = 20.dp
 }

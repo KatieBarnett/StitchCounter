@@ -48,6 +48,8 @@ object Analytics {
         const val EditProject = "Project Confirm"
         const val EditProjectConfim = "Edit Project Confirm Save"
         const val EditProjectSave = "Edit Project Save"
+        const val EditCounterSave = "Edit Counter Save"
+        const val EditCounterConfim = "Edit Counter Confirm Save"
         const val ResetCounter = "Reset Counter"
         const val ResetProject = "Reset Project"
     }

@@ -1,7 +1,5 @@
 package dev.veryniche.stitchcounter.mobile
 
-import dev.veryniche.stitchcounter.data.models.Counter
-import dev.veryniche.stitchcounter.data.models.Project
 import kotlinx.serialization.Serializable
 
 @Serializable
