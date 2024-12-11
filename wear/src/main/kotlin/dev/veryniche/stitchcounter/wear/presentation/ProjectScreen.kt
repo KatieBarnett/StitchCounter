@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material.icons.Icons.Filled
 import androidx.compose.material.icons.filled.Add
@@ -26,10 +27,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.rotary.onRotaryScrollEvent
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.wear.compose.foundation.ExperimentalWearFoundationApi
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.ScalingLazyListState
@@ -47,6 +50,7 @@ import androidx.wear.compose.material.dialog.Alert
 import com.google.android.horologist.compose.ambient.AmbientState
 import com.google.android.horologist.compose.ambient.AmbientStateUpdate
 import dev.veryniche.stitchcounter.BuildConfig
+import dev.veryniche.stitchcounter.R
 import dev.veryniche.stitchcounter.R.string
 import dev.veryniche.stitchcounter.core.Analytics
 import dev.veryniche.stitchcounter.core.TrackedScreen
@@ -220,6 +224,15 @@ fun ProjectContent(
                     }
                 }
             }
+        }
+        item {
+            Text(
+                modifier = modifier.fillMaxWidth().padding(horizontal = 8.dp).alpha(0.5f),
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.caption3,
+                color = MaterialTheme.colors.onBackground,
+                text = stringResource(R.string.project_last_updated, project.lastModifiedString)
+            )
         }
     }
 }

@@ -27,6 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import dev.veryniche.stitchcounter.core.Analytics.Screen
@@ -95,7 +96,12 @@ fun ProjectList(
             SnackbarHost(hostState = snackbarHostState)
         },
         bottomBar = {
-            BannerAd(location = BannerAdLocation.MainScreen, modifier = Modifier.navigationBarsPadding())
+            if (!LocalInspectionMode.current) {
+                BannerAd(
+                    location = BannerAdLocation.MainScreen,
+                    modifier = Modifier.navigationBarsPadding()
+                )
+            }
         },
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
     ) { contentPadding ->

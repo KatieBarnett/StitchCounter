@@ -6,8 +6,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -33,8 +35,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Dp
 import dev.veryniche.stitchcounter.core.Analytics.Action
 import dev.veryniche.stitchcounter.core.R
@@ -49,13 +56,12 @@ import dev.veryniche.stitchcounter.mobile.ui.theme.StitchCounterTheme
 fun CounterListItemComponent(
     counter: Counter,
     onCounterUpdate: (counter: Counter) -> Unit,
-    onCounterDelete: (counter: Counter) -> Unit,
-//    onCounterClick: (counter: Counter) -> Unit,
+    onCounterDelete: () -> Unit,
     inEditMode: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     var counterName by remember { mutableStateOf(counter.name) }
-    var counterMaxCount by remember { mutableStateOf<Int?>(counter.maxCount) }
+    var counterMaxCount by remember { mutableStateOf<String>(counter.maxCount.toString()) }
     Card(
         modifier = modifier,
         colors = CardDefaults.cardColors(
@@ -82,6 +88,7 @@ fun CounterListItemComponent(
                             onCounterUpdate.invoke(counter.copy(currentCount = counter.currentCount - 1))
                         }
                     },
+                    modifier = Modifier.width(Dimen.mobileListCounterButtonWidth).aspectRatio(1f)
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Remove,
@@ -90,18 +97,12 @@ fun CounterListItemComponent(
                 }
                 CounterCentre(
                     name = counter.name,
-                    displayedCount = if (counter.maxCount == 0) {
-                        stringResource(R.string.counter_fraction_zero, counter.currentCount)
-                    } else {
-                        stringResource(
-                            R.string.counter_fraction_many,
-                            counter.currentCount,
-                            counter.maxCount
-                        )
-                    },
+                    currentCount = counter.currentCount,
+                    maxCount = counter.maxCount,
                     modifier = Modifier.weight(1f)
                 )
                 Button(
+                    modifier = Modifier.width(Dimen.mobileListCounterButtonWidth).aspectRatio(1f),
                     onClick = { onCounterUpdate.invoke(counter.copy(currentCount = counter.currentCount + 1)) },
                 ) {
                     Icon(
@@ -153,7 +154,7 @@ fun CounterListItemComponent(
                                 value = counterMaxCount.toString(),
                                 singleLine = true,
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                                onValueChange = { counterMaxCount = it.trim().toIntOrNull() },
+                                onValueChange = { counterMaxCount = it },
                                 label = {
                                     Text(
                                         stringResource(
@@ -174,9 +175,12 @@ fun CounterListItemComponent(
                         ) {
                             Button(
                                 onClick = {
-                                    onCounterUpdate.invoke(
-                                        counter.copy(name = counterName, maxCount = counterMaxCount ?: 0)
+                                    val updatedCounter = counter.copy(
+                                        name = counterName,
+                                        maxCount = counterMaxCount.trim().toIntOrNull() ?: 0
                                     )
+                                    onCounterUpdate.invoke(updatedCounter)
+                                    counterMaxCount = updatedCounter.maxCount.toString()
                                 },
                                 colors = ButtonDefaults.buttonColors()
                             ) {
@@ -202,7 +206,7 @@ fun CounterListItemComponent(
                             Button(
                                 onClick = {
                                     trackEvent(Action.DeleteCounter, isMobile = true)
-                                    onCounterDelete.invoke(counter)
+                                    onCounterDelete.invoke()
                                 },
                                 colors = ButtonDefaults.filledTonalButtonColors()
                             ) {
@@ -222,13 +226,49 @@ fun CounterListItemComponent(
 
 @Composable
 fun CounterCentre(
-    displayedCount: String,
+    currentCount: Int,
+    maxCount: Int,
     name: String,
     modifier: Modifier = Modifier
 ) {
+    var showMaxCount by remember(maxCount) { mutableStateOf(maxCount > 0) }
+    val displayedCount = buildAnnotatedString {
+        withStyle(
+            style = SpanStyle(
+                fontWeight = FontWeight.Bold,
+                fontSize = MaterialTheme.typography.displayMedium.fontSize
+            )
+        ) {
+            append(currentCount.toString())
+        }
+        if (showMaxCount) {
+            withStyle(
+                style = SpanStyle(
+                    fontSize = MaterialTheme.typography.displayMedium.fontSize / 2
+                )
+            ) {
+                append("/")
+                append(maxCount.toString())
+            }
+        }
+    }
+
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = modifier) {
-        Text(text = displayedCount, textAlign = TextAlign.Center)
-        Text(text = name, textAlign = TextAlign.Center)
+        Text(
+            text = displayedCount,
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.displaySmall,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            onTextLayout = { result ->
+                showMaxCount = showMaxCount && !result.hasVisualOverflow
+            },
+        )
+        Text(
+            text = name,
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.bodyMedium,
+        )
     }
 }
 
@@ -283,6 +323,23 @@ fun CounterLongTextPreview() {
                 name = "pattern that is something super long",
                 currentCount = 4000,
                 maxCount = 1000
+            ),
+            onCounterUpdate = {},
+            onCounterDelete = {}
+        )
+    }
+}
+
+@PreviewComponent
+@Composable
+fun CounterVeryLongTextPreview() {
+    StitchCounterTheme {
+        CounterListItemComponent(
+            counter = Counter(
+                id = 3,
+                name = "pattern that is something super long",
+                currentCount = 400000,
+                maxCount = 100000
             ),
             onCounterUpdate = {},
             onCounterDelete = {}

@@ -24,4 +24,7 @@
     <string name="project_list_empty">No projects</string>
     <string name="counter_list_empty">No counters</string>
 
+    <string name="project_instruction_text">Tap to open a counter to a larger view, long press to edit.</string>
+    <string name="project_last_updated">Last updated: %s</string>
+
 </resources>

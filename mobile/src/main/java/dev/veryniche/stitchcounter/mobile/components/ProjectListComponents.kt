@@ -2,6 +2,7 @@ package dev.veryniche.stitchcounter.mobile.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -27,6 +28,12 @@ fun ProjectItem(project: Project, onProjectClick: (Int) -> Unit, modifier: Modif
                 onProjectClick.invoke(it)
             }
         },
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+            contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+            disabledContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+            disabledContentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+        ),
         modifier = modifier
     ) {
         Column(Modifier.padding(Dimen.spacingQuad)) {

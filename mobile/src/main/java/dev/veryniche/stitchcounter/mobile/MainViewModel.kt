@@ -38,9 +38,10 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    suspend fun saveProject(project: Project) {
+    suspend fun saveProject(project: Project): Int {
         val updatedProject = savedProjectsRepository.saveProject(project, isMobile = true)
         eventsToWatch.emit(updatedProject.toUpdateEvent())
+        return updatedProject.id ?: -1
     }
 
     suspend fun syncAllProjects() {

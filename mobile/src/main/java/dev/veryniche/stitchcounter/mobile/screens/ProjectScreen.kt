@@ -43,9 +43,11 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import dev.veryniche.stitchcounter.core.Analytics.Action
@@ -101,7 +103,6 @@ fun ProjectScreen(
             }
         )
     }
-    var projectState by remember { mutableStateOf(project) }
     var showProjectEditMode by rememberSaveable { mutableStateOf(projectEditMode) }
     var showDeleteProjectConfirmation by rememberSaveable { mutableStateOf(false) }
     var showSaveProjectConfirmation by rememberSaveable { mutableStateOf(false) }
@@ -154,7 +155,7 @@ fun ProjectScreen(
                 ExtendedFloatingActionButton(
                     onClick = {
                         trackEvent(Action.EditProjectSave, isMobile = true)
-                        onSave.invoke(projectState.copy(name = projectName))
+                        onSave.invoke(project.copy(name = projectName))
                         showProjectEditMode = false
                     },
                     icon = { Icon(Icons.Filled.Check, stringResource(id = R.string.add_project)) },
@@ -162,28 +163,12 @@ fun ProjectScreen(
                     modifier = fabModifier
                 )
             } else {
-//                ExtendedFloatingActionButton(
-//                    onClick = {
-//                        trackEvent(AnalyticsConstants.Action.EditProject)
-//                        showProjectEditMode = true
-//                    },
-//                    icon = { Icon(Icons.Filled.Edit, stringResource(id = R.string.edit_project)) },
-//                    text = { Text(text = stringResource(id = R.string.edit_project)) },
-//                    modifier = fabModifier
-//                )
                 ExtendedFloatingActionButton(
                     onClick = {
                         trackEvent(Action.AddCounter, isMobile = true)
-                        val nextId = projectState.counters.maxOfOrNull { it.id }?.plus(1) ?: 0
+                        val nextId = project.counters.maxOfOrNull { it.id }?.plus(1) ?: 0
                         val defaultCounterName = context.getString(R.string.counter_name_default, nextId)
-                        projectState = projectState.copy(
-                            counters = projectState.counters.plus(
-                                Counter(
-                                    id = nextId,
-                                    name = defaultCounterName
-                                )
-                            )
-                        )
+                        onCounterUpdate.invoke(Counter(id = nextId, name = defaultCounterName))
                         countersInEditMode.add(nextId)
                     },
                     icon = { Icon(Icons.Filled.Add, stringResource(id = R.string.add_counter)) },
@@ -193,12 +178,14 @@ fun ProjectScreen(
             }
         },
         bottomBar = {
-            BannerAd(
-                location = BannerAdLocation.ProjectScreen,
-                modifier = Modifier
-                    .navigationBarsPadding()
-                    .imePadding()
-            )
+            if (!LocalInspectionMode.current) {
+                BannerAd(
+                    location = BannerAdLocation.ProjectScreen,
+                    modifier = Modifier
+                        .navigationBarsPadding()
+                        .imePadding()
+                )
+            }
         },
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
     ) { contentPadding ->
@@ -251,7 +238,7 @@ fun ProjectScreen(
                     }
                 }
             }
-            if (projectState.counters.isEmpty()) {
+            if (project.counters.isEmpty()) {
                 Box(
                     contentAlignment = Alignment.Center,
                     modifier = modifier
@@ -276,12 +263,12 @@ fun ProjectScreen(
                     item {
                         // Spacer
                     }
-                    itemsIndexed(projectState.counters) { index, counter ->
+                    itemsIndexed(project.counters) { index, counter ->
                         CounterListItemComponent(
                             counter = counter,
-                            onCounterUpdate = {
+                            onCounterUpdate = { updatedCounter ->
                                 countersInEditMode.remove(counter.id)
-                                onCounterUpdate.invoke(counter)
+                                onCounterUpdate.invoke(updatedCounter)
                             },
                             onCounterDelete = {
                                 countersInEditMode.remove(counter.id)
@@ -299,6 +286,27 @@ fun ProjectScreen(
                         )
                     }
                     item {
+                        Column(verticalArrangement = Arrangement.spacedBy(Dimen.spacingDouble)) {
+                            Text(
+                                stringResource(dev.veryniche.stitchcounter.mobile.R.string.project_instruction_text),
+                                style = MaterialTheme.typography.labelLarge,
+                                color = MaterialTheme.colorScheme.onBackground,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                            Text(
+                                stringResource(
+                                    dev.veryniche.stitchcounter.mobile.R.string.project_last_updated,
+                                    project.lastModifiedString
+                                ),
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onBackground,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.fillMaxWidth().alpha(0.5f)
+                            )
+                        }
+                    }
+                    item {
                         // Spacer
                     }
                 }
@@ -310,7 +318,8 @@ fun ProjectScreen(
             projectName = projectName,
             onAccept = {
                 trackEvent(Action.EditProjectSave, isMobile = true)
-                onSave.invoke(projectState)
+                onSave.invoke(project.copy(name = projectName))
+                showProjectEditMode = false
             },
             onDismiss = {
                 onBack.invoke()

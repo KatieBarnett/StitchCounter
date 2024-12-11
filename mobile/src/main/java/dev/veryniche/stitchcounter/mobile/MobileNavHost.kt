@@ -4,8 +4,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -13,6 +11,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.toRoute
 import dev.veryniche.stitchcounter.core.Analytics.Action
 import dev.veryniche.stitchcounter.core.R
 import dev.veryniche.stitchcounter.core.trackEvent
@@ -33,12 +32,13 @@ fun MobileNavHost(
     onPurchaseClick: (PurchaseAction) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val defaultProjectName = stringResource(R.string.project_name_default)
     NavHost(
         navController = navController,
-        startDestination = "project_list",
+        startDestination = ProjectListDestination,
         modifier = modifier
     ) {
-        composable("about") {
+        composable<AboutDestination> {
             AboutScreen(
                 purchaseStatus = purchaseStatus,
                 snackbarHostState = snackbarHostState,
@@ -46,98 +46,65 @@ fun MobileNavHost(
                 onPurchaseClick = onPurchaseClick
             )
         }
-        composable("project_list") {
+        composable<ProjectListDestination> {
+            val coroutineScope = rememberCoroutineScope()
             ProjectListScreen(
                 viewModel = viewModel,
                 snackbarHostState = snackbarHostState,
                 onProjectClick = { projectId ->
-                    navController.navigate("project/$projectId")
+                    navController.navigate(ProjectDestination(projectId, false))
                 },
                 onAddProjectClick = {
-                    navController.navigate("project")
+                    coroutineScope.launch {
+                        val newProjectId = viewModel.saveProject(Project(name = defaultProjectName))
+                        navController.navigate(ProjectDestination(newProjectId, true))
+                    }
                 },
                 onAboutClick = {
-                    navController.navigate("about")
+                    navController.navigate(AboutDestination)
                 }
             )
         }
-        composable("project") {
-            val composableScope = rememberCoroutineScope()
-            val defaultProjectName = stringResource(R.string.project_name_default)
-            var projectState by remember { mutableStateOf(Project(name = defaultProjectName)) }
-            ProjectScreen(
-                project = projectState,
-                snackbarHostState = snackbarHostState,
-                projectEditMode = true,
-                onSave = { updatedProject ->
-                    composableScope.launch {
-                        viewModel.saveProject(updatedProject)
-                        projectState = updatedProject
-                    }
-                },
-                onDelete = {
-                    composableScope.launch {
-                        projectState.id?.let {
-                            trackEvent(Action.DeleteProject, isMobile = true)
-                            viewModel.deleteProject(it)
+        composable<ProjectDestination> { backstackNavigation ->
+            val arguments = backstackNavigation.toRoute<ProjectDestination>()
+            val coroutineScope = rememberCoroutineScope()
+            val projectState by viewModel.getProject(arguments.id).collectAsState(null)
+            projectState?.let { project ->
+                ProjectScreen(
+                    project = project,
+                    snackbarHostState = snackbarHostState,
+                    projectEditMode = arguments.inEditMode,
+                    onSave = { updatedProject ->
+                        coroutineScope.launch {
+                            viewModel.saveProject(updatedProject)
                         }
-                        navController.navigateUp()
-                    }
-                },
-                onBack = {
-                    navController.navigateUp()
-                },
-                onAboutClick = {
-                    navController.navigate("about")
-                },
-                onOpenCounter = {
-
-                },
-                onCounterUpdate = {
-
-                },
-                onCounterDelete = {
-
-                }
-            )
-        }
-        composable("project/{id}") {
-            it.arguments?.getString("id")?.toIntOrNull()?.let { projectId ->
-                val projectState = viewModel.getProject(projectId).collectAsState(initial = null)
-                projectState.value?.let { project ->
-                    val composableScope = rememberCoroutineScope()
-                    ProjectScreen(
-                        project = project,
-                        snackbarHostState = snackbarHostState,
-                        onSave = { updatedProject ->
-                            composableScope.launch {
-                                viewModel.saveProject(updatedProject)
-                            }
-                        },
-                        onDelete = {
-                            composableScope.launch {
-                                trackEvent(Action.DeleteProject, isMobile = true)
-                                viewModel.deleteProject(projectId)
-                                navController.navigateUp()
-                            }
-                        },
-                        onBack = {
+                    },
+                    onDelete = {
+                        coroutineScope.launch {
+                            trackEvent(Action.DeleteProject, isMobile = true)
+                            viewModel.deleteProject(arguments.id)
                             navController.navigateUp()
-                        },
-                        onAboutClick = {
-                            navController.navigate("about")
-                        },
-                        onOpenCounter = {
-
-                        },
-                        onCounterDelete = {
-
-                        },
-                        onCounterUpdate = {
-
-                        },
-                    )
-                }
+                        }
+                    },
+                    onBack = {
+                        navController.navigateUp()
+                    },
+                    onAboutClick = {
+                        navController.navigate("about")
+                    },
+                    onOpenCounter = {
+                    },
+                    onCounterUpdate = { updatedCounter ->
+                        coroutineScope.launch {
+                            viewModel.updateCounter(project, updatedCounter)
+                        }
+                    },
+                    onCounterDelete = { counter ->
+                        coroutineScope.launch {
+                            viewModel.deleteCounter(project.id ?: -1, counter.id)
+                        }
+                    }
+                )
             }
         }
 

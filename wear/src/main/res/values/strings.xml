@@ -87,6 +87,7 @@
     <string name="about_link_opened_confirmation">Link opened on your phone.</string>
     <string name="about_email_opened_confirmation">Email client opened on your phone.</string>
 
+    <string name="project_last_updated">Last updated: %s</string>
 
     <string name="counter_tile_label">Stitch Counter</string>
     <string name="counter_tile_description">Counter tile</string>
