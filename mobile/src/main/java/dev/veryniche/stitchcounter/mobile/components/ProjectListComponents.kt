@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import dev.veryniche.stitchcounter.core.R
 import dev.veryniche.stitchcounter.core.theme.Dimen
 import dev.veryniche.stitchcounter.data.models.Counter
@@ -43,6 +44,7 @@ fun ProjectItem(project: Project, onProjectClick: (Int) -> Unit, modifier: Modif
                 } else {
                     project.name
                 },
+                overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.headlineMedium
             )
             Text(

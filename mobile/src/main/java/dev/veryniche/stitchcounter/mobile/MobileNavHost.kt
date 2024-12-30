@@ -18,6 +18,7 @@ import dev.veryniche.stitchcounter.data.models.Project
 import dev.veryniche.stitchcounter.mobile.purchase.PurchaseAction
 import dev.veryniche.stitchcounter.mobile.purchase.PurchaseStatus
 import dev.veryniche.stitchcounter.mobile.screens.AboutScreen
+import dev.veryniche.stitchcounter.mobile.screens.CounterScreen
 import dev.veryniche.stitchcounter.mobile.screens.ProjectListScreen
 import dev.veryniche.stitchcounter.mobile.screens.ProjectScreen
 import kotlinx.coroutines.launch
@@ -89,9 +90,12 @@ fun MobileNavHost(
                         navController.navigateUp()
                     },
                     onAboutClick = {
-                        navController.navigate("about")
+                        navController.navigate(AboutDestination)
                     },
-                    onOpenCounter = {
+                    onOpenCounter = { counter ->
+                        projectState?.id?.let {
+                            navController.navigate(CounterDestination(it, counter.id))
+                        }
                     },
                     onCounterUpdate = { updatedCounter ->
                         coroutineScope.launch {
@@ -106,86 +110,36 @@ fun MobileNavHost(
                 )
             }
         }
-
-//        composable("counter/{project_id}/{counter_id}") {
-//            val projectId = it.arguments?.getString("project_id")?.toIntOrNull()
-//            val counterId = it.arguments?.getString("counter_id")?.toIntOrNull()
-//            if (projectId != null && counterId != null) {
-//                viewModel.updatePageContext(stringResource(id = R.string.context_counter))
-//                CounterScreen(
-//                    viewModel = viewModel,
-//                    projectId = projectId,
-//                    counterId = counterId,
-//                    onCounterEdit = { counterName, counterMax ->
-//                        navController.navigate("edit_counter/$projectId/$counterId/$counterName/$counterMax")
-//                    }
-//                )
-//            }
-//        }
-//        composable("edit_counter/{project_id}/{counter_id}") {
-//            val projectId = it.arguments?.getString("project_id")?.toIntOrNull()
-//            val counterId = it.arguments?.getString("counter_id")?.toIntOrNull()
-//            if (projectId != null && counterId != null) {
-//                viewModel.updatePageContext(stringResource(id = R.string.context_counter))
-//                LoadEditCounterScreen(
-//                    navController = navController,
-//                    viewModel = viewModel,
-//                    projectId = projectId,
-//                    counterId = counterId,
-//                    counterName = null,
-//                    counterMax = 0
-//                )
-//            }
-//        }
-//        composable("edit_counter/{project_id}/{counter_id}/{counter_name}/{counter_max}") {
-//            val projectId = it.arguments?.getString("project_id")?.toIntOrNull()
-//            val counterId = it.arguments?.getString("counter_id")?.toIntOrNull()
-//            val counterName = it.arguments?.getString("counter_name")
-//            val counterMax = it.arguments?.getString("counter_max")?.toIntOrNull() ?: 0
-//            if (projectId != null && counterId != null) {
-//                viewModel.updatePageContext(stringResource(id = R.string.context_counter))
-//                LoadEditCounterScreen(
-//                    navController = navController,
-//                    viewModel = viewModel,
-//                    projectId = projectId,
-//                    counterId = counterId,
-//                    counterName = counterName,
-//                    counterMax = counterMax
-//                )
-//            }
-//        }
+        composable<CounterDestination> { backstackNavigation ->
+            val arguments = backstackNavigation.toRoute<CounterDestination>()
+            val coroutineScope = rememberCoroutineScope()
+            val projectState by viewModel.getProject(arguments.projectId).collectAsState(null)
+            projectState?.counters?.firstOrNull { it.id == arguments.counterId }?.let { counter ->
+                CounterScreen(
+                    counter = counter,
+                    snackbarHostState = snackbarHostState,
+                    initialInEditMode = false,
+                    onBack = {
+                        navController.navigateUp()
+                    },
+                    onAboutClick = {
+                        navController.navigate(AboutDestination)
+                    },
+                    onCounterUpdate = { updatedCounter ->
+                        coroutineScope.launch {
+                            projectState?.let {
+                                viewModel.updateCounter(it, updatedCounter)
+                            }
+                        }
+                    },
+                    onCounterDelete = {
+                        coroutineScope.launch {
+                            viewModel.deleteCounter(arguments.projectId, counter.id)
+                            navController.navigateUp()
+                        }
+                    }
+                )
+            }
+        }
     }
 }
-//
-// @Composable
-// fun LoadEditCounterScreen(
-//    navController: NavHostController,
-//    viewModel: MainViewModel,
-//    projectId: Int,
-//    counterId: Int,
-//    counterName: String?,
-//    counterMax: Int,
-// ) {
-//    val composableScope = rememberCoroutineScope()
-//    EditCounterScreen(
-//        counterId = counterId,
-//        initialName = counterName,
-//        initialMax = counterMax,
-//        onSave = { counterName, counterMax ->
-//            composableScope.launch {
-//                viewModel.saveCounter(projectId, counterId, counterName, counterMax)
-//                navController.navigateUp()
-//            }
-//        },
-//        onDelete = {
-//            composableScope.launch {
-//                trackEvent(Analytics.Action.DeleteCounter)
-//                viewModel.deleteCounter(projectId, counterId)
-//                navController.navigateUp()
-//            }
-//        },
-//        onClose = {
-//            navController.navigateUp()
-//        }
-//    )
-// }

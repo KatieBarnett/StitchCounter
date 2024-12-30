@@ -70,6 +70,9 @@ class MainViewModel @Inject constructor(
             val updatedList = project.counters.toMutableList()
             updatedList[counterIndex] = counter
             saveProject(project.copy(counters = updatedList))
+        } else {
+            val updatedList = project.counters.plus(counter)
+            saveProject(project.copy(counters = updatedList))
         }
     }
 

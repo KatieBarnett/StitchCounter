@@ -50,6 +50,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import dev.veryniche.stitchcounter.core.Analytics.Action
 import dev.veryniche.stitchcounter.core.Analytics.Screen
 import dev.veryniche.stitchcounter.core.R
@@ -70,6 +71,7 @@ import dev.veryniche.stitchcounter.mobile.components.EditActionIcon
 import dev.veryniche.stitchcounter.mobile.components.NavigationIcon
 import dev.veryniche.stitchcounter.mobile.components.SaveProjectConfirmation
 import dev.veryniche.stitchcounter.mobile.components.topAppBarColors
+import dev.veryniche.stitchcounter.mobile.conditional
 import dev.veryniche.stitchcounter.mobile.previews.PreviewScreen
 import dev.veryniche.stitchcounter.mobile.snapshotStateListSaver
 import dev.veryniche.stitchcounter.mobile.ui.theme.StitchCounterTheme
@@ -123,6 +125,7 @@ fun ProjectScreen(
                         } else {
                             projectName
                         },
+                        overflow = TextOverflow.Ellipsis,
                         style = MaterialTheme.typography.headlineMedium,
                     )
                 },
@@ -155,7 +158,7 @@ fun ProjectScreen(
                 ExtendedFloatingActionButton(
                     onClick = {
                         trackEvent(Action.EditProjectSave, isMobile = true)
-                        onSave.invoke(project.copy(name = projectName))
+                        onSave.invoke(project.copy(name = projectName.trim()))
                         showProjectEditMode = false
                     },
                     icon = { Icon(Icons.Filled.Check, stringResource(id = R.string.add_project)) },
@@ -275,14 +278,20 @@ fun ProjectScreen(
                                 onCounterDelete.invoke(counter)
                             },
                             inEditMode = countersInEditMode.contains(counter.id),
-                            modifier = Modifier.fillMaxWidth().combinedClickable(
-                                onClick = {
-                                    onOpenCounter.invoke(counter)
-                                },
-                                onLongClick = {
-                                    countersInEditMode.add(counter.id)
-                                },
-                            )
+                            modifier = Modifier.fillMaxWidth()
+                                .conditional(
+                                    !countersInEditMode.contains(counter.id),
+                                    {
+                                        combinedClickable(
+                                            onClick = {
+                                                onOpenCounter.invoke(counter)
+                                            },
+                                            onLongClick = {
+                                                countersInEditMode.add(counter.id)
+                                            }
+                                        )
+                                    }
+                                ),
                         )
                     }
                     item {

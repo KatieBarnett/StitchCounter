@@ -4,6 +4,7 @@
     <string name="label_project_name">Project Name</string>
     <string name="validation_message_project_name">Please enter a name for the project</string>
     <string name="validation_message_counter_name">Please enter a name for the counter</string>
+    <string name="validation_message_counter_max_count">Please enter a valid number for the maximum counter value.</string>
 
     <string name="label_counter_name">Counter Name</string>
     <string name="label_counter_max_count">Maximum Counter Value</string>

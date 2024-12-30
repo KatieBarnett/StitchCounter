@@ -31,6 +31,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -60,8 +61,8 @@ fun CounterListItemComponent(
     inEditMode: Boolean = false,
     modifier: Modifier = Modifier
 ) {
-    var counterName by remember { mutableStateOf(counter.name) }
-    var counterMaxCount by remember { mutableStateOf<String>(counter.maxCount.toString()) }
+    var counterName by rememberSaveable { mutableStateOf(counter.name) }
+    var counterMaxCount by rememberSaveable { mutableStateOf<String>(counter.maxCount.toString()) }
     Card(
         modifier = modifier,
         colors = CardDefaults.cardColors(
@@ -88,6 +89,7 @@ fun CounterListItemComponent(
                             onCounterUpdate.invoke(counter.copy(currentCount = counter.currentCount - 1))
                         }
                     },
+                    enabled = !inEditMode,
                     modifier = Modifier.width(Dimen.mobileListCounterButtonWidth).aspectRatio(1f)
                 ) {
                     Icon(
@@ -102,6 +104,7 @@ fun CounterListItemComponent(
                     modifier = Modifier.weight(1f)
                 )
                 Button(
+                    enabled = !inEditMode,
                     modifier = Modifier.width(Dimen.mobileListCounterButtonWidth).aspectRatio(1f),
                     onClick = { onCounterUpdate.invoke(counter.copy(currentCount = counter.currentCount + 1)) },
                 ) {
@@ -152,9 +155,20 @@ fun CounterListItemComponent(
                         ) {
                             OutlinedTextField(
                                 value = counterMaxCount.toString(),
+                                isError = counterMaxCount.trim().toIntOrNull() == null,
                                 singleLine = true,
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                                 onValueChange = { counterMaxCount = it },
+                                supportingText = {
+                                    if (counterMaxCount.trim().toIntOrNull() == null) {
+                                        Text(
+                                            text = stringResource(
+                                                dev.veryniche.stitchcounter.mobile.R.string.validation_message_counter_max_count
+                                            ),
+                                            color = MaterialTheme.colorScheme.error
+                                        )
+                                    }
+                                },
                                 label = {
                                     Text(
                                         stringResource(
@@ -176,13 +190,13 @@ fun CounterListItemComponent(
                             Button(
                                 onClick = {
                                     val updatedCounter = counter.copy(
-                                        name = counterName,
+                                        name = counterName.trim(),
                                         maxCount = counterMaxCount.trim().toIntOrNull() ?: 0
                                     )
                                     onCounterUpdate.invoke(updatedCounter)
                                     counterMaxCount = updatedCounter.maxCount.toString()
                                 },
-                                colors = ButtonDefaults.buttonColors()
+                                colors = ButtonDefaults.buttonColors(),
                             ) {
                                 Icon(
                                     imageVector = Icons.Filled.Check,
