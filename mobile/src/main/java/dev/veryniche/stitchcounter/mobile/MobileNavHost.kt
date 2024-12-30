@@ -11,6 +11,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
+import androidx.window.core.layout.WindowSizeClass
 import dev.veryniche.stitchcounter.core.Analytics.Action
 import dev.veryniche.stitchcounter.core.R
 import dev.veryniche.stitchcounter.core.trackEvent
@@ -30,6 +31,7 @@ fun MobileNavHost(
     viewModel: MainViewModel,
     purchaseStatus: PurchaseStatus,
     onPurchaseClick: (PurchaseAction) -> Unit,
+    windowSizeClass: WindowSizeClass,
     modifier: Modifier = Modifier,
 ) {
     val defaultProjectName = stringResource(R.string.project_name_default)
@@ -40,17 +42,17 @@ fun MobileNavHost(
     ) {
         composable<AboutDestination> {
             AboutScreen(
-                purchaseStatus = purchaseStatus,
-                snackbarHostState = snackbarHostState,
                 onNavigateBack = { navController.navigateUp() },
-                onPurchaseClick = onPurchaseClick
+                purchaseStatus = purchaseStatus,
+                onPurchaseClick = onPurchaseClick,
+                snackbarHostState = snackbarHostState,
+                windowSizeClass = windowSizeClass,
             )
         }
         composable<ProjectListDestination> {
             val coroutineScope = rememberCoroutineScope()
             ProjectListScreen(
                 viewModel = viewModel,
-                snackbarHostState = snackbarHostState,
                 onProjectClick = { projectId ->
                     navController.navigate(ProjectDestination(projectId, false))
                 },
@@ -62,7 +64,9 @@ fun MobileNavHost(
                 },
                 onAboutClick = {
                     navController.navigate(AboutDestination)
-                }
+                },
+                snackbarHostState = snackbarHostState,
+                windowSizeClass = windowSizeClass,
             )
         }
         composable<ProjectDestination> { backstackNavigation ->
@@ -72,8 +76,10 @@ fun MobileNavHost(
             projectState?.let { project ->
                 ProjectScreen(
                     project = project,
-                    snackbarHostState = snackbarHostState,
                     projectEditMode = arguments.inEditMode,
+                    onAboutClick = {
+                        navController.navigate(AboutDestination)
+                    },
                     onSave = { updatedProject ->
                         coroutineScope.launch {
                             viewModel.saveProject(updatedProject)
@@ -89,9 +95,6 @@ fun MobileNavHost(
                     onBack = {
                         navController.navigateUp()
                     },
-                    onAboutClick = {
-                        navController.navigate(AboutDestination)
-                    },
                     onOpenCounter = { counter ->
                         projectState?.id?.let {
                             navController.navigate(CounterDestination(it, counter.id))
@@ -106,7 +109,9 @@ fun MobileNavHost(
                         coroutineScope.launch {
                             viewModel.deleteCounter(project.id ?: -1, counter.id)
                         }
-                    }
+                    },
+                    snackbarHostState = snackbarHostState,
+                    windowSizeClass = windowSizeClass,
                 )
             }
         }
@@ -117,11 +122,6 @@ fun MobileNavHost(
             projectState?.counters?.firstOrNull { it.id == arguments.counterId }?.let { counter ->
                 CounterScreen(
                     counter = counter,
-                    snackbarHostState = snackbarHostState,
-                    initialInEditMode = false,
-                    onBack = {
-                        navController.navigateUp()
-                    },
                     onAboutClick = {
                         navController.navigate(AboutDestination)
                     },
@@ -137,7 +137,12 @@ fun MobileNavHost(
                             viewModel.deleteCounter(arguments.projectId, counter.id)
                             navController.navigateUp()
                         }
-                    }
+                    },
+                    onBack = {
+                        navController.navigateUp()
+                    },
+                    snackbarHostState = snackbarHostState,
+                    windowSizeClass = windowSizeClass,
                 )
             }
         }

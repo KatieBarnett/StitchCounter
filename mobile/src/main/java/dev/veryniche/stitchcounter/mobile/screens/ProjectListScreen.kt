@@ -3,11 +3,13 @@ package dev.veryniche.stitchcounter.mobile.screens
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.GridCells.Fixed
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -19,6 +21,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -30,6 +33,9 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.window.core.layout.WindowHeightSizeClass
+import androidx.window.core.layout.WindowSizeClass
+import androidx.window.core.layout.WindowWidthSizeClass
 import dev.veryniche.stitchcounter.core.Analytics.Screen
 import dev.veryniche.stitchcounter.core.R
 import dev.veryniche.stitchcounter.core.TrackedScreen
@@ -41,9 +47,10 @@ import dev.veryniche.stitchcounter.mobile.MainViewModel
 import dev.veryniche.stitchcounter.mobile.ads.BannerAd
 import dev.veryniche.stitchcounter.mobile.ads.BannerAdLocation
 import dev.veryniche.stitchcounter.mobile.components.AboutActionIcon
+import dev.veryniche.stitchcounter.mobile.components.CollapsedTopAppBar
 import dev.veryniche.stitchcounter.mobile.components.ExpandingTopAppBar
 import dev.veryniche.stitchcounter.mobile.components.ProjectItem
-import dev.veryniche.stitchcounter.mobile.previews.PreviewComponent
+import dev.veryniche.stitchcounter.mobile.previews.PreviewScreen
 import dev.veryniche.stitchcounter.mobile.ui.theme.StitchCounterTheme
 
 @Composable
@@ -53,12 +60,21 @@ fun ProjectListScreen(
     onAddProjectClick: () -> Unit,
     onAboutClick: () -> Unit,
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    windowSizeClass: WindowSizeClass = currentWindowAdaptiveInfo().windowSizeClass,
 ) {
     val projects: List<Project> by viewModel.projects.collectAsState(initial = emptyList())
-    ProjectList(projects.sortedByDescending {
-        it.lastModified
-    }, onProjectClick, onAddProjectClick, onAboutClick, snackbarHostState, modifier)
+    ProjectList(
+        projects.sortedByDescending {
+            it.lastModified
+        },
+        onProjectClick,
+        onAddProjectClick,
+        onAboutClick,
+        snackbarHostState,
+        modifier,
+        windowSizeClass
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -69,7 +85,8 @@ fun ProjectList(
     onAddProjectClick: () -> Unit,
     onAboutClick: () -> Unit,
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    windowSizeClass: WindowSizeClass = currentWindowAdaptiveInfo().windowSizeClass,
 ) {
     TrackedScreen {
         trackScreenView(name = Screen.ProjectList, isMobile = true)
@@ -77,13 +94,25 @@ fun ProjectList(
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     Scaffold(
         topBar = {
-            ExpandingTopAppBar(
-                titleText = stringResource(id = R.string.app_name),
-                actions = {
-                    AboutActionIcon { onAboutClick.invoke() }
-                },
-                scrollBehavior = scrollBehavior,
-            )
+            if (windowSizeClass.windowHeightSizeClass == WindowHeightSizeClass.COMPACT) {
+                CollapsedTopAppBar(
+                    titleText = stringResource(id = R.string.app_name),
+
+                    actions = {
+                        AboutActionIcon { onAboutClick.invoke() }
+                    },
+                    navigationIcon = {}
+                )
+            } else {
+                ExpandingTopAppBar(
+                    titleText = stringResource(id = R.string.app_name),
+                    actions = {
+                        AboutActionIcon { onAboutClick.invoke() }
+                    },
+                    scrollBehavior = scrollBehavior,
+                    navigationIcon = {}
+                )
+            }
         },
         floatingActionButton = {
             ExtendedFloatingActionButton(
@@ -121,21 +150,23 @@ fun ProjectList(
                     )
                 }
             } else {
-                LazyColumn(
+                LazyVerticalGrid(
                     verticalArrangement = Arrangement.spacedBy(Dimen.spacingQuad),
+                    horizontalArrangement = Arrangement.spacedBy(Dimen.spacingQuad),
+                    contentPadding = PaddingValues(Dimen.spacingQuad),
+                    columns = Fixed(
+                        when (windowSizeClass.windowWidthSizeClass) {
+                            WindowWidthSizeClass.EXPANDED -> 3
+                            WindowWidthSizeClass.MEDIUM -> 2
+                            else -> 1
+                        }
+                    ),
                     modifier = modifier
                         .weight(1f)
                         .fillMaxWidth()
-                        .padding(horizontal = Dimen.spacingQuad)
                 ) {
-                    item {
-                        // Spacing
-                    }
                     items(projectList) { project ->
                         ProjectItem(project, onProjectClick, Modifier.fillMaxWidth())
-                    }
-                    item {
-                        // Spacing
                     }
                 }
             }
@@ -143,7 +174,7 @@ fun ProjectList(
     }
 }
 
-@PreviewComponent
+@PreviewScreen
 @Composable
 fun ProjectListEmptyPreview() {
     StitchCounterTheme {
@@ -157,7 +188,7 @@ fun ProjectListEmptyPreview() {
     }
 }
 
-@PreviewComponent
+@PreviewScreen
 @Composable
 fun ProjectListPreview() {
     StitchCounterTheme {

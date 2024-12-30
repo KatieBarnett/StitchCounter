@@ -116,76 +116,55 @@ fun CounterListItemComponent(
             }
             if (inEditMode) {
                 Surface {
-                    Column {
-                        Row(
-                            modifier = Modifier.padding(
-                                start = Dimen.spacingTriple,
-                                end = Dimen.spacingTriple,
-                                top = Dimen.spacingTriple
-                            )
-                        ) {
-                            OutlinedTextField(
-                                value = counterName,
-                                onValueChange = { counterName = it },
-                                isError = counterName.isBlank(),
-                                label = {
+                    Column(Modifier.padding(Dimen.spacingTriple)) {
+                        OutlinedTextField(
+                            value = counterName,
+                            onValueChange = { counterName = it },
+                            isError = counterName.isBlank(),
+                            label = {
+                                Text(
+                                    stringResource(dev.veryniche.stitchcounter.mobile.R.string.label_counter_name)
+                                )
+                            },
+                            supportingText = {
+                                if (counterName.isBlank()) {
                                     Text(
-                                        stringResource(dev.veryniche.stitchcounter.mobile.R.string.label_counter_name)
+                                        text = stringResource(
+                                            dev.veryniche.stitchcounter.mobile.R.string.validation_message_counter_name
+                                        ),
+                                        color = MaterialTheme.colorScheme.error
                                     )
-                                },
-                                supportingText = {
-                                    if (counterName.isBlank()) {
-                                        Text(
-                                            text = stringResource(
-                                                dev.veryniche.stitchcounter.mobile.R.string.validation_message_counter_name
-                                            ),
-                                            color = MaterialTheme.colorScheme.error
-                                        )
-                                    }
-                                },
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                        }
-                        Row(
-                            modifier = Modifier.padding(
-                                start = Dimen.spacingTriple,
-                                end = Dimen.spacingTriple,
-                                bottom = Dimen.spacingTriple
-                            )
-                        ) {
-                            OutlinedTextField(
-                                value = counterMaxCount.toString(),
-                                isError = counterMaxCount.trim().toIntOrNull() == null,
-                                singleLine = true,
-                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                                onValueChange = { counterMaxCount = it },
-                                supportingText = {
-                                    if (counterMaxCount.trim().toIntOrNull() == null) {
-                                        Text(
-                                            text = stringResource(
-                                                dev.veryniche.stitchcounter.mobile.R.string.validation_message_counter_max_count
-                                            ),
-                                            color = MaterialTheme.colorScheme.error
-                                        )
-                                    }
-                                },
-                                label = {
+                                }
+                            },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        OutlinedTextField(
+                            value = counterMaxCount.toString(),
+                            isError = counterMaxCount.trim().toIntOrNull() == null,
+                            singleLine = true,
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                            onValueChange = { counterMaxCount = it },
+                            supportingText = {
+                                if (counterMaxCount.trim().toIntOrNull() == null) {
                                     Text(
-                                        stringResource(
-                                            dev.veryniche.stitchcounter.mobile.R.string.label_counter_max_count
-                                        )
+                                        text = stringResource(
+                                            dev.veryniche.stitchcounter.mobile.R.string.validation_message_counter_max_count
+                                        ),
+                                        color = MaterialTheme.colorScheme.error
                                     )
-                                },
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                        }
+                                }
+                            },
+                            label = {
+                                Text(
+                                    stringResource(
+                                        dev.veryniche.stitchcounter.mobile.R.string.label_counter_max_count
+                                    )
+                                )
+                            },
+                            modifier = Modifier.fillMaxWidth()
+                        )
                         FlowRow(
-                            horizontalArrangement = Arrangement.spacedBy(Dimen.spacingTriple),
-                            modifier = Modifier.padding(
-                                start = Dimen.spacingTriple,
-                                end = Dimen.spacingTriple,
-                                bottom = Dimen.spacingTriple
-                            )
+                            horizontalArrangement = Arrangement.spacedBy(Dimen.spacingTriple)
                         ) {
                             Button(
                                 onClick = {

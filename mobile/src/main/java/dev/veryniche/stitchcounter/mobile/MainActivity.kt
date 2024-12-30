@@ -8,6 +8,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -18,6 +19,7 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.rememberNavController
+import androidx.window.core.layout.WindowSizeClass
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.wearable.PutDataMapRequest
 import com.google.android.gms.wearable.Wearable
@@ -89,12 +91,13 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             }
+            val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
             StitchCounterTheme {
                 val snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }
                 val coroutineScope = rememberCoroutineScope()
                 appUpdateHelper = AppUpdateHelper(this, updateLauncher, snackbarHostState, coroutineScope)
                 appUpdateHelper.checkForUpdates()
-                StitchCounterMobileApp(viewModel, snackbarHostState)
+                StitchCounterMobileApp(viewModel, snackbarHostState, windowSizeClass, Modifier)
             }
         }
     }
@@ -114,6 +117,7 @@ class MainActivity : ComponentActivity() {
     fun StitchCounterMobileApp(
         viewModel: MainViewModel,
         snackbarHostState: SnackbarHostState,
+        windowSizeClass: WindowSizeClass,
         modifier: Modifier = Modifier,
     ) {
         val navController = rememberNavController()
@@ -127,6 +131,7 @@ class MainActivity : ComponentActivity() {
             ),
             onPurchaseClick = {},
             snackbarHostState = snackbarHostState,
+            windowSizeClass = windowSizeClass,
             modifier = modifier.fillMaxSize()
         )
     }

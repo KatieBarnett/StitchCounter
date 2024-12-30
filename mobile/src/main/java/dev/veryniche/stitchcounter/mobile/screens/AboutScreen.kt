@@ -19,6 +19,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -28,7 +29,7 @@ import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.core.content.ContextCompat.startActivity
+import androidx.window.core.layout.WindowSizeClass
 import dev.veryniche.stitchcounter.core.Analytics.Action
 import dev.veryniche.stitchcounter.core.Analytics.Screen
 import dev.veryniche.stitchcounter.core.R
@@ -40,6 +41,7 @@ import dev.veryniche.stitchcounter.mobile.BuildConfig
 import dev.veryniche.stitchcounter.mobile.ads.BannerAd
 import dev.veryniche.stitchcounter.mobile.ads.BannerAdLocation
 import dev.veryniche.stitchcounter.mobile.components.CollapsedTopAppBar
+import dev.veryniche.stitchcounter.mobile.components.NavigationIcon
 import dev.veryniche.stitchcounter.mobile.previews.PreviewScreen
 import dev.veryniche.stitchcounter.mobile.purchase.PurchaseAction
 import dev.veryniche.stitchcounter.mobile.purchase.PurchaseStatus
@@ -71,7 +73,8 @@ fun AboutScreen(
     purchaseStatus: PurchaseStatus,
     onPurchaseClick: (PurchaseAction) -> Unit,
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    windowSizeClass: WindowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
 ) {
     val scrollableState = rememberScrollState()
     val context = LocalContext.current
@@ -83,7 +86,7 @@ fun AboutScreen(
             CollapsedTopAppBar(
                 titleText = stringResource(id = R.string.about_title),
                 actions = {},
-                onNavigation = onNavigateBack
+                navigationIcon = { NavigationIcon( { onNavigateBack.invoke() }) }
             )
         },
         snackbarHost = {
@@ -148,7 +151,7 @@ fun AboutScreen(
                     intent.putExtra(Intent.EXTRA_EMAIL, email)
                     intent.putExtra(Intent.EXTRA_SUBJECT, emailSubject)
                     if (intent.resolveActivity(context.packageManager) != null) {
-                        startActivity(context, intent, null)
+                        context.startActivity(intent, null)
                     }
                 }
             )
@@ -237,7 +240,11 @@ fun AboutScreen(
 @Composable
 fun AboutScreenFreePreview() {
     StitchCounterTheme {
-        AboutScreen(purchaseStatus = PurchaseStatus(false, false, false), onNavigateBack = {}, onPurchaseClick = {})
+        AboutScreen(
+            onNavigateBack = {},
+            purchaseStatus = PurchaseStatus(false, false, false),
+            onPurchaseClick = {},
+        )
     }
 }
 
@@ -245,7 +252,11 @@ fun AboutScreenFreePreview() {
 @Composable
 fun AboutScreenRemoveAdsPurchasedPreview() {
     StitchCounterTheme {
-        AboutScreen(purchaseStatus = PurchaseStatus(true, false, false), onNavigateBack = {}, onPurchaseClick = {})
+        AboutScreen(
+            onNavigateBack = {},
+            purchaseStatus = PurchaseStatus(true, false, false),
+            onPurchaseClick = {},
+        )
     }
 }
 
@@ -253,7 +264,11 @@ fun AboutScreenRemoveAdsPurchasedPreview() {
 @Composable
 fun AboutScreenSyncPurchasedPreview() {
     StitchCounterTheme {
-        AboutScreen(purchaseStatus = PurchaseStatus(false, true, false), onNavigateBack = {}, onPurchaseClick = {})
+        AboutScreen(
+            onNavigateBack = {},
+            purchaseStatus = PurchaseStatus(false, true, false),
+            onPurchaseClick = {},
+        )
     }
 }
 
@@ -261,6 +276,10 @@ fun AboutScreenSyncPurchasedPreview() {
 @Composable
 fun AboutScreenBundlePurchasedPreview() {
     StitchCounterTheme {
-        AboutScreen(purchaseStatus = PurchaseStatus(false, false, true), onNavigateBack = {}, onPurchaseClick = {})
+        AboutScreen(
+            onNavigateBack = {},
+            purchaseStatus = PurchaseStatus(false, false, true),
+            onPurchaseClick = {},
+        )
     }
 }

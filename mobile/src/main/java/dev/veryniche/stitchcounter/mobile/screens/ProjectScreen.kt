@@ -5,6 +5,7 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,8 +14,10 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.grid.GridCells.Fixed
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
@@ -22,7 +25,6 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -31,6 +33,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
@@ -50,7 +53,9 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.window.core.layout.WindowHeightSizeClass
+import androidx.window.core.layout.WindowSizeClass
+import androidx.window.core.layout.WindowWidthSizeClass
 import dev.veryniche.stitchcounter.core.Analytics.Action
 import dev.veryniche.stitchcounter.core.Analytics.Screen
 import dev.veryniche.stitchcounter.core.R
@@ -64,13 +69,14 @@ import dev.veryniche.stitchcounter.mobile.BuildConfig
 import dev.veryniche.stitchcounter.mobile.ads.BannerAd
 import dev.veryniche.stitchcounter.mobile.ads.BannerAdLocation
 import dev.veryniche.stitchcounter.mobile.components.AboutActionIcon
+import dev.veryniche.stitchcounter.mobile.components.CollapsedTopAppBar
 import dev.veryniche.stitchcounter.mobile.components.CounterListItemComponent
 import dev.veryniche.stitchcounter.mobile.components.DeleteActionIcon
 import dev.veryniche.stitchcounter.mobile.components.DeleteProjectConfirmation
 import dev.veryniche.stitchcounter.mobile.components.EditActionIcon
+import dev.veryniche.stitchcounter.mobile.components.ExpandingTopAppBar
 import dev.veryniche.stitchcounter.mobile.components.NavigationIcon
 import dev.veryniche.stitchcounter.mobile.components.SaveProjectConfirmation
-import dev.veryniche.stitchcounter.mobile.components.topAppBarColors
 import dev.veryniche.stitchcounter.mobile.conditional
 import dev.veryniche.stitchcounter.mobile.previews.PreviewScreen
 import dev.veryniche.stitchcounter.mobile.snapshotStateListSaver
@@ -95,7 +101,8 @@ fun ProjectScreen(
     onCounterUpdate: (Counter) -> Unit,
     onCounterDelete: (Counter) -> Unit,
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    windowSizeClass: WindowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
 ) {
     val projectNameDefault = stringResource(R.string.project_name_default)
     var projectName by rememberSaveable {
@@ -117,37 +124,56 @@ fun ProjectScreen(
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     Scaffold(
         topBar = {
-            LargeTopAppBar(
-                title = {
-                    Text(
-                        text = if (BuildConfig.SHOW_IDS) {
-                            "$projectName (${project.id})"
-                        } else {
-                            projectName
-                        },
-                        overflow = TextOverflow.Ellipsis,
-                        style = MaterialTheme.typography.headlineMedium,
-                    )
-                },
-                colors = topAppBarColors,
-                actions = {
-                    if (!showProjectEditMode) {
-                        EditActionIcon { showProjectEditMode = true }
-                    }
-                    DeleteActionIcon { showDeleteProjectConfirmation = true }
-                    AboutActionIcon { onAboutClick.invoke() }
-                },
-                scrollBehavior = scrollBehavior,
-                navigationIcon = {
-                    NavigationIcon {
-                        if (showProjectEditMode) {
-                            showSaveProjectConfirmation = true
-                        } else {
-                            onBack.invoke()
+            if (windowSizeClass.windowHeightSizeClass == WindowHeightSizeClass.COMPACT) {
+                CollapsedTopAppBar(
+                    titleText = if (BuildConfig.SHOW_IDS) {
+                        "$projectName (${project.id})"
+                    } else {
+                        projectName
+                    },
+                    actions = {
+                        if (!showProjectEditMode) {
+                            EditActionIcon { showProjectEditMode = true }
+                        }
+                        DeleteActionIcon { showDeleteProjectConfirmation = true }
+                        AboutActionIcon { onAboutClick.invoke() }
+                    },
+                    navigationIcon = {
+                        NavigationIcon {
+                            if (showProjectEditMode) {
+                                showSaveProjectConfirmation = true
+                            } else {
+                                onBack.invoke()
+                            }
                         }
                     }
-                }
-            )
+                )
+            } else {
+                ExpandingTopAppBar(
+                    titleText = if (BuildConfig.SHOW_IDS) {
+                        "$projectName (${project.id})"
+                    } else {
+                        projectName
+                    },
+                    actions = {
+                        if (!showProjectEditMode) {
+                            EditActionIcon { showProjectEditMode = true }
+                        }
+                        DeleteActionIcon { showDeleteProjectConfirmation = true }
+                        AboutActionIcon { onAboutClick.invoke() }
+                    },
+                    scrollBehavior = scrollBehavior,
+                    navigationIcon = {
+                        NavigationIcon {
+                            if (showProjectEditMode) {
+                                showSaveProjectConfirmation = true
+                            } else {
+                                onBack.invoke()
+                            }
+                        }
+                    }
+                )
+            }
         },
         snackbarHost = {
             SnackbarHost(hostState = snackbarHostState)
@@ -256,16 +282,21 @@ fun ProjectScreen(
                     )
                 }
             } else {
-                LazyColumn(
+                LazyVerticalGrid(
                     verticalArrangement = Arrangement.spacedBy(Dimen.spacingQuad),
+                    horizontalArrangement = Arrangement.spacedBy(Dimen.spacingQuad),
+                    columns = Fixed(
+                        when (windowSizeClass.windowWidthSizeClass) {
+                            WindowWidthSizeClass.EXPANDED,
+                            WindowWidthSizeClass.MEDIUM -> 2
+                            else -> 1
+                        }
+                    ),
+                    contentPadding = PaddingValues(Dimen.spacingQuad),
                     modifier = modifier
                         .weight(1f)
                         .fillMaxWidth()
-                        .padding(horizontal = Dimen.spacingQuad)
                 ) {
-                    item {
-                        // Spacer
-                    }
                     itemsIndexed(project.counters) { index, counter ->
                         CounterListItemComponent(
                             counter = counter,
@@ -278,7 +309,8 @@ fun ProjectScreen(
                                 onCounterDelete.invoke(counter)
                             },
                             inEditMode = countersInEditMode.contains(counter.id),
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier
+                                .fillMaxWidth()
                                 .conditional(
                                     !countersInEditMode.contains(counter.id),
                                     {
@@ -294,7 +326,15 @@ fun ProjectScreen(
                                 ),
                         )
                     }
-                    item {
+                    item(span = {
+                        GridItemSpan(
+                            when (windowSizeClass.windowWidthSizeClass) {
+                                WindowWidthSizeClass.EXPANDED,
+                                WindowWidthSizeClass.MEDIUM -> 2
+                                else -> 1
+                            }
+                        )
+                    }) {
                         Column(verticalArrangement = Arrangement.spacedBy(Dimen.spacingDouble)) {
                             Text(
                                 stringResource(dev.veryniche.stitchcounter.mobile.R.string.project_instruction_text),
@@ -311,12 +351,11 @@ fun ProjectScreen(
                                 style = MaterialTheme.typography.labelSmall,
                                 color = MaterialTheme.colorScheme.onBackground,
                                 textAlign = TextAlign.Center,
-                                modifier = Modifier.fillMaxWidth().alpha(0.5f)
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .alpha(0.5f)
                             )
                         }
-                    }
-                    item {
-                        // Spacer
                     }
                 }
             }
@@ -329,6 +368,8 @@ fun ProjectScreen(
                 trackEvent(Action.EditProjectSave, isMobile = true)
                 onSave.invoke(project.copy(name = projectName))
                 showProjectEditMode = false
+                showSaveProjectConfirmation = false
+                onBack.invoke()
             },
             onDismiss = {
                 onBack.invoke()

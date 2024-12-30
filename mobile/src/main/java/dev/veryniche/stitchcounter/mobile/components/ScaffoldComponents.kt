@@ -6,6 +6,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -18,6 +19,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import dev.veryniche.stitchcounter.core.R
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -35,7 +37,7 @@ val topAppBarColors: TopAppBarColors
 fun CollapsedTopAppBar(
     titleText: String,
     actions: @Composable RowScope.() -> Unit,
-    onNavigation: (() -> Unit)? = null,
+    navigationIcon: @Composable () -> Unit = {},
 ) {
     TopAppBar(
         title = {
@@ -46,11 +48,7 @@ fun CollapsedTopAppBar(
         },
         actions = actions,
         colors = topAppBarColors,
-        navigationIcon = {
-            onNavigation?.let {
-                NavigationIcon { onNavigation.invoke() }
-            }
-        }
+        navigationIcon = navigationIcon,
     )
 }
 
@@ -59,24 +57,21 @@ fun CollapsedTopAppBar(
 fun ExpandingTopAppBar(
     titleText: String,
     actions: @Composable RowScope.() -> Unit,
-    onNavigation: (() -> Unit)? = null,
+    navigationIcon: @Composable () -> Unit,
     scrollBehavior: TopAppBarScrollBehavior
 ) {
     LargeTopAppBar(
         title = {
             Text(
                 text = titleText,
+                overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.headlineMedium,
             )
         },
         colors = topAppBarColors,
         actions = actions,
         scrollBehavior = scrollBehavior,
-        navigationIcon = {
-            onNavigation?.let {
-                NavigationIcon { onNavigation.invoke() }
-            }
-        }
+        navigationIcon = navigationIcon,
     )
 }
 
@@ -111,7 +106,7 @@ fun DeleteActionIcon(onClick: () -> Unit) {
     ) {
         Icon(
             imageVector = Icons.Filled.Delete,
-            contentDescription = stringResource(id = R.string.delete_project)
+            contentDescription = "Delete"
         )
     }
 }
@@ -123,7 +118,19 @@ fun EditActionIcon(onClick: () -> Unit) {
     ) {
         Icon(
             imageVector = Icons.Filled.Edit,
-            contentDescription = stringResource(id = R.string.edit_project)
+            contentDescription = "Edit"
+        )
+    }
+}
+
+@Composable
+fun RefreshActionIcon(onClick: () -> Unit) {
+    IconButton(
+        onClick = { onClick.invoke() }
+    ) {
+        Icon(
+            imageVector = Icons.Filled.Refresh,
+            contentDescription = "Reset"
         )
     }
 }

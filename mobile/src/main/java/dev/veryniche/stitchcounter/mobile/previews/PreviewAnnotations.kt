@@ -16,21 +16,20 @@ annotation class PreviewComponent
 @Preview(
     name = "Phone - Regular Font",
     group = "Regular Font",
-    device = Devices.PHONE,
+    device = Devices.PIXEL_7,
     uiMode = Configuration.UI_MODE_NIGHT_NO,
     fontScale = 1.0f,
     showSystemUi = true,
     backgroundColor = Color.BLACK.toLong(),
 )
-
 @Preview(
     name = "Phone - Regular Font",
     group = "Regular Font",
-    device = Devices.PHONE,
+    device = Devices.PIXEL_7,
     uiMode = Configuration.UI_MODE_NIGHT_YES,
     fontScale = 1.0f,
     showSystemUi = true,
-    backgroundColor = Color.WHITE.toLong(),
+    backgroundColor = Color.BLACK.toLong(),
 )
 annotation class PreviewScreen
 //@Preview(

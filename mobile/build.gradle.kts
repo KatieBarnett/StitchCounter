@@ -71,6 +71,9 @@ dependencies {
     implementation(libs.ui.graphics)
     implementation(libs.compose.ui.tooling.preview)
     implementation(libs.material3)
+    implementation(libs.material3.adaptive)
+    implementation(libs.material3.adaptive.layout)
+    implementation(libs.material3.adaptive.navigation)
     implementation(libs.material)
     implementation(libs.splashscreen)
 
