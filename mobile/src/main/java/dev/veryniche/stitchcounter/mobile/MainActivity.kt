@@ -1,6 +1,8 @@
 package dev.veryniche.stitchcounter.mobile
 
 import android.os.Bundle
+import android.view.Window
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -24,9 +26,11 @@ import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.wearable.PutDataMapRequest
 import com.google.android.gms.wearable.Wearable
 import dagger.hilt.android.AndroidEntryPoint
+import dev.veryniche.stitchcounter.data.models.ScreenOnState
 import dev.veryniche.stitchcounter.mobile.purchase.PurchaseStatus
 import dev.veryniche.stitchcounter.mobile.ui.theme.StitchCounterTheme
 import dev.veryniche.stitchcounter.mobile.update.AppUpdateHelper
+import dev.veryniche.stitchcounter.storage.ThemeMode
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -74,6 +78,8 @@ class MainActivity : ComponentActivity() {
         }
         setContent {
             val dataSyncState by viewModel.eventsToWatch.collectAsStateWithLifecycle()
+            val themeMode by viewModel.themeMode.collectAsStateWithLifecycle(ThemeMode.Auto)
+            val keepScreenOnState by viewModel.keepScreenOnState.collectAsStateWithLifecycle(ScreenOnState(false, false))
             LaunchedEffect(dataSyncState) {
                 dataSyncState?.let {
                     try {
@@ -92,12 +98,12 @@ class MainActivity : ComponentActivity() {
                 }
             }
             val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
-            StitchCounterTheme {
+            StitchCounterTheme(themeMode) {
                 val snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }
                 val coroutineScope = rememberCoroutineScope()
                 appUpdateHelper = AppUpdateHelper(this, updateLauncher, snackbarHostState, coroutineScope)
                 appUpdateHelper.checkForUpdates()
-                StitchCounterMobileApp(viewModel, snackbarHostState, windowSizeClass, Modifier)
+                StitchCounterMobileApp(viewModel, snackbarHostState, windowSizeClass, themeMode, keepScreenOnState, Modifier)
             }
         }
     }
@@ -113,26 +119,39 @@ class MainActivity : ComponentActivity() {
         super.onPause()
     }
 
+    private fun setKeepScreenOn(window: Window, screenOn: Boolean) {
+        if (screenOn) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        } else {
+            window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        }
+        Timber.d("Updating screen on setting to: $screenOn")
+    }
+
     @Composable
     fun StitchCounterMobileApp(
         viewModel: MainViewModel,
         snackbarHostState: SnackbarHostState,
         windowSizeClass: WindowSizeClass,
+        themeMode: ThemeMode,
+        keepScreenOnState: ScreenOnState,
         modifier: Modifier = Modifier,
     ) {
         val navController = rememberNavController()
         MobileNavHost(
             navController = navController,
             viewModel = viewModel,
-            purchaseStatus = PurchaseStatus(
-                isAdRemovalPurchased = false,
-                isSyncPurchased = false,
-                isBundlePurchased = false
-            ),
+            purchaseStatus = PurchaseStatus(),
             onPurchaseClick = {},
             snackbarHostState = snackbarHostState,
             windowSizeClass = windowSizeClass,
+            themeMode = themeMode,
+            keepScreenOnState = keepScreenOnState,
+            onKeepScreenOnChanged = {
+                setKeepScreenOn(window, it)
+            },
             modifier = modifier.fillMaxSize()
         )
     }
 }
+

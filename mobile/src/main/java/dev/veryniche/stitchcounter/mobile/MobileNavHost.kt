@@ -16,12 +16,15 @@ import dev.veryniche.stitchcounter.core.Analytics.Action
 import dev.veryniche.stitchcounter.core.R
 import dev.veryniche.stitchcounter.core.trackEvent
 import dev.veryniche.stitchcounter.data.models.Project
+import dev.veryniche.stitchcounter.data.models.ScreenOnState
 import dev.veryniche.stitchcounter.mobile.purchase.PurchaseAction
 import dev.veryniche.stitchcounter.mobile.purchase.PurchaseStatus
 import dev.veryniche.stitchcounter.mobile.screens.AboutScreen
 import dev.veryniche.stitchcounter.mobile.screens.CounterScreen
 import dev.veryniche.stitchcounter.mobile.screens.ProjectListScreen
 import dev.veryniche.stitchcounter.mobile.screens.ProjectScreen
+import dev.veryniche.stitchcounter.mobile.screens.SettingsScreen
+import dev.veryniche.stitchcounter.storage.ThemeMode
 import kotlinx.coroutines.launch
 
 @Composable
@@ -32,6 +35,9 @@ fun MobileNavHost(
     purchaseStatus: PurchaseStatus,
     onPurchaseClick: (PurchaseAction) -> Unit,
     windowSizeClass: WindowSizeClass,
+    themeMode: ThemeMode,
+    keepScreenOnState: ScreenOnState,
+    onKeepScreenOnChanged: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val defaultProjectName = stringResource(R.string.project_name_default)
@@ -41,15 +47,36 @@ fun MobileNavHost(
         modifier = modifier
     ) {
         composable<AboutDestination> {
+            onKeepScreenOnChanged.invoke(false)
             AboutScreen(
                 onNavigateBack = { navController.navigateUp() },
+                onSettingsClick = { navController.navigate(SettingsDestination) },
                 purchaseStatus = purchaseStatus,
                 onPurchaseClick = onPurchaseClick,
                 snackbarHostState = snackbarHostState,
-                windowSizeClass = windowSizeClass,
+            )
+        }
+        composable<SettingsDestination> {
+            onKeepScreenOnChanged.invoke(false)
+            SettingsScreen(
+                onNavigateBack = { navController.navigateUp() },
+                onAboutClick = {
+                    navController.navigate(AboutDestination)
+                },
+                snackbarHostState = snackbarHostState,
+                themeMode = themeMode,
+                onThemeModeSelected = {
+                    viewModel.updateThemeMode(it)
+                },
+                onKeepScreenOnStateSelected = {
+                    viewModel.updateScreenOnState(it)
+                },
+                purchaseStatus = purchaseStatus,
+                keepScreenOnState = keepScreenOnState,
             )
         }
         composable<ProjectListDestination> {
+            onKeepScreenOnChanged.invoke(false)
             val coroutineScope = rememberCoroutineScope()
             ProjectListScreen(
                 viewModel = viewModel,
@@ -67,9 +94,11 @@ fun MobileNavHost(
                 },
                 snackbarHostState = snackbarHostState,
                 windowSizeClass = windowSizeClass,
+                onSettingsClick = { navController.navigate(SettingsDestination) },
             )
         }
         composable<ProjectDestination> { backstackNavigation ->
+            onKeepScreenOnChanged.invoke(keepScreenOnState.projectScreenOn)
             val arguments = backstackNavigation.toRoute<ProjectDestination>()
             val coroutineScope = rememberCoroutineScope()
             val projectState by viewModel.getProject(arguments.id).collectAsState(null)
@@ -112,10 +141,12 @@ fun MobileNavHost(
                     },
                     snackbarHostState = snackbarHostState,
                     windowSizeClass = windowSizeClass,
+                    onSettingsClick = { navController.navigate(SettingsDestination) },
                 )
             }
         }
         composable<CounterDestination> { backstackNavigation ->
+            onKeepScreenOnChanged.invoke(keepScreenOnState.counterScreenOn)
             val arguments = backstackNavigation.toRoute<CounterDestination>()
             val coroutineScope = rememberCoroutineScope()
             val projectState by viewModel.getProject(arguments.projectId).collectAsState(null)
@@ -143,6 +174,7 @@ fun MobileNavHost(
                     },
                     snackbarHostState = snackbarHostState,
                     windowSizeClass = windowSizeClass,
+                    onSettingsClick = { navController.navigate(SettingsDestination) },
                 )
             }
         }

@@ -21,6 +21,7 @@ private const val ANALYTICS_LOG_TAG = "Analytics"
 object Analytics {
     object Screen {
         const val About = "About"
+        const val Settings = "Settings"
         const val Counter = "Counter"
         const val EditCounter = "Edit Counter"
         const val EditCounterMax = "Edit Counter Max"

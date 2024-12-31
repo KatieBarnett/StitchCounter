@@ -5,7 +5,10 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.veryniche.stitchcounter.data.models.Counter
 import dev.veryniche.stitchcounter.data.models.Project
+import dev.veryniche.stitchcounter.data.models.ScreenOnState
 import dev.veryniche.stitchcounter.storage.ProjectsRepository
+import dev.veryniche.stitchcounter.storage.ThemeMode
+import dev.veryniche.stitchcounter.storage.UserPreferencesRepository
 import dev.veryniche.stitchcounter.storage.datasync.Event
 import dev.veryniche.stitchcounter.storage.datasync.toDeleteEvent
 import dev.veryniche.stitchcounter.storage.datasync.toUpdateAllEvent
@@ -14,14 +17,26 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val savedProjectsRepository: ProjectsRepository
+    private val savedProjectsRepository: ProjectsRepository,
+    private val userPreferencesRepository: UserPreferencesRepository
 ) : ViewModel() {
+
+    private val userPreferencesFlow = userPreferencesRepository.userPreferencesFlow
+
+    val keepScreenOnState = userPreferencesFlow.map {
+        it.keepScreenOn
+    }
+
+    val themeMode = userPreferencesFlow.map {
+        it.themeMode
+    }
 
     val projects = savedProjectsRepository.getProjects()
 
@@ -100,6 +115,18 @@ class MainViewModel @Inject constructor(
                 updatedList.removeAt(counterIndex)
                 saveProject(project.copy(counters = updatedList))
             }
+        }
+    }
+
+    fun updateScreenOnState(screenOnState: ScreenOnState) {
+        viewModelScope.launch {
+            userPreferencesRepository.updateKeepScreenOn(screenOnState)
+        }
+    }
+
+    fun updateThemeMode(themeMode: ThemeMode) {
+        viewModelScope.launch {
+            userPreferencesRepository.updateThemeMode(themeMode)
         }
     }
 }

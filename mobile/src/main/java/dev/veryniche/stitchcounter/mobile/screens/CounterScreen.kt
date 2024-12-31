@@ -71,6 +71,7 @@ import dev.veryniche.stitchcounter.mobile.components.ExpandingTopAppBar
 import dev.veryniche.stitchcounter.mobile.components.NavigationIcon
 import dev.veryniche.stitchcounter.mobile.components.RefreshActionIcon
 import dev.veryniche.stitchcounter.mobile.components.SaveCounterConfirmation
+import dev.veryniche.stitchcounter.mobile.components.SettingsActionIcon
 import dev.veryniche.stitchcounter.mobile.previews.PreviewScreen
 import dev.veryniche.stitchcounter.mobile.ui.theme.StitchCounterTheme
 
@@ -83,13 +84,14 @@ import dev.veryniche.stitchcounter.mobile.ui.theme.StitchCounterTheme
 fun CounterScreen(
     counter: Counter,
     onAboutClick: () -> Unit,
+    onSettingsClick: () -> Unit,
     onCounterUpdate: (counter: Counter) -> Unit,
     onCounterDelete: () -> Unit,
     onBack: () -> Unit,
     initialInEditMode: Boolean = false,
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
     modifier: Modifier = Modifier,
-    windowSizeClass: WindowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
+    windowSizeClass: WindowSizeClass = currentWindowAdaptiveInfo().windowSizeClass,
 ) {
     val counterNameDefault = stringResource(R.string.counter_name_default)
     var counterName by rememberSaveable {
@@ -122,6 +124,7 @@ fun CounterScreen(
                             EditActionIcon { showCounterEditMode = true }
                         }
                         DeleteActionIcon { showDeleteCounterConfirmation = true }
+                        SettingsActionIcon { onSettingsClick.invoke() }
                         AboutActionIcon { onAboutClick.invoke() }
                     },
                     navigationIcon = {
@@ -142,10 +145,12 @@ fun CounterScreen(
                         counterName
                     },
                     actions = {
+                        RefreshActionIcon { onCounterUpdate(counter.copy(currentCount = 0)) }
                         if (!showCounterEditMode) {
                             EditActionIcon { showCounterEditMode = true }
                         }
                         DeleteActionIcon { showDeleteCounterConfirmation = true }
+                        SettingsActionIcon { onSettingsClick.invoke() }
                         AboutActionIcon { onAboutClick.invoke() }
                     },
                     scrollBehavior = scrollBehavior,
@@ -432,6 +437,7 @@ fun CounterScreenPreview() {
             onCounterUpdate = { },
             onCounterDelete = { },
             onBack = { },
+            onSettingsClick = {},
         )
     }
 }
@@ -447,6 +453,7 @@ fun CounterScreenEditPreview() {
             onCounterDelete = { },
             onBack = { },
             initialInEditMode = true,
+            onSettingsClick = {},
         )
     }
 }
@@ -465,6 +472,7 @@ fun CounterScreenLongTextPreview() {
             onAboutClick = { },
             onCounterUpdate = { },
             onCounterDelete = { },
+            onSettingsClick = {},
             onBack = { },
         )
     }
@@ -485,6 +493,7 @@ fun CounterScreenVeryLongTextPreview() {
             onCounterUpdate = { },
             onCounterDelete = { },
             onBack = { },
+            onSettingsClick = {},
         )
     }
 }

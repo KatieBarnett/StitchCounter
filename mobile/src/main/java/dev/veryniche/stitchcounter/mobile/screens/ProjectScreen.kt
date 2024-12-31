@@ -77,6 +77,7 @@ import dev.veryniche.stitchcounter.mobile.components.EditActionIcon
 import dev.veryniche.stitchcounter.mobile.components.ExpandingTopAppBar
 import dev.veryniche.stitchcounter.mobile.components.NavigationIcon
 import dev.veryniche.stitchcounter.mobile.components.SaveProjectConfirmation
+import dev.veryniche.stitchcounter.mobile.components.SettingsActionIcon
 import dev.veryniche.stitchcounter.mobile.conditional
 import dev.veryniche.stitchcounter.mobile.previews.PreviewScreen
 import dev.veryniche.stitchcounter.mobile.snapshotStateListSaver
@@ -94,6 +95,7 @@ fun ProjectScreen(
     project: Project,
     projectEditMode: Boolean = false,
     onAboutClick: () -> Unit,
+    onSettingsClick: () -> Unit,
     onSave: (project: Project) -> Unit,
     onDelete: () -> Unit,
     onBack: () -> Unit,
@@ -102,7 +104,7 @@ fun ProjectScreen(
     onCounterDelete: (Counter) -> Unit,
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
     modifier: Modifier = Modifier,
-    windowSizeClass: WindowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
+    windowSizeClass: WindowSizeClass = currentWindowAdaptiveInfo().windowSizeClass,
 ) {
     val projectNameDefault = stringResource(R.string.project_name_default)
     var projectName by rememberSaveable {
@@ -136,6 +138,7 @@ fun ProjectScreen(
                             EditActionIcon { showProjectEditMode = true }
                         }
                         DeleteActionIcon { showDeleteProjectConfirmation = true }
+                        SettingsActionIcon { onSettingsClick.invoke() }
                         AboutActionIcon { onAboutClick.invoke() }
                     },
                     navigationIcon = {
@@ -160,6 +163,7 @@ fun ProjectScreen(
                             EditActionIcon { showProjectEditMode = true }
                         }
                         DeleteActionIcon { showDeleteProjectConfirmation = true }
+                        SettingsActionIcon { onSettingsClick.invoke() }
                         AboutActionIcon { onAboutClick.invoke() }
                     },
                     scrollBehavior = scrollBehavior,
@@ -399,6 +403,7 @@ fun ProjectScreenPreview() {
                 counters = listOf(),
             ),
             onAboutClick = {},
+            onSettingsClick = {},
             onSave = {},
             onDelete = {},
             onBack = {},
@@ -422,6 +427,7 @@ fun ProjectScreenWithCountersPreview() {
                 ),
             ),
             onAboutClick = {},
+            onSettingsClick = {},
             onSave = {},
             onDelete = {},
             onBack = {},
@@ -446,6 +452,7 @@ fun ProjectScreenEditModePreview() {
             ),
             projectEditMode = true,
             onAboutClick = {},
+            onSettingsClick = {},
             onSave = {},
             onDelete = {},
             onBack = {},

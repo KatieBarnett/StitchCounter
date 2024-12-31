@@ -6,6 +6,9 @@ import kotlinx.serialization.Serializable
 object AboutDestination
 
 @Serializable
+object SettingsDestination
+
+@Serializable
 object ProjectListDestination
 
 @Serializable

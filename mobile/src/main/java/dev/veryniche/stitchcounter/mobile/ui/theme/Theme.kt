@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import dev.veryniche.stitchcounter.core.theme.DarkColors
 import dev.veryniche.stitchcounter.core.theme.LightColors
+import dev.veryniche.stitchcounter.storage.ThemeMode
 
 // private val DarkColorScheme = darkColorScheme(
 //    primary = RubineRed,
@@ -43,6 +44,23 @@ import dev.veryniche.stitchcounter.core.theme.LightColors
 //    onSurfaceVariant = Charcoal
 // )
 
+@Composable
+fun StitchCounterTheme(
+    themeMode: ThemeMode,
+    // Dynamic color is available on Android 12+
+    dynamicColor: Boolean = false, // !BuildConfig.DEBUG, //true,
+    content: @Composable () -> Unit
+) {
+    StitchCounterTheme(
+        darkTheme = when(themeMode) {
+            ThemeMode.Auto -> isSystemInDarkTheme()
+            ThemeMode.Light -> false
+            ThemeMode.Dark -> true
+        },
+        // Dynamic color is available on Android 12+
+        dynamicColor = dynamicColor,
+        content = content)
+}
 @Composable
 fun StitchCounterTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),

@@ -1,6 +1,5 @@
 package dev.veryniche.stitchcounter.wear.presentation
 
-
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -343,12 +342,16 @@ fun CounterContent(
                                     contentDescription = stringResource(id = string.edit_counter)
                                 )
                             }
+                            var keepScreenOnState by remember { mutableStateOf(keepScreenOn) }
                             CompactButton(
-                                onClick = { onKeepScreenOnUpdate.invoke(!keepScreenOn) },
+                                onClick = {
+                                    keepScreenOnState = !keepScreenOnState
+                                    onKeepScreenOnUpdate.invoke(keepScreenOnState)
+                                },
                                 colors = ButtonDefaults.secondaryButtonColors()
                             ) {
                                 Icon(
-                                    imageVector = if (keepScreenOn) {
+                                    imageVector = if (keepScreenOnState) {
                                         Filled.BrightnessHigh
                                     } else {
                                         Filled.BrightnessLow

@@ -50,6 +50,7 @@ import dev.veryniche.stitchcounter.mobile.components.AboutActionIcon
 import dev.veryniche.stitchcounter.mobile.components.CollapsedTopAppBar
 import dev.veryniche.stitchcounter.mobile.components.ExpandingTopAppBar
 import dev.veryniche.stitchcounter.mobile.components.ProjectItem
+import dev.veryniche.stitchcounter.mobile.components.SettingsActionIcon
 import dev.veryniche.stitchcounter.mobile.previews.PreviewScreen
 import dev.veryniche.stitchcounter.mobile.ui.theme.StitchCounterTheme
 
@@ -59,6 +60,7 @@ fun ProjectListScreen(
     onProjectClick: (Int) -> Unit,
     onAddProjectClick: () -> Unit,
     onAboutClick: () -> Unit,
+    onSettingsClick: () -> Unit,
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
     modifier: Modifier = Modifier,
     windowSizeClass: WindowSizeClass = currentWindowAdaptiveInfo().windowSizeClass,
@@ -71,6 +73,7 @@ fun ProjectListScreen(
         onProjectClick,
         onAddProjectClick,
         onAboutClick,
+        onSettingsClick,
         snackbarHostState,
         modifier,
         windowSizeClass
@@ -84,6 +87,7 @@ fun ProjectList(
     onProjectClick: (Int) -> Unit,
     onAddProjectClick: () -> Unit,
     onAboutClick: () -> Unit,
+    onSettingsClick: () -> Unit,
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
     modifier: Modifier = Modifier,
     windowSizeClass: WindowSizeClass = currentWindowAdaptiveInfo().windowSizeClass,
@@ -97,8 +101,8 @@ fun ProjectList(
             if (windowSizeClass.windowHeightSizeClass == WindowHeightSizeClass.COMPACT) {
                 CollapsedTopAppBar(
                     titleText = stringResource(id = R.string.app_name),
-
                     actions = {
+                        SettingsActionIcon { onSettingsClick.invoke() }
                         AboutActionIcon { onAboutClick.invoke() }
                     },
                     navigationIcon = {}
@@ -107,6 +111,7 @@ fun ProjectList(
                 ExpandingTopAppBar(
                     titleText = stringResource(id = R.string.app_name),
                     actions = {
+                        SettingsActionIcon { onSettingsClick.invoke() }
                         AboutActionIcon { onAboutClick.invoke() }
                     },
                     scrollBehavior = scrollBehavior,
@@ -182,6 +187,7 @@ fun ProjectListEmptyPreview() {
             projectList = listOf(),
             onProjectClick = {},
             onAddProjectClick = {},
+            onSettingsClick = {},
             onAboutClick = {},
             modifier = Modifier
         )
@@ -207,6 +213,7 @@ fun ProjectListPreview() {
                 )
             ),
             onProjectClick = {},
+            onSettingsClick = {},
             onAddProjectClick = {},
             onAboutClick = {},
             modifier = Modifier

@@ -17,6 +17,7 @@ import javax.inject.Inject
 data class UserPreferences(
     val whatsNewLastSeen: Int,
     val keepScreenOn: ScreenOnState,
+    val themeMode: ThemeMode,
     val lastReviewDate: Long,
     val tileProjectId: Int?,
     val tileCounterId: Int?,
@@ -24,6 +25,7 @@ data class UserPreferences(
 
 class UserPreferencesRepository @Inject constructor(
     private val dataStore: DataStore<Preferences>,
+    private val isMobile: Boolean,
 ) {
 
     private object PreferencesKeys {
@@ -32,6 +34,7 @@ class UserPreferencesRepository @Inject constructor(
         val LAST_REVIEW_DATE = longPreferencesKey("last_review_date")
         val TILE_PROJECT_ID = intPreferencesKey("tile_project_id")
         val TILE_COUNTER_ID = intPreferencesKey("tile_counter_id")
+        val THEME_MODE = stringPreferencesKey("theme_mode")
     }
 
     val userPreferencesFlow: Flow<UserPreferences> = dataStore.data
@@ -47,11 +50,26 @@ class UserPreferencesRepository @Inject constructor(
             val keepScreenOnStateString = preferences[PreferencesKeys.KEEP_SCREEN_ON_STATE]
             val keepScreenOnState = keepScreenOnStateString?.let {
                 ScreenOnState.fromJsonString(it)
-            } ?: ScreenOnState()
+            } ?: if (isMobile) {
+                ScreenOnState(false, false)
+            } else {
+                ScreenOnState(true, true)
+            }
+            val themeModeString = preferences[PreferencesKeys.THEME_MODE]
+            val themeMode = themeModeString?.let {
+                ThemeMode.valueOf(it)
+            } ?: ThemeMode.Auto
             val lastReviewDate = preferences[PreferencesKeys.LAST_REVIEW_DATE] ?: -1L
             val tileProjectId = preferences[PreferencesKeys.TILE_PROJECT_ID]
             val tileCounterId = preferences[PreferencesKeys.TILE_COUNTER_ID]
-            UserPreferences(whatsNewLastSeen, keepScreenOnState, lastReviewDate, tileProjectId, tileCounterId)
+            UserPreferences(
+                whatsNewLastSeen,
+                keepScreenOnState,
+                themeMode,
+                lastReviewDate,
+                tileProjectId,
+                tileCounterId
+            )
         }
 
     suspend fun updateWhatsNewLastSeen(whatsNewLastSeen: Int) {
@@ -63,6 +81,12 @@ class UserPreferencesRepository @Inject constructor(
     suspend fun updateKeepScreenOn(keepScreenOn: ScreenOnState) {
         dataStore.edit { preferences ->
             preferences[PreferencesKeys.KEEP_SCREEN_ON_STATE] = keepScreenOn.toJsonString()
+        }
+    }
+
+    suspend fun updateThemeMode(themeMode: ThemeMode) {
+        dataStore.edit { preferences ->
+            preferences[PreferencesKeys.THEME_MODE] = themeMode.name
         }
     }
 

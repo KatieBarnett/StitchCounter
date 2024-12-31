@@ -19,7 +19,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -29,7 +28,6 @@ import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.window.core.layout.WindowSizeClass
 import dev.veryniche.stitchcounter.core.Analytics.Action
 import dev.veryniche.stitchcounter.core.Analytics.Screen
 import dev.veryniche.stitchcounter.core.R
@@ -42,6 +40,7 @@ import dev.veryniche.stitchcounter.mobile.ads.BannerAd
 import dev.veryniche.stitchcounter.mobile.ads.BannerAdLocation
 import dev.veryniche.stitchcounter.mobile.components.CollapsedTopAppBar
 import dev.veryniche.stitchcounter.mobile.components.NavigationIcon
+import dev.veryniche.stitchcounter.mobile.components.SettingsActionIcon
 import dev.veryniche.stitchcounter.mobile.previews.PreviewScreen
 import dev.veryniche.stitchcounter.mobile.purchase.PurchaseAction
 import dev.veryniche.stitchcounter.mobile.purchase.PurchaseStatus
@@ -70,11 +69,11 @@ fun AboutText(textRes: Int, modifier: Modifier = Modifier) {
 @Composable
 fun AboutScreen(
     onNavigateBack: () -> Unit,
+    onSettingsClick: () -> Unit,
     purchaseStatus: PurchaseStatus,
     onPurchaseClick: (PurchaseAction) -> Unit,
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
     modifier: Modifier = Modifier,
-    windowSizeClass: WindowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
 ) {
     val scrollableState = rememberScrollState()
     val context = LocalContext.current
@@ -85,8 +84,10 @@ fun AboutScreen(
         topBar = {
             CollapsedTopAppBar(
                 titleText = stringResource(id = R.string.about_title),
-                actions = {},
-                navigationIcon = { NavigationIcon( { onNavigateBack.invoke() }) }
+                actions = {
+                    SettingsActionIcon { onSettingsClick.invoke() }
+                },
+                navigationIcon = { NavigationIcon({ onNavigateBack.invoke() }) }
             )
         },
         snackbarHost = {
@@ -156,30 +157,30 @@ fun AboutScreen(
                 }
             )
 
-            if (!(purchaseStatus.isAdRemovalPurchased || purchaseStatus.isBundlePurchased)) {
-                AboutHeading(R.string.about_remove_ads_version_title)
-                Button(content = {
-                    Text(text = stringResource(id = R.string.about_get_remove_ads_version))
-                }, onClick = {
-                    trackEvent(Action.AboutRemoveAdsVersion, isMobile = true)
-                    onPurchaseClick.invoke(PurchaseAction.AD_REMOVAL)
-                })
-            }
-
-            if (!(purchaseStatus.isSyncPurchased || purchaseStatus.isBundlePurchased)) {
-                AboutHeading(R.string.about_sync_version_title)
-                Text(
-                    text = stringResource(id = R.string.about_sync_version),
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.fillMaxWidth()
-                )
-                Button(content = {
-                    Text(text = stringResource(id = R.string.about_get_sync_version))
-                }, onClick = {
-                    trackEvent(Action.AboutSyncVersion, isMobile = true)
-                    onPurchaseClick.invoke(PurchaseAction.SYNC)
-                })
-            }
+//            if (!(purchaseStatus.isAdRemovalPurchased || purchaseStatus.isBundlePurchased)) {
+//                AboutHeading(R.string.about_remove_ads_version_title)
+//                Button(content = {
+//                    Text(text = stringResource(id = R.string.about_get_remove_ads_version))
+//                }, onClick = {
+//                    trackEvent(Action.AboutRemoveAdsVersion, isMobile = true)
+//                    onPurchaseClick.invoke(PurchaseAction.AD_REMOVAL)
+//                })
+//            }
+//
+//            if (!(purchaseStatus.isSyncPurchased || purchaseStatus.isBundlePurchased)) {
+//                AboutHeading(R.string.about_sync_version_title)
+//                Text(
+//                    text = stringResource(id = R.string.about_sync_version),
+//                    style = MaterialTheme.typography.bodyLarge,
+//                    modifier = Modifier.fillMaxWidth()
+//                )
+//                Button(content = {
+//                    Text(text = stringResource(id = R.string.about_get_sync_version))
+//                }, onClick = {
+//                    trackEvent(Action.AboutSyncVersion, isMobile = true)
+//                    onPurchaseClick.invoke(PurchaseAction.SYNC)
+//                })
+//            }
 
             if (!(purchaseStatus.isBundlePurchased)) {
                 AboutHeading(R.string.about_bundle_version_title)
@@ -242,32 +243,9 @@ fun AboutScreenFreePreview() {
     StitchCounterTheme {
         AboutScreen(
             onNavigateBack = {},
-            purchaseStatus = PurchaseStatus(false, false, false),
+            purchaseStatus = PurchaseStatus(false),
             onPurchaseClick = {},
-        )
-    }
-}
-
-@PreviewScreen
-@Composable
-fun AboutScreenRemoveAdsPurchasedPreview() {
-    StitchCounterTheme {
-        AboutScreen(
-            onNavigateBack = {},
-            purchaseStatus = PurchaseStatus(true, false, false),
-            onPurchaseClick = {},
-        )
-    }
-}
-
-@PreviewScreen
-@Composable
-fun AboutScreenSyncPurchasedPreview() {
-    StitchCounterTheme {
-        AboutScreen(
-            onNavigateBack = {},
-            purchaseStatus = PurchaseStatus(false, true, false),
-            onPurchaseClick = {},
+            onSettingsClick = {},
         )
     }
 }
@@ -278,8 +256,9 @@ fun AboutScreenBundlePurchasedPreview() {
     StitchCounterTheme {
         AboutScreen(
             onNavigateBack = {},
-            purchaseStatus = PurchaseStatus(false, false, true),
+            purchaseStatus = PurchaseStatus(true),
             onPurchaseClick = {},
+            onSettingsClick = {},
         )
     }
 }

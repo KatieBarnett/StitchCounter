@@ -9,7 +9,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -115,20 +114,16 @@ fun StitchCounterWearApp(
 
         val currentScreen by viewModel.currentScreen.collectAsStateWithLifecycle(
             Screens.ProjectList,
-            lifecycleOwner = LocalLifecycleOwner.current
         )
         val screenOnState by viewModel.keepScreenOnState.collectAsStateWithLifecycle(
             ScreenOnState(),
-            lifecycleOwner = LocalLifecycleOwner.current
         )
         val keepCurrentScreenOn by viewModel.keepCurrentScreenOn.collectAsStateWithLifecycle(
             false,
-            lifecycleOwner = LocalLifecycleOwner.current
         )
 
         val whatsNewToShow by viewModel.whatsNewToShow.collectAsStateWithLifecycle(
             listOf(),
-            lifecycleOwner = LocalLifecycleOwner.current
         )
 
         val startDestination = when (journey) {

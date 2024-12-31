@@ -7,6 +7,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -95,6 +96,18 @@ fun AboutActionIcon(onClick: () -> Unit) {
         Icon(
             imageVector = Icons.Filled.Info,
             contentDescription = stringResource(id = R.string.navigate_about)
+        )
+    }
+}
+
+@Composable
+fun SettingsActionIcon(onClick: () -> Unit) {
+    IconButton(
+        onClick = { onClick.invoke() }
+    ) {
+        Icon(
+            imageVector = Icons.Filled.Settings,
+            contentDescription = stringResource(id = R.string.navigate_settings)
         )
     }
 }

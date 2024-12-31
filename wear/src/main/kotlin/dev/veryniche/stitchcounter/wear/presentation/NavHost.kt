@@ -121,9 +121,9 @@ fun NavHost(
                     onProjectEdit = { id, name ->
                         navController.navigate("edit_project/$id/$name")
                     },
-                    keepScreenOn = screenOnState.counterScreenOn,
+                    keepScreenOn = screenOnState.projectScreenOn,
                     onKeepScreenOnUpdate = { update ->
-                        onScreenOnStateUpdate.invoke(screenOnState.copy(counterScreenOn = update))
+                        onScreenOnStateUpdate.invoke(screenOnState.copy(projectScreenOn = update))
                     },
                 )
             }
