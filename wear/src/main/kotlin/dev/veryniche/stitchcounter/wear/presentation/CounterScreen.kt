@@ -1,5 +1,6 @@
 package dev.veryniche.stitchcounter.wear.presentation
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -156,6 +157,7 @@ fun ResetCounterAlert(counterName: String, onConfirm: () -> Unit, onCancel: () -
     )
 }
 
+@SuppressLint("UnusedBoxWithConstraintsScope")
 @OptIn(ExperimentalHorologistApi::class)
 @Composable
 fun CounterContent(

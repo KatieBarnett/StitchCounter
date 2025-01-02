@@ -120,6 +120,20 @@
     <string name="settings_screen_on_heading">Keep screen on</string>
     <string name="settings_screen_on_project">Project screen</string>
     <string name="settings_screen_on_counter">Counter screen</string>
-    <string name="settings_purchase_pro">Want to enable theming and keep screen on settings? Sign up for pro!</string>
+    <string name="settings_purchase_pro">Want to enable theming and keep screen on settings? Sign up for unlimited!</string>
+
+    <string name="purchases_title">Unlimited Subscription</string>
+    <string name="purchases_manage_subscription">Manage subscription</string>
+    <string name="purchases_manage_subscription_url">https://play.google.com/store/account/subscriptions?sku=dev.veryniche.stitchcounter.bundle&amp;package=dev.veryniche.stitchcounter</string>
+    <string name="purchases_buy_pro_monthly">Unlimited Monthly - %s</string>
+    <string name="purchases_buy_pro_annual">Unlimited Annual - %s</string>
+    <string name="purchases_buy_pro_misc">Unlimited - %s</string>
+    <string name="purchases_pro_description">With an unlimited subscription you can get all the following:</string>
+    <string name="purchases_pro_description_purchased">With your unlimited subscription you have all the following:</string>
+    <string name="purchases_pro_feature_1">Unlimited Projects</string>
+    <string name="purchases_pro_feature_2">Unlimited Counters</string>
+    <string name="purchases_pro_feature_3">No Ads on the phone app</string>
+    <string name="purchases_pro_feature_4">Allow project and counter screens to remain on while in use</string>
+    <string name="purchases_pro_feature_5">Change the display theme (phone app only)</string>
     
 </resources>

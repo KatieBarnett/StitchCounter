@@ -39,32 +39,19 @@ import dev.veryniche.stitchcounter.mobile.BuildConfig
 import dev.veryniche.stitchcounter.mobile.ads.BannerAd
 import dev.veryniche.stitchcounter.mobile.ads.BannerAdLocation
 import dev.veryniche.stitchcounter.mobile.components.CollapsedTopAppBar
+import dev.veryniche.stitchcounter.mobile.components.Heading
+import dev.veryniche.stitchcounter.mobile.components.InfoText
 import dev.veryniche.stitchcounter.mobile.components.NavigationIcon
 import dev.veryniche.stitchcounter.mobile.components.SettingsActionIcon
+import dev.veryniche.stitchcounter.mobile.components.UnorderedListText
 import dev.veryniche.stitchcounter.mobile.previews.PreviewScreen
+import dev.veryniche.stitchcounter.mobile.purchase.Products
+import dev.veryniche.stitchcounter.mobile.purchase.Products.bundleOfferAnnual
+import dev.veryniche.stitchcounter.mobile.purchase.Products.bundleOfferMonthly
 import dev.veryniche.stitchcounter.mobile.purchase.PurchaseAction
 import dev.veryniche.stitchcounter.mobile.purchase.PurchaseStatus
+import dev.veryniche.stitchcounter.mobile.purchase.Subscription
 import dev.veryniche.stitchcounter.mobile.ui.theme.StitchCounterTheme
-
-@Composable
-fun AboutHeading(textRes: Int, modifier: Modifier = Modifier) {
-    Text(
-        text = stringResource(id = textRes),
-        style = MaterialTheme.typography.headlineSmall,
-        color = MaterialTheme.colorScheme.primary,
-        fontWeight = FontWeight.Bold,
-        modifier = modifier.fillMaxWidth()
-    )
-}
-
-@Composable
-fun AboutText(textRes: Int, modifier: Modifier = Modifier) {
-    Text(
-        text = stringResource(id = textRes),
-        style = MaterialTheme.typography.bodyLarge,
-        modifier = modifier.fillMaxWidth()
-    )
-}
 
 @Composable
 fun AboutScreen(
@@ -74,6 +61,7 @@ fun AboutScreen(
     onPurchaseClick: (PurchaseAction) -> Unit,
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
     modifier: Modifier = Modifier,
+    availableSubscriptions: List<Subscription>,
 ) {
     val scrollableState = rememberScrollState()
     val context = LocalContext.current
@@ -94,7 +82,7 @@ fun AboutScreen(
             SnackbarHost(hostState = snackbarHostState)
         },
         bottomBar = {
-            if (!LocalInspectionMode.current) {
+            if (!LocalInspectionMode.current && !purchaseStatus.isBundleSubscribed) {
                 BannerAd(
                     location = BannerAdLocation.AboutScreen,
                     modifier = Modifier
@@ -157,48 +145,58 @@ fun AboutScreen(
                 }
             )
 
-//            if (!(purchaseStatus.isAdRemovalPurchased || purchaseStatus.isBundlePurchased)) {
-//                AboutHeading(R.string.about_remove_ads_version_title)
-//                Button(content = {
-//                    Text(text = stringResource(id = R.string.about_get_remove_ads_version))
-//                }, onClick = {
-//                    trackEvent(Action.AboutRemoveAdsVersion, isMobile = true)
-//                    onPurchaseClick.invoke(PurchaseAction.AD_REMOVAL)
-//                })
-//            }
-//
-//            if (!(purchaseStatus.isSyncPurchased || purchaseStatus.isBundlePurchased)) {
-//                AboutHeading(R.string.about_sync_version_title)
-//                Text(
-//                    text = stringResource(id = R.string.about_sync_version),
-//                    style = MaterialTheme.typography.bodyLarge,
-//                    modifier = Modifier.fillMaxWidth()
-//                )
-//                Button(content = {
-//                    Text(text = stringResource(id = R.string.about_get_sync_version))
-//                }, onClick = {
-//                    trackEvent(Action.AboutSyncVersion, isMobile = true)
-//                    onPurchaseClick.invoke(PurchaseAction.SYNC)
-//                })
-//            }
-
-            if (!(purchaseStatus.isBundlePurchased)) {
-                AboutHeading(R.string.about_bundle_version_title)
-                Text(
-                    text = stringResource(id = R.string.about_bundle_version),
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.fillMaxWidth()
+            Heading(R.string.purchases_title)
+            if (purchaseStatus.isBundleSubscribed) {
+                InfoText(R.string.purchases_pro_description_purchased)
+                UnorderedListText(
+                    listOf(
+                        R.string.purchases_pro_feature_1,
+                        R.string.purchases_pro_feature_2,
+                        R.string.purchases_pro_feature_3,
+                        R.string.purchases_pro_feature_4,
+                        R.string.purchases_pro_feature_5,
+                    )
                 )
+                val manageSubscriptionUrl = stringResource(R.string.purchases_manage_subscription_url)
                 Button(content = {
-                    Text(text = stringResource(id = R.string.about_get_bundle_version))
+                    Text(text = stringResource(id = R.string.purchases_manage_subscription))
                 }, onClick = {
-                    trackEvent(Action.AboutBundleVersion, isMobile = true)
-                    onPurchaseClick.invoke(PurchaseAction.BUNDLE)
+                    trackEvent(Action.ManageSubscription, isMobile = true)
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(manageSubscriptionUrl))
+                    context.startActivity(intent)
                 })
+            } else {
+                InfoText(R.string.purchases_pro_description)
+                UnorderedListText(
+                    listOf(
+                        R.string.purchases_pro_feature_1,
+                        R.string.purchases_pro_feature_2,
+                        R.string.purchases_pro_feature_3,
+                        R.string.purchases_pro_feature_4,
+                        R.string.purchases_pro_feature_5,
+                    )
+                )
+                availableSubscriptions.forEach { subscription ->
+                    subscription.plans?.forEach {
+                        val buttonTextRes = when (it.planId) {
+                        bundleOfferAnnual -> R.string.purchases_buy_pro_annual
+                        bundleOfferMonthly -> R.string.purchases_buy_pro_monthly
+                        else -> R.string.purchases_buy_pro_misc
+                    }
+                        Button(content = {
+                            Text(text = stringResource(buttonTextRes, it.displayedPrice))
+                        }, onClick = {
+                            trackEvent("${Action.PurchasePro} ${it.planId}", isMobile = true)
+                            onPurchaseClick.invoke(
+                                PurchaseAction.Subscribe(subscription.productId, it.offerToken)
+                            )
+                        })
+                    }
+                }
             }
 
-            AboutHeading(R.string.about_developer_title)
-            AboutText(R.string.about_developer_text)
+            Heading(R.string.about_developer_title)
+            InfoText(R.string.about_developer_text)
             val aboutDeveloperUrl = stringResource(id = R.string.about_developer_url)
             Button(content = {
                 Text(text = stringResource(id = R.string.about_developer))
@@ -208,7 +206,7 @@ fun AboutScreen(
             })
 
             val privacyPolicyUrl = stringResource(id = R.string.about_privacy_policy_url)
-            AboutHeading(R.string.about_privacy_policy_title)
+            Heading(R.string.about_privacy_policy_title)
             Button(content = {
                 Text(text = stringResource(id = R.string.about_privacy_policy))
             }, onClick = {
@@ -243,9 +241,31 @@ fun AboutScreenFreePreview() {
     StitchCounterTheme {
         AboutScreen(
             onNavigateBack = {},
+            onSettingsClick = {},
             purchaseStatus = PurchaseStatus(false),
             onPurchaseClick = {},
-            onSettingsClick = {},
+            availableSubscriptions = listOf(
+                Subscription(
+                    productId = Products.bundle,
+                    productName = "Unlimited Bundle",
+                    productDescription = "Unlimited Bundle Description",
+                    purchased = false,
+                    plans = listOf(
+                        Subscription.Plan(
+                            planId = bundleOfferMonthly,
+                            offerToken = "",
+                            purchasePrice = "1.00",
+                            purchaseCurrency = "AUD",
+                        ),
+                        Subscription.Plan(
+                            planId = bundleOfferAnnual,
+                            offerToken = "",
+                            purchasePrice = "11.00",
+                            purchaseCurrency = "AUD",
+                        )
+                    )
+                )
+            ),
         )
     }
 }
@@ -256,9 +276,10 @@ fun AboutScreenBundlePurchasedPreview() {
     StitchCounterTheme {
         AboutScreen(
             onNavigateBack = {},
+            onSettingsClick = {},
             purchaseStatus = PurchaseStatus(true),
             onPurchaseClick = {},
-            onSettingsClick = {},
+            availableSubscriptions = listOf(),
         )
     }
 }

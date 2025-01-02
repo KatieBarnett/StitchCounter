@@ -80,6 +80,7 @@ import dev.veryniche.stitchcounter.mobile.components.SaveProjectConfirmation
 import dev.veryniche.stitchcounter.mobile.components.SettingsActionIcon
 import dev.veryniche.stitchcounter.mobile.conditional
 import dev.veryniche.stitchcounter.mobile.previews.PreviewScreen
+import dev.veryniche.stitchcounter.mobile.purchase.PurchaseStatus
 import dev.veryniche.stitchcounter.mobile.snapshotStateListSaver
 import dev.veryniche.stitchcounter.mobile.ui.theme.StitchCounterTheme
 
@@ -93,6 +94,7 @@ fun keyboardAsState(): State<Boolean> {
 @Composable
 fun ProjectScreen(
     project: Project,
+    purchaseStatus: PurchaseStatus,
     projectEditMode: Boolean = false,
     onAboutClick: () -> Unit,
     onSettingsClick: () -> Unit,
@@ -211,7 +213,7 @@ fun ProjectScreen(
             }
         },
         bottomBar = {
-            if (!LocalInspectionMode.current) {
+            if (!LocalInspectionMode.current && !purchaseStatus.isBundleSubscribed) {
                 BannerAd(
                     location = BannerAdLocation.ProjectScreen,
                     modifier = Modifier
@@ -410,6 +412,7 @@ fun ProjectScreenPreview() {
             onOpenCounter = {},
             onCounterDelete = {},
             onCounterUpdate = {},
+            purchaseStatus = PurchaseStatus(true),
         )
     }
 }
@@ -434,6 +437,7 @@ fun ProjectScreenWithCountersPreview() {
             onOpenCounter = {},
             onCounterDelete = {},
             onCounterUpdate = {},
+            purchaseStatus = PurchaseStatus(true),
         )
     }
 }
@@ -459,6 +463,7 @@ fun ProjectScreenEditModePreview() {
             onOpenCounter = {},
             onCounterDelete = {},
             onCounterUpdate = {},
+            purchaseStatus = PurchaseStatus(true),
         )
     }
 }

@@ -1,5 +1,6 @@
 package dev.veryniche.stitchcounter.wear
 
+import android.app.Activity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel

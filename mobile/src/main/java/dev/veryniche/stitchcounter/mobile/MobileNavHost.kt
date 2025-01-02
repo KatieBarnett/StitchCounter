@@ -7,6 +7,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -41,6 +42,7 @@ fun MobileNavHost(
     modifier: Modifier = Modifier,
 ) {
     val defaultProjectName = stringResource(R.string.project_name_default)
+    val availableSubscriptions by viewModel.availableSubscriptions.collectAsStateWithLifecycle(listOf())
     NavHost(
         navController = navController,
         startDestination = ProjectListDestination,
@@ -54,32 +56,36 @@ fun MobileNavHost(
                 purchaseStatus = purchaseStatus,
                 onPurchaseClick = onPurchaseClick,
                 snackbarHostState = snackbarHostState,
+                availableSubscriptions = availableSubscriptions,
             )
         }
         composable<SettingsDestination> {
             onKeepScreenOnChanged.invoke(false)
             SettingsScreen(
+                purchaseStatus = purchaseStatus,
                 onNavigateBack = { navController.navigateUp() },
                 onAboutClick = {
                     navController.navigate(AboutDestination)
                 },
-                snackbarHostState = snackbarHostState,
-                themeMode = themeMode,
+                onPurchaseClick = onPurchaseClick,
                 onThemeModeSelected = {
                     viewModel.updateThemeMode(it)
                 },
                 onKeepScreenOnStateSelected = {
                     viewModel.updateScreenOnState(it)
                 },
-                purchaseStatus = purchaseStatus,
+                snackbarHostState = snackbarHostState,
+                themeMode = themeMode,
                 keepScreenOnState = keepScreenOnState,
+                availableSubscriptions = availableSubscriptions,
             )
         }
         composable<ProjectListDestination> {
             onKeepScreenOnChanged.invoke(false)
             val coroutineScope = rememberCoroutineScope()
+            val projects: List<Project> by viewModel.projects.collectAsState(initial = emptyList())
             ProjectListScreen(
-                viewModel = viewModel,
+                projectList = projects,
                 onProjectClick = { projectId ->
                     navController.navigate(ProjectDestination(projectId, false))
                 },
@@ -95,6 +101,7 @@ fun MobileNavHost(
                 snackbarHostState = snackbarHostState,
                 windowSizeClass = windowSizeClass,
                 onSettingsClick = { navController.navigate(SettingsDestination) },
+                purchaseStatus = purchaseStatus,
             )
         }
         composable<ProjectDestination> { backstackNavigation ->
@@ -142,6 +149,7 @@ fun MobileNavHost(
                     snackbarHostState = snackbarHostState,
                     windowSizeClass = windowSizeClass,
                     onSettingsClick = { navController.navigate(SettingsDestination) },
+                    purchaseStatus = purchaseStatus,
                 )
             }
         }
@@ -175,6 +183,7 @@ fun MobileNavHost(
                     snackbarHostState = snackbarHostState,
                     windowSizeClass = windowSizeClass,
                     onSettingsClick = { navController.navigate(SettingsDestination) },
+                    purchaseStatus = purchaseStatus,
                 )
             }
         }

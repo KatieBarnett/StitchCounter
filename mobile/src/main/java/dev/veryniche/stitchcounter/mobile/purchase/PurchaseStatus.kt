@@ -1,9 +1,10 @@
 package dev.veryniche.stitchcounter.mobile.purchase
 
 data class PurchaseStatus(
-    val isBundlePurchased: Boolean = false,
+    val isBundleSubscribed: Boolean = false,
 )
 
-enum class PurchaseAction {
-    BUNDLE
+sealed class PurchaseAction(productId: String) {
+
+    data class Subscribe(val productId: String, val offerToken: String) : PurchaseAction(productId)
 }

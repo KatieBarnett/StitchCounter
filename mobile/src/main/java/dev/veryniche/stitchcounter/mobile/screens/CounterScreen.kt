@@ -73,6 +73,7 @@ import dev.veryniche.stitchcounter.mobile.components.RefreshActionIcon
 import dev.veryniche.stitchcounter.mobile.components.SaveCounterConfirmation
 import dev.veryniche.stitchcounter.mobile.components.SettingsActionIcon
 import dev.veryniche.stitchcounter.mobile.previews.PreviewScreen
+import dev.veryniche.stitchcounter.mobile.purchase.PurchaseStatus
 import dev.veryniche.stitchcounter.mobile.ui.theme.StitchCounterTheme
 
 @OptIn(
@@ -83,6 +84,7 @@ import dev.veryniche.stitchcounter.mobile.ui.theme.StitchCounterTheme
 @Composable
 fun CounterScreen(
     counter: Counter,
+    purchaseStatus: PurchaseStatus,
     onAboutClick: () -> Unit,
     onSettingsClick: () -> Unit,
     onCounterUpdate: (counter: Counter) -> Unit,
@@ -190,7 +192,7 @@ fun CounterScreen(
             }
         },
         bottomBar = {
-            if (!LocalInspectionMode.current) {
+            if (!LocalInspectionMode.current && !purchaseStatus.isBundleSubscribed) {
                 BannerAd(
                     location = BannerAdLocation.CounterScreen,
                     modifier = Modifier
@@ -438,6 +440,7 @@ fun CounterScreenPreview() {
             onCounterDelete = { },
             onBack = { },
             onSettingsClick = {},
+            purchaseStatus = PurchaseStatus(true),
         )
     }
 }
@@ -454,6 +457,7 @@ fun CounterScreenEditPreview() {
             onBack = { },
             initialInEditMode = true,
             onSettingsClick = {},
+            purchaseStatus = PurchaseStatus(true),
         )
     }
 }
@@ -474,6 +478,7 @@ fun CounterScreenLongTextPreview() {
             onCounterDelete = { },
             onSettingsClick = {},
             onBack = { },
+            purchaseStatus = PurchaseStatus(true),
         )
     }
 }
@@ -494,6 +499,7 @@ fun CounterScreenVeryLongTextPreview() {
             onCounterDelete = { },
             onBack = { },
             onSettingsClick = {},
+            purchaseStatus = PurchaseStatus(true),
         )
     }
 }

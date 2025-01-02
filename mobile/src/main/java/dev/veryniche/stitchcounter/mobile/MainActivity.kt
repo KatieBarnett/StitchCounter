@@ -7,17 +7,24 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.rememberNavController
@@ -27,6 +34,8 @@ import com.google.android.gms.wearable.PutDataMapRequest
 import com.google.android.gms.wearable.Wearable
 import dagger.hilt.android.AndroidEntryPoint
 import dev.veryniche.stitchcounter.data.models.ScreenOnState
+import dev.veryniche.stitchcounter.mobile.purchase.PurchaseAction
+import dev.veryniche.stitchcounter.mobile.purchase.PurchaseManager
 import dev.veryniche.stitchcounter.mobile.purchase.PurchaseStatus
 import dev.veryniche.stitchcounter.mobile.ui.theme.StitchCounterTheme
 import dev.veryniche.stitchcounter.mobile.update.AppUpdateHelper
@@ -41,8 +50,9 @@ class MainActivity : ComponentActivity() {
 
     lateinit var appUpdateHelper: AppUpdateHelper
 
+    lateinit var viewModel: MainViewModel
+
     private val dataClient by lazy { Wearable.getDataClient(this) }
-    val viewModel: MainViewModel by viewModels<MainViewModel>()
 
     private val updateLauncher = registerForActivityResult(
         ActivityResultContracts.StartIntentSenderForResult()
@@ -63,9 +73,13 @@ class MainActivity : ComponentActivity() {
 
     override fun onStart() {
         super.onStart()
-        lifecycleScope.launch {
-            Timber.d("Syncing all projects")
-            viewModel.syncAllProjects()
+        if (::viewModel.isInitialized) {
+            lifecycleScope.launch {
+                Timber.d("Syncing all projects")
+                viewModel.syncAllProjects()
+            }
+        } else {
+            Timber.e("Main viewmodel is not initialized for data sync")
         }
     }
 
@@ -77,9 +91,16 @@ class MainActivity : ComponentActivity() {
             Timber.d("AdMob init: ${initializationStatus.adapterStatusMap}")
         }
         setContent {
+            val coroutineScope = rememberCoroutineScope()
+            val purchaseManager = remember { PurchaseManager(this, coroutineScope) }
+            viewModel = hiltViewModel<MainViewModel, MainViewModel.MainViewModelFactory> { factory ->
+                factory.create(purchaseManager)
+            }
             val dataSyncState by viewModel.eventsToWatch.collectAsStateWithLifecycle()
             val themeMode by viewModel.themeMode.collectAsStateWithLifecycle(ThemeMode.Auto)
-            val keepScreenOnState by viewModel.keepScreenOnState.collectAsStateWithLifecycle(ScreenOnState(false, false))
+            val keepScreenOnState by viewModel.keepScreenOnState.collectAsStateWithLifecycle(
+                ScreenOnState(false, false)
+            )
             LaunchedEffect(dataSyncState) {
                 dataSyncState?.let {
                     try {
@@ -103,8 +124,16 @@ class MainActivity : ComponentActivity() {
                 val coroutineScope = rememberCoroutineScope()
                 appUpdateHelper = AppUpdateHelper(this, updateLauncher, snackbarHostState, coroutineScope)
                 appUpdateHelper.checkForUpdates()
-                StitchCounterMobileApp(viewModel, snackbarHostState, windowSizeClass, themeMode, keepScreenOnState, Modifier)
+                StitchCounterMobileApp(
+                    viewModel = viewModel,
+                    snackbarHostState = snackbarHostState,
+                    windowSizeClass = windowSizeClass,
+                    themeMode = themeMode,
+                    keepScreenOnState = keepScreenOnState,
+                    modifier = Modifier
+                )
             }
+            viewModel.requestReviewIfAble(this)
         }
     }
 
@@ -137,12 +166,24 @@ class MainActivity : ComponentActivity() {
         keepScreenOnState: ScreenOnState,
         modifier: Modifier = Modifier,
     ) {
+        var showPurchaseErrorMessage by rememberSaveable { mutableStateOf<Int?>(null) }
         val navController = rememberNavController()
+        val purchaseStatus by viewModel.purchaseStatus.collectAsStateWithLifecycle(PurchaseStatus())
         MobileNavHost(
             navController = navController,
             viewModel = viewModel,
-            purchaseStatus = PurchaseStatus(),
-            onPurchaseClick = {},
+            purchaseStatus = purchaseStatus,
+            onPurchaseClick = { action ->
+                if (action is PurchaseAction.Subscribe) {
+                    viewModel.purchaseSubscription(
+                        productId = action.productId,
+                        offerToken = action.offerToken,
+                        onError = { message ->
+                            showPurchaseErrorMessage = message
+                        }
+                    )
+                }
+            },
             snackbarHostState = snackbarHostState,
             windowSizeClass = windowSizeClass,
             themeMode = themeMode,
@@ -152,6 +193,20 @@ class MainActivity : ComponentActivity() {
             },
             modifier = modifier.fillMaxSize()
         )
+
+        showPurchaseErrorMessage?.let { message ->
+            AlertDialog(
+                onDismissRequest = { showPurchaseErrorMessage = null },
+                title = { Text(stringResource(R.string.app_name)) },
+                text = { Text(stringResource(message)) },
+                confirmButton = {
+                    TextButton(onClick = {
+                        showPurchaseErrorMessage = null
+                    }) {
+                        Text(stringResource(R.string.purchase_error_dismiss))
+                    }
+                }
+            )
+        }
     }
 }
-

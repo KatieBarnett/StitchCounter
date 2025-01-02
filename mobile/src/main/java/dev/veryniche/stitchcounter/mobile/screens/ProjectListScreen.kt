@@ -24,8 +24,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,7 +41,6 @@ import dev.veryniche.stitchcounter.core.theme.Dimen
 import dev.veryniche.stitchcounter.core.trackScreenView
 import dev.veryniche.stitchcounter.data.models.Counter
 import dev.veryniche.stitchcounter.data.models.Project
-import dev.veryniche.stitchcounter.mobile.MainViewModel
 import dev.veryniche.stitchcounter.mobile.ads.BannerAd
 import dev.veryniche.stitchcounter.mobile.ads.BannerAdLocation
 import dev.veryniche.stitchcounter.mobile.components.AboutActionIcon
@@ -52,37 +49,13 @@ import dev.veryniche.stitchcounter.mobile.components.ExpandingTopAppBar
 import dev.veryniche.stitchcounter.mobile.components.ProjectItem
 import dev.veryniche.stitchcounter.mobile.components.SettingsActionIcon
 import dev.veryniche.stitchcounter.mobile.previews.PreviewScreen
+import dev.veryniche.stitchcounter.mobile.purchase.PurchaseStatus
 import dev.veryniche.stitchcounter.mobile.ui.theme.StitchCounterTheme
-
-@Composable
-fun ProjectListScreen(
-    viewModel: MainViewModel,
-    onProjectClick: (Int) -> Unit,
-    onAddProjectClick: () -> Unit,
-    onAboutClick: () -> Unit,
-    onSettingsClick: () -> Unit,
-    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
-    modifier: Modifier = Modifier,
-    windowSizeClass: WindowSizeClass = currentWindowAdaptiveInfo().windowSizeClass,
-) {
-    val projects: List<Project> by viewModel.projects.collectAsState(initial = emptyList())
-    ProjectList(
-        projects.sortedByDescending {
-            it.lastModified
-        },
-        onProjectClick,
-        onAddProjectClick,
-        onAboutClick,
-        onSettingsClick,
-        snackbarHostState,
-        modifier,
-        windowSizeClass
-    )
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProjectList(
+fun ProjectListScreen(
+    purchaseStatus: PurchaseStatus,
     projectList: List<Project>,
     onProjectClick: (Int) -> Unit,
     onAddProjectClick: () -> Unit,
@@ -130,7 +103,7 @@ fun ProjectList(
             SnackbarHost(hostState = snackbarHostState)
         },
         bottomBar = {
-            if (!LocalInspectionMode.current) {
+            if (!LocalInspectionMode.current && !purchaseStatus.isBundleSubscribed) {
                 BannerAd(
                     location = BannerAdLocation.MainScreen,
                     modifier = Modifier.navigationBarsPadding()
@@ -181,14 +154,15 @@ fun ProjectList(
 
 @PreviewScreen
 @Composable
-fun ProjectListEmptyPreview() {
+fun ProjectListScreenEmptyPreview() {
     StitchCounterTheme {
-        ProjectList(
+        ProjectListScreen(
             projectList = listOf(),
             onProjectClick = {},
             onAddProjectClick = {},
             onSettingsClick = {},
             onAboutClick = {},
+            purchaseStatus = PurchaseStatus(true),
             modifier = Modifier
         )
     }
@@ -196,9 +170,9 @@ fun ProjectListEmptyPreview() {
 
 @PreviewScreen
 @Composable
-fun ProjectListPreview() {
+fun ProjectListScreenPreview() {
     StitchCounterTheme {
-        ProjectList(
+        ProjectListScreen(
             projectList = listOf(
                 Project(
                     name = "Project 1",
@@ -216,6 +190,7 @@ fun ProjectListPreview() {
             onSettingsClick = {},
             onAddProjectClick = {},
             onAboutClick = {},
+            purchaseStatus = PurchaseStatus(true),
             modifier = Modifier
         )
     }

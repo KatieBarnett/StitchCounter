@@ -9,7 +9,6 @@
     <string name="label_counter_name">Counter Name</string>
     <string name="label_counter_max_count">Maximum Counter Value</string>
 
-
     <string name="save_counter_short">Save</string>
     <string name="delete_counter_short">Delete</string>
     <string name="reset_counter_short">Reset</string>
@@ -24,11 +23,14 @@
     <string name="confirm_counter_save_confirm">Yes</string>
     <string name="confirm_counter_save_dismiss">No</string>
 
-
     <string name="project_list_empty">No projects</string>
     <string name="counter_list_empty">No counters</string>
 
     <string name="project_instruction_text">Tap to open a counter to a larger view, long press to edit.</string>
     <string name="project_last_updated">Last updated: %s</string>
+
+    <string name="purchase_error_generic">Error processing purchase. Please try again.</string>
+    <string name="purchase_error_disconnected">Error connecting to billing system. Please try again.</string>
+    <string name="purchase_error_dismiss">OK</string>
 
 </resources>

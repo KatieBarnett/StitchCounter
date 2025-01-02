@@ -1,5 +1,7 @@
 package dev.veryniche.stitchcounter.mobile.screens
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,6 +14,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
@@ -30,55 +33,47 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import dev.veryniche.stitchcounter.core.Analytics.Action
 import dev.veryniche.stitchcounter.core.Analytics.Screen
 import dev.veryniche.stitchcounter.core.R
 import dev.veryniche.stitchcounter.core.TrackedScreen
 import dev.veryniche.stitchcounter.core.theme.Dimen
+import dev.veryniche.stitchcounter.core.trackEvent
 import dev.veryniche.stitchcounter.core.trackScreenView
 import dev.veryniche.stitchcounter.data.models.ScreenOnState
 import dev.veryniche.stitchcounter.mobile.ads.BannerAd
 import dev.veryniche.stitchcounter.mobile.ads.BannerAdLocation
 import dev.veryniche.stitchcounter.mobile.components.AboutActionIcon
 import dev.veryniche.stitchcounter.mobile.components.CollapsedTopAppBar
+import dev.veryniche.stitchcounter.mobile.components.Heading
+import dev.veryniche.stitchcounter.mobile.components.InfoText
 import dev.veryniche.stitchcounter.mobile.components.NavigationIcon
+import dev.veryniche.stitchcounter.mobile.components.OptionText
+import dev.veryniche.stitchcounter.mobile.components.UnorderedListText
 import dev.veryniche.stitchcounter.mobile.previews.PreviewScreen
+import dev.veryniche.stitchcounter.mobile.purchase.Products
+import dev.veryniche.stitchcounter.mobile.purchase.Products.bundleOfferAnnual
+import dev.veryniche.stitchcounter.mobile.purchase.Products.bundleOfferMonthly
+import dev.veryniche.stitchcounter.mobile.purchase.PurchaseAction
 import dev.veryniche.stitchcounter.mobile.purchase.PurchaseStatus
+import dev.veryniche.stitchcounter.mobile.purchase.Subscription
 import dev.veryniche.stitchcounter.mobile.ui.theme.StitchCounterTheme
 import dev.veryniche.stitchcounter.storage.ThemeMode
-
-@Composable
-fun SettingsHeading(textRes: Int, modifier: Modifier = Modifier) {
-    Text(
-        text = stringResource(id = textRes),
-        style = MaterialTheme.typography.headlineSmall,
-        color = MaterialTheme.colorScheme.primary,
-        fontWeight = FontWeight.Bold,
-        modifier = modifier.fillMaxWidth()
-    )
-}
-
-@Composable
-fun SettingsText(textRes: Int, modifier: Modifier = Modifier) {
-    Text(
-        text = stringResource(id = textRes),
-        style = MaterialTheme.typography.bodyLarge,
-        modifier = modifier.fillMaxWidth()
-    )
-}
 
 @Composable
 fun SettingsScreen(
     purchaseStatus: PurchaseStatus,
     onNavigateBack: () -> Unit,
     onAboutClick: () -> Unit,
+    onPurchaseClick: (PurchaseAction) -> Unit,
     onThemeModeSelected: (ThemeMode) -> Unit,
     onKeepScreenOnStateSelected: (ScreenOnState) -> Unit,
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
     modifier: Modifier = Modifier,
     themeMode: ThemeMode = ThemeMode.Auto,
-    keepScreenOnState: ScreenOnState = ScreenOnState()
+    keepScreenOnState: ScreenOnState = ScreenOnState(),
+    availableSubscriptions: List<Subscription>,
 ) {
     val scrollableState = rememberScrollState()
     val context = LocalContext.current
@@ -99,7 +94,7 @@ fun SettingsScreen(
             SnackbarHost(hostState = snackbarHostState)
         },
         bottomBar = {
-            if (!LocalInspectionMode.current) {
+            if (!LocalInspectionMode.current && !purchaseStatus.isBundleSubscribed) {
                 BannerAd(
                     location = BannerAdLocation.SettingsScreen,
                     modifier = Modifier
@@ -118,21 +113,10 @@ fun SettingsScreen(
                 .verticalScroll(scrollableState)
                 .padding(Dimen.spacingDouble)
         ) {
-            if (!purchaseStatus.isBundlePurchased) {
-                Text(
-                    text = stringResource(id = R.string.settings_purchase_pro),
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.fillMaxWidth()
-                )
+            if (!purchaseStatus.isBundleSubscribed) {
+                InfoText(R.string.settings_purchase_pro, bold = true)
             }
-            Text(
-                text = stringResource(id = R.string.settings_theme_heading),
-                style = MaterialTheme.typography.headlineSmall,
-                color = MaterialTheme.colorScheme.primary,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.fillMaxWidth()
-            )
+            Heading(R.string.settings_theme_heading)
             val radioOptions = ThemeMode.entries
             val (selectedOption, onOptionSelected) = remember {
                 mutableStateOf(radioOptions.firstOrNull { it == themeMode } ?: ThemeMode.Auto)
@@ -148,7 +132,7 @@ fun SettingsScreen(
                             .fillMaxWidth()
                             .selectable(
                                 selected = (entry == selectedOption),
-                                enabled = purchaseStatus.isBundlePurchased,
+                                enabled = purchaseStatus.isBundleSubscribed,
                                 onClick = {
                                     onOptionSelected(entry)
                                     onThemeModeSelected.invoke(entry)
@@ -160,7 +144,7 @@ fun SettingsScreen(
                     ) {
                         RadioButton(
                             selected = (entry == selectedOption),
-                            enabled = purchaseStatus.isBundlePurchased,
+                            enabled = purchaseStatus.isBundleSubscribed,
                             onClick = null // null recommended for accessibility with screen readers
                         )
                         Column(Modifier.padding(start = 16.dp)) {
@@ -179,13 +163,7 @@ fun SettingsScreen(
                 }
             }
             Spacer(Modifier)
-            Text(
-                text = stringResource(id = R.string.settings_screen_on_heading),
-                style = MaterialTheme.typography.headlineSmall,
-                color = MaterialTheme.colorScheme.primary,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.fillMaxWidth()
-            )
+            Heading(R.string.settings_screen_on_heading)
             var projectScreenOnState by remember { mutableStateOf(keepScreenOnState.projectScreenOn) }
             var counterScreenOnState by remember { mutableStateOf(keepScreenOnState.counterScreenOn) }
             Row(
@@ -193,7 +171,7 @@ fun SettingsScreen(
                     .fillMaxWidth()
                     .selectable(
                         selected = projectScreenOnState,
-                        enabled = purchaseStatus.isBundlePurchased,
+                        enabled = purchaseStatus.isBundleSubscribed,
                         onClick = {
                             val newValue = !projectScreenOnState
                             projectScreenOnState = newValue
@@ -206,21 +184,17 @@ fun SettingsScreen(
             ) {
                 Checkbox(
                     checked = projectScreenOnState,
-                    enabled = purchaseStatus.isBundlePurchased,
+                    enabled = purchaseStatus.isBundleSubscribed,
                     onCheckedChange = null
                 )
-                Text(
-                    text = stringResource(R.string.settings_screen_on_project),
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.padding(start = 16.dp)
-                )
+                OptionText(R.string.settings_screen_on_project)
             }
             Row(
                 Modifier
                     .fillMaxWidth()
                     .selectable(
                         selected = counterScreenOnState,
-                        enabled = purchaseStatus.isBundlePurchased,
+                        enabled = purchaseStatus.isBundleSubscribed,
                         onClick = {
                             val newValue = !counterScreenOnState
                             counterScreenOnState = newValue
@@ -232,15 +206,61 @@ fun SettingsScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Checkbox(
-                    enabled = purchaseStatus.isBundlePurchased,
+                    enabled = purchaseStatus.isBundleSubscribed,
                     checked = counterScreenOnState,
                     onCheckedChange = null
                 )
-                Text(
-                    text = stringResource(R.string.settings_screen_on_counter),
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.padding(start = 16.dp)
+                OptionText(R.string.settings_screen_on_counter)
+            }
+            Spacer(Modifier)
+            Heading(R.string.purchases_title)
+            if (purchaseStatus.isBundleSubscribed) {
+                InfoText(R.string.purchases_pro_description_purchased)
+                UnorderedListText(
+                    listOf(
+                        R.string.purchases_pro_feature_1,
+                        R.string.purchases_pro_feature_2,
+                        R.string.purchases_pro_feature_3,
+                        R.string.purchases_pro_feature_4,
+                        R.string.purchases_pro_feature_5,
+                    )
                 )
+                val manageSubscriptionUrl = stringResource(R.string.purchases_manage_subscription_url)
+                Button(content = {
+                    Text(text = stringResource(id = R.string.purchases_manage_subscription))
+                }, onClick = {
+                    trackEvent(Action.ManageSubscription, isMobile = true)
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(manageSubscriptionUrl))
+                    context.startActivity(intent)
+                })
+            } else {
+                InfoText(R.string.purchases_pro_description)
+                UnorderedListText(
+                    listOf(
+                        R.string.purchases_pro_feature_1,
+                        R.string.purchases_pro_feature_2,
+                        R.string.purchases_pro_feature_3,
+                        R.string.purchases_pro_feature_4,
+                        R.string.purchases_pro_feature_5,
+                    )
+                )
+                availableSubscriptions.forEach { subscription ->
+                    subscription.plans?.forEach {
+                        val buttonTextRes = when (it.planId) {
+                            bundleOfferAnnual -> R.string.purchases_buy_pro_annual
+                            bundleOfferMonthly -> R.string.purchases_buy_pro_monthly
+                            else -> R.string.purchases_buy_pro_misc
+                        }
+                        Button(content = {
+                            Text(text = stringResource(buttonTextRes, it.displayedPrice))
+                        }, onClick = {
+                            trackEvent("${Action.PurchasePro} ${it.planId}", isMobile = true)
+                            onPurchaseClick.invoke(
+                                PurchaseAction.Subscribe(subscription.productId, it.offerToken)
+                            )
+                        })
+                    }
+                }
             }
         }
     }
@@ -248,14 +268,74 @@ fun SettingsScreen(
 
 @PreviewScreen
 @Composable
-fun SettingsScreenPreview() {
+fun SettingsScreenFreePreview() {
     StitchCounterTheme {
         SettingsScreen(
-            purchaseStatus = PurchaseStatus(),
+            purchaseStatus = PurchaseStatus(false),
             onNavigateBack = {},
             onAboutClick = {},
             onThemeModeSelected = {},
-            onKeepScreenOnStateSelected = {}
+            onKeepScreenOnStateSelected = {},
+            onPurchaseClick = {},
+            availableSubscriptions = listOf(
+                Subscription(
+                    productId = Products.bundle,
+                    productName = "Unlimited Bundle",
+                    productDescription = "Unlimited Bundle Description",
+                    purchased = false,
+                    plans = listOf(
+                        Subscription.Plan(
+                            planId = bundleOfferMonthly,
+                            purchasePrice = "1.00",
+                            offerToken = "",
+                            purchaseCurrency = "AUD",
+                        ),
+                        Subscription.Plan(
+                            planId = bundleOfferAnnual,
+                            offerToken = "",
+                            purchasePrice = "11.00",
+                            purchaseCurrency = "AUD",
+                        )
+                    )
+                )
+            ),
+        )
+    }
+}
+
+@PreviewScreen
+@Composable
+fun SettingsScreenBundlePurchasedPreview() {
+    StitchCounterTheme {
+        SettingsScreen(
+            purchaseStatus = PurchaseStatus(true),
+            onNavigateBack = {},
+            onAboutClick = {},
+            onThemeModeSelected = {},
+            onKeepScreenOnStateSelected = {},
+            onPurchaseClick = {},
+            availableSubscriptions = listOf(
+                Subscription(
+                    productId = Products.bundle,
+                    productName = "Unlimited Bundle",
+                    productDescription = "Unlimited Bundle Description",
+                    purchased = false,
+                    plans = listOf(
+                        Subscription.Plan(
+                            planId = bundleOfferMonthly,
+                            offerToken = "",
+                            purchasePrice = "1.00",
+                            purchaseCurrency = "AUD",
+                        ),
+                        Subscription.Plan(
+                            planId = bundleOfferAnnual,
+                            offerToken = "",
+                            purchasePrice = "11.00",
+                            purchaseCurrency = "AUD",
+                        )
+                    )
+                )
+            ),
         )
     }
 }

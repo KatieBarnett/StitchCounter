@@ -82,6 +82,10 @@ dependencies {
 
     implementation(libs.play.services.base)
     implementation(libs.play.services.ads)
+    implementation(libs.play.review)
+    implementation(libs.play.review.ktx)
+
+    implementation(libs.billing)
 
     implementation(libs.timber)
 

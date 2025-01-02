@@ -1,11 +1,20 @@
 package dev.veryniche.stitchcounter.mobile
 
+import android.app.Activity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.veryniche.stitchcounter.data.models.Counter
 import dev.veryniche.stitchcounter.data.models.Project
 import dev.veryniche.stitchcounter.data.models.ScreenOnState
+import dev.veryniche.stitchcounter.mobile.purchase.Products
+import dev.veryniche.stitchcounter.mobile.purchase.PurchaseManager
+import dev.veryniche.stitchcounter.mobile.purchase.PurchaseStatus
+import dev.veryniche.stitchcounter.mobile.purchase.Subscription
+import dev.veryniche.stitchcounter.mobile.review.ReviewManager
 import dev.veryniche.stitchcounter.storage.ProjectsRepository
 import dev.veryniche.stitchcounter.storage.ThemeMode
 import dev.veryniche.stitchcounter.storage.UserPreferencesRepository
@@ -14,19 +23,49 @@ import dev.veryniche.stitchcounter.storage.datasync.toDeleteEvent
 import dev.veryniche.stitchcounter.storage.datasync.toUpdateAllEvent
 import dev.veryniche.stitchcounter.storage.datasync.toUpdateEvent
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import javax.inject.Inject
 
-@HiltViewModel
-class MainViewModel @Inject constructor(
+@HiltViewModel(assistedFactory = MainViewModel.MainViewModelFactory::class)
+class MainViewModel @AssistedInject constructor(
+    @Assisted val purchaseManager: PurchaseManager,
     private val savedProjectsRepository: ProjectsRepository,
     private val userPreferencesRepository: UserPreferencesRepository
 ) : ViewModel() {
+
+    @AssistedFactory
+    interface MainViewModelFactory {
+        fun create(purchaseManager: PurchaseManager): MainViewModel
+    }
+
+    val purchaseStatus = purchaseManager.purchases.combine(
+        purchaseManager.subscriptions
+    ) { purchases, activeSubscriptions ->
+        PurchaseStatus(isBundleSubscribed = activeSubscriptions.contains(Products.bundle))
+    }
+
+    val availableSubscriptions: Flow<List<Subscription>> = purchaseManager.availableSubscriptions
+        .combine(purchaseManager.subscriptions) { availableProducts, activeSubscriptions ->
+            availableProducts.map {
+                it.copy(purchased = activeSubscriptions.contains(it.productId))
+            }
+        }
+
+    fun purchaseSubscription(productId: String, offerToken: String, onError: (message: Int) -> Unit) {
+        viewModelScope.launch {
+            purchaseManager.purchaseSubscription(
+                productId = productId,
+                offerToken = offerToken,
+                onError = onError
+            )
+        }
+    }
 
     private val userPreferencesFlow = userPreferencesRepository.userPreferencesFlow
 
@@ -50,6 +89,9 @@ class MainViewModel @Inject constructor(
             eventsFromWatch.collect { value ->
                 Timber.d("Data from watch: $value")
             }
+        }
+        viewModelScope.launch {
+            purchaseManager.connectToBilling()
         }
     }
 
@@ -127,6 +169,14 @@ class MainViewModel @Inject constructor(
     fun updateThemeMode(themeMode: ThemeMode) {
         viewModelScope.launch {
             userPreferencesRepository.updateThemeMode(themeMode)
+        }
+    }
+
+    private val reviewManager = ReviewManager(userPreferencesRepository)
+
+    fun requestReviewIfAble(activity: Activity) {
+        viewModelScope.launch {
+            reviewManager.requestReviewIfAble(activity, this)
         }
     }
 }

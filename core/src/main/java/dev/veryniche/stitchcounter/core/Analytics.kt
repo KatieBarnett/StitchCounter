@@ -14,6 +14,7 @@ import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.analytics.ktx.logEvent
 import com.google.firebase.ktx.Firebase
 import dev.veryniche.stitchcounter.core.Analytics.Action
+import dev.veryniche.stitchcounter.core.Analytics.Action.ReviewRequested
 import timber.log.Timber
 
 private const val ANALYTICS_LOG_TAG = "Analytics"
@@ -34,7 +35,6 @@ object Analytics {
     }
 
     object Action {
-        const val AboutBundleVersion = "About bundle version"
         const val AboutEmail = "About email"
         const val AboutRemoveAdsVersion = "About remove ads version"
         const val AboutSyncVersion = "About sync version"
@@ -53,6 +53,9 @@ object Analytics {
         const val EditCounterConfim = "Edit Counter Confirm Save"
         const val ResetCounter = "Reset Counter"
         const val ResetProject = "Reset Project"
+        const val ReviewRequested = "Review Requested"
+        const val ManageSubscription = "Manage subscription"
+        const val PurchasePro = "Purchase Pro Bundle"
     }
 }
 
@@ -132,4 +135,9 @@ fun trackProjectScreenView(counterCount: Int, isMobile: Boolean) {
         param(FirebaseAnalytics.Param.SCREEN_NAME, screen.replace(" ", "_"))
         param(FirebaseAnalytics.Param.ITEMS, counterCount.toDouble())
     }
+}
+
+fun trackReviewRequested() {
+    Timber.d("Track action: Review requested")
+    Firebase.analytics.logEvent(ReviewRequested.replace(" ", "_")) {}
 }

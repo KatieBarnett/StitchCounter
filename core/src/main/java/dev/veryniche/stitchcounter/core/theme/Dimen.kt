@@ -1,6 +1,7 @@
 package dev.veryniche.stitchcounter.core.theme
 
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 object Dimen {
 
@@ -20,6 +21,7 @@ object Dimen {
 
     val confirmationIconSize = 60.dp
 
+    val bulletTextIndent = 12.sp
 
     val mobileEditModeIconSize = 40.dp
     val mobileBannerAdSize = 50.dp
