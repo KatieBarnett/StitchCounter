@@ -101,6 +101,7 @@ fun ProjectScreen(
     onSave: (project: Project) -> Unit,
     onDelete: () -> Unit,
     onBack: () -> Unit,
+    onAddCounter: (() -> Unit) -> Unit,
     onOpenCounter: (Counter) -> Unit,
     onCounterUpdate: (Counter) -> Unit,
     onCounterDelete: (Counter) -> Unit,
@@ -200,11 +201,14 @@ fun ProjectScreen(
             } else {
                 ExtendedFloatingActionButton(
                     onClick = {
-                        trackEvent(Action.AddCounter, isMobile = true)
-                        val nextId = project.counters.maxOfOrNull { it.id }?.plus(1) ?: 0
-                        val defaultCounterName = context.getString(R.string.counter_name_default, nextId)
-                        onCounterUpdate.invoke(Counter(id = nextId, name = defaultCounterName))
-                        countersInEditMode.add(nextId)
+                        onAddCounter.invoke {
+                            trackEvent(Action.AddCounter, isMobile = true)
+                            val nextId = project.counters.maxOfOrNull { it.id }?.plus(1) ?: 0
+                            val defaultCounterName =
+                                context.getString(R.string.counter_name_default, nextId)
+                            onCounterUpdate.invoke(Counter(id = nextId, name = defaultCounterName))
+                            countersInEditMode.add(nextId)
+                        }
                     },
                     icon = { Icon(Icons.Filled.Add, stringResource(id = R.string.add_counter)) },
                     text = { Text(text = stringResource(id = R.string.add_counter)) },
@@ -412,6 +416,7 @@ fun ProjectScreenPreview() {
             onOpenCounter = {},
             onCounterDelete = {},
             onCounterUpdate = {},
+            onAddCounter = {},
             purchaseStatus = PurchaseStatus(true),
         )
     }
@@ -437,6 +442,7 @@ fun ProjectScreenWithCountersPreview() {
             onOpenCounter = {},
             onCounterDelete = {},
             onCounterUpdate = {},
+            onAddCounter = {},
             purchaseStatus = PurchaseStatus(true),
         )
     }
@@ -463,6 +469,7 @@ fun ProjectScreenEditModePreview() {
             onOpenCounter = {},
             onCounterDelete = {},
             onCounterUpdate = {},
+            onAddCounter = {},
             purchaseStatus = PurchaseStatus(true),
         )
     }

@@ -33,4 +33,9 @@
     <string name="purchase_error_disconnected">Error connecting to billing system. Please try again.</string>
     <string name="purchase_error_dismiss">OK</string>
 
+    <string name="purchase_limit_title">Unlimited Subscription Required</string>
+    <string name="purchase_limit_projects">To add more projects, please sign up for the Unlimited Subscription.</string>
+    <string name="purchase_limit_counters">To add more counters, please sign up for the Unlimited Subscription.</string>
+    <string name="purchase_limit_button_cancel">Cancel</string>
+
 </resources>

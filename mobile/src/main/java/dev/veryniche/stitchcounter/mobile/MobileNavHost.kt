@@ -4,7 +4,10 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -18,6 +21,7 @@ import dev.veryniche.stitchcounter.core.R
 import dev.veryniche.stitchcounter.core.trackEvent
 import dev.veryniche.stitchcounter.data.models.Project
 import dev.veryniche.stitchcounter.data.models.ScreenOnState
+import dev.veryniche.stitchcounter.mobile.components.PurchaseDialog
 import dev.veryniche.stitchcounter.mobile.purchase.PurchaseAction
 import dev.veryniche.stitchcounter.mobile.purchase.PurchaseStatus
 import dev.veryniche.stitchcounter.mobile.screens.AboutScreen
@@ -43,6 +47,7 @@ fun MobileNavHost(
 ) {
     val defaultProjectName = stringResource(R.string.project_name_default)
     val availableSubscriptions by viewModel.availableSubscriptions.collectAsStateWithLifecycle(listOf())
+    var showPurchaseDialogMessage by rememberSaveable { mutableStateOf<Int?>(null) }
     NavHost(
         navController = navController,
         startDestination = ProjectListDestination,
@@ -90,9 +95,14 @@ fun MobileNavHost(
                     navController.navigate(ProjectDestination(projectId, false))
                 },
                 onAddProjectClick = {
-                    coroutineScope.launch {
-                        val newProjectId = viewModel.saveProject(Project(name = defaultProjectName))
-                        navController.navigate(ProjectDestination(newProjectId, true))
+                    if (projects.isEmpty() || purchaseStatus.isBundleSubscribed) {
+                        coroutineScope.launch {
+                            val newProjectId =
+                                viewModel.saveProject(Project(name = defaultProjectName))
+                            navController.navigate(ProjectDestination(newProjectId, true))
+                        }
+                    } else {
+                        showPurchaseDialogMessage = dev.veryniche.stitchcounter.mobile.R.string.purchase_limit_projects
                     }
                 },
                 onAboutClick = {
@@ -108,6 +118,7 @@ fun MobileNavHost(
             onKeepScreenOnChanged.invoke(keepScreenOnState.projectScreenOn)
             val arguments = backstackNavigation.toRoute<ProjectDestination>()
             val coroutineScope = rememberCoroutineScope()
+            val projects: List<Project> by viewModel.projects.collectAsState(initial = emptyList())
             val projectState by viewModel.getProject(arguments.id).collectAsState(null)
             projectState?.let { project ->
                 ProjectScreen(
@@ -144,6 +155,15 @@ fun MobileNavHost(
                     onCounterDelete = { counter ->
                         coroutineScope.launch {
                             viewModel.deleteCounter(project.id ?: -1, counter.id)
+                        }
+                    },
+                    onAddCounter = { nextAction ->
+                        if ((projectState?.counters?.isEmpty() != false && projects.size == 1) ||
+                            purchaseStatus.isBundleSubscribed
+                        ) {
+                            nextAction.invoke()
+                        } else {
+                            showPurchaseDialogMessage = dev.veryniche.stitchcounter.mobile.R.string.purchase_limit_counters
                         }
                     },
                     snackbarHostState = snackbarHostState,
@@ -187,5 +207,19 @@ fun MobileNavHost(
                 )
             }
         }
+    }
+
+    showPurchaseDialogMessage?.let {
+        PurchaseDialog(
+            message = it,
+            availableSubscriptions = availableSubscriptions,
+            onDismiss = {
+                showPurchaseDialogMessage = null
+            },
+            onPurchaseClick = { purchaseAction ->
+                onPurchaseClick.invoke(purchaseAction)
+                showPurchaseDialogMessage = null
+            }
+        )
     }
 }

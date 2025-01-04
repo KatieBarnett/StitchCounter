@@ -128,8 +128,8 @@
     <string name="purchases_buy_pro_monthly">Unlimited Monthly - %s</string>
     <string name="purchases_buy_pro_annual">Unlimited Annual - %s</string>
     <string name="purchases_buy_pro_misc">Unlimited - %s</string>
-    <string name="purchases_pro_description">With an unlimited subscription you can get all the following:</string>
-    <string name="purchases_pro_description_purchased">With your unlimited subscription you have all the following:</string>
+    <string name="purchases_pro_description">With an Unlimited Subscription you can get all the following:</string>
+    <string name="purchases_pro_description_purchased">With your Unlimited Subscription you have all the following:</string>
     <string name="purchases_pro_feature_1">Unlimited Projects</string>
     <string name="purchases_pro_feature_2">Unlimited Counters</string>
     <string name="purchases_pro_feature_3">No Ads on the phone app</string>
