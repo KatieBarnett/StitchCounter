@@ -32,6 +32,9 @@ import androidx.window.core.layout.WindowSizeClass
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.wearable.PutDataMapRequest
 import com.google.android.gms.wearable.Wearable
+import com.google.android.horologist.annotations.ExperimentalHorologistApi
+import com.google.android.horologist.data.WearDataLayerRegistry
+import com.google.android.horologist.datalayer.phone.PhoneDataLayerAppHelper
 import dagger.hilt.android.AndroidEntryPoint
 import dev.veryniche.stitchcounter.data.models.ScreenOnState
 import dev.veryniche.stitchcounter.mobile.purchase.PurchaseAction

@@ -2,6 +2,7 @@ package dev.veryniche.stitchcounter.storage
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.intPreferencesKey
@@ -21,6 +22,7 @@ data class UserPreferences(
     val lastReviewDate: Long,
     val tileProjectId: Int?,
     val tileCounterId: Int?,
+    val isProPurchased: Boolean,
 )
 
 class UserPreferencesRepository @Inject constructor(
@@ -35,6 +37,7 @@ class UserPreferencesRepository @Inject constructor(
         val TILE_PROJECT_ID = intPreferencesKey("tile_project_id")
         val TILE_COUNTER_ID = intPreferencesKey("tile_counter_id")
         val THEME_MODE = stringPreferencesKey("theme_mode")
+        val PRO_PURCHASED = booleanPreferencesKey("pro_purchased")
     }
 
     val userPreferencesFlow: Flow<UserPreferences> = dataStore.data
@@ -62,13 +65,15 @@ class UserPreferencesRepository @Inject constructor(
             val lastReviewDate = preferences[PreferencesKeys.LAST_REVIEW_DATE] ?: -1L
             val tileProjectId = preferences[PreferencesKeys.TILE_PROJECT_ID]
             val tileCounterId = preferences[PreferencesKeys.TILE_COUNTER_ID]
+            val isProPurchased = preferences[PreferencesKeys.PRO_PURCHASED] == true
             UserPreferences(
-                whatsNewLastSeen,
-                keepScreenOnState,
-                themeMode,
-                lastReviewDate,
-                tileProjectId,
-                tileCounterId
+                whatsNewLastSeen = whatsNewLastSeen,
+                keepScreenOn = keepScreenOnState,
+                themeMode = themeMode,
+                lastReviewDate = lastReviewDate,
+                tileProjectId = tileProjectId,
+                tileCounterId = tileCounterId,
+                isProPurchased = isProPurchased,
             )
         }
 
@@ -105,6 +110,12 @@ class UserPreferencesRepository @Inject constructor(
     suspend fun updateTileCounterId(id: Int) {
         dataStore.edit { preferences ->
             preferences[PreferencesKeys.TILE_COUNTER_ID] = id
+        }
+    }
+
+    suspend fun updateProPurchased(isProPurchased: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[PreferencesKeys.PRO_PURCHASED] = isProPurchased
         }
     }
 }

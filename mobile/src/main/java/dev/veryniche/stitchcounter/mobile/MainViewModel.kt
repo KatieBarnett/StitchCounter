@@ -3,6 +3,8 @@ package dev.veryniche.stitchcounter.mobile
 import android.app.Activity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.horologist.annotations.ExperimentalHorologistApi
+import com.google.android.horologist.datalayer.phone.PhoneDataLayerAppHelper
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -18,6 +20,8 @@ import dev.veryniche.stitchcounter.mobile.review.ReviewManager
 import dev.veryniche.stitchcounter.storage.ProjectsRepository
 import dev.veryniche.stitchcounter.storage.ThemeMode
 import dev.veryniche.stitchcounter.storage.UserPreferencesRepository
+import dev.veryniche.stitchcounter.storage.datasync.DataLayerListenerService.Companion.KEY_PRO_PURCHASED
+import dev.veryniche.stitchcounter.storage.datasync.DataLayerListenerService.Companion.PRO_PURCHASED_PATH
 import dev.veryniche.stitchcounter.storage.datasync.Event
 import dev.veryniche.stitchcounter.storage.datasync.toDeleteEvent
 import dev.veryniche.stitchcounter.storage.datasync.toUpdateAllEvent
@@ -25,13 +29,14 @@ import dev.veryniche.stitchcounter.storage.datasync.toUpdateEvent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import kotlin.collections.map
 
 @HiltViewModel(assistedFactory = MainViewModel.MainViewModelFactory::class)
 class MainViewModel @AssistedInject constructor(
@@ -48,7 +53,15 @@ class MainViewModel @AssistedInject constructor(
     val purchaseStatus = purchaseManager.purchases.combine(
         purchaseManager.subscriptions
     ) { purchases, activeSubscriptions ->
-        PurchaseStatus(isBundleSubscribed = activeSubscriptions.contains(Products.bundle))
+        val isProPurchased = activeSubscriptions.contains(Products.bundle)
+        eventsToWatch.emit(
+            Event(
+                path = PRO_PURCHASED_PATH,
+                key = KEY_PRO_PURCHASED,
+                data = isProPurchased.toString()
+            )
+        )
+        PurchaseStatus(isBundleSubscribed = isProPurchased)
     }
 
     val availableSubscriptions: Flow<List<Subscription>> = purchaseManager.availableSubscriptions
@@ -107,21 +120,6 @@ class MainViewModel @AssistedInject constructor(
         eventsToWatch.emit(projects.toUpdateAllEvent())
     }
 
-    suspend fun saveCounter(projectId: Int, counterId: Int, counterName: String, counterMax: Int) {
-        saveCounter(
-            projectId,
-            Counter(
-                id = counterId,
-                name = counterName,
-                maxCount = counterMax
-            )
-        )
-    }
-
-    suspend fun saveCounter(projectId: Int, counter: Counter) {
-        savedProjectsRepository.saveCounter(projectId, counter)
-    }
-
     suspend fun updateCounter(project: Project, counter: Counter) {
         val counterIndex = project.counters.indexOfFirst { it.id == counter.id }
         if (counterIndex != -1) {
@@ -132,17 +130,6 @@ class MainViewModel @AssistedInject constructor(
             val updatedList = project.counters.plus(counter)
             saveProject(project.copy(counters = updatedList))
         }
-    }
-
-    suspend fun resetProject(project: Project) {
-        val updatedList = project.counters.map {
-            it.copy(currentCount = 0)
-        }
-        saveProject(project.copy(counters = updatedList))
-    }
-
-    suspend fun resetCounter(project: Project, counter: Counter) {
-        updateCounter(project, counter.copy(currentCount = 0))
     }
 
     suspend fun deleteProject(projectId: Int) {

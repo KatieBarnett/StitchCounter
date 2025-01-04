@@ -10,6 +10,7 @@ import timber.log.Timber
 
 @HiltAndroidApp
 class StitchCounterApplication : Application() {
+
     override fun onCreate() {
         super.onCreate()
 
@@ -38,6 +39,4 @@ class StitchCounterApplication : Application() {
             }
         }
     }
-    
-    
 }

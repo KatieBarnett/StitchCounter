@@ -8,6 +8,7 @@ import com.google.android.gms.wearable.WearableListenerService
 import dagger.hilt.android.AndroidEntryPoint
 import dev.veryniche.stitchcounter.data.models.Project
 import dev.veryniche.stitchcounter.storage.ProjectsRepository
+import dev.veryniche.stitchcounter.storage.UserPreferencesRepository
 import jakarta.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -23,6 +24,9 @@ class DataLayerListenerService : WearableListenerService() {
 
     @Inject
     lateinit var savedProjectsRepository: ProjectsRepository
+
+    @Inject
+    lateinit var userPreferencesRepository: UserPreferencesRepository
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
 
@@ -51,11 +55,11 @@ class DataLayerListenerService : WearableListenerService() {
                                         savedProjectsRepository.syncProject(syncedProject)
                                         Timber.d("Updated data: $dataString")
                                     } else {
-                                        Timber.e("Data sync fail because it is null")
+                                        Timber.e("$PROJECT_UPDATE_PATH: Data sync fail because it is null")
                                     }
                                 }
                                 else -> {
-                                    Timber.e("Data sync fail because the type is unknown")
+                                    Timber.e("$PROJECT_UPDATE_PATH: Data sync fail because the type is unknown")
                                 }
                             }
                         }
@@ -70,11 +74,11 @@ class DataLayerListenerService : WearableListenerService() {
                                         savedProjectsRepository.deleteProject(projectId)
                                         Timber.d("Deleted project: $projectId")
                                     } else {
-                                        Timber.e("Data sync fail because it is null or not an int")
+                                        Timber.e("$PROJECT_DELETE_PATH: Data sync fail because it is null or not an int")
                                     }
                                 }
                                 else -> {
-                                    Timber.e("Data sync fail because the type is unknown")
+                                    Timber.e("$PROJECT_DELETE_PATH: Data sync fail because the type is unknown")
                                 }
                             }
                         }
@@ -88,11 +92,28 @@ class DataLayerListenerService : WearableListenerService() {
                                         val syncedProjectList = Json.Default.decodeFromString<List<Project>>(dataString)
                                         savedProjectsRepository.syncAllProjects(syncedProjectList)
                                     } else {
-                                        Timber.e("Data sync fail because it is null")
+                                        Timber.e("$ALL_PROJECT_SYNC_PATH: Data sync fail because it is null")
                                     }
                                 }
                                 else -> {
-                                    Timber.e("Data sync fail because the type is unknown")
+                                    Timber.e("$ALL_PROJECT_SYNC_PATH: Data sync fail because the type is unknown")
+                                }
+                            }
+                        }
+                        PRO_PURCHASED_PATH -> {
+                            when (frozenEvent.type) {
+                                DataEvent.TYPE_CHANGED -> {
+                                    val dataString = DataMapItem.fromDataItem(frozenEvent.dataItem)
+                                        .dataMap
+                                        .getString(KEY_PRO_PURCHASED)
+                                    if (dataString != null) {
+                                        userPreferencesRepository.updateProPurchased(dataString.toBoolean())
+                                    } else {
+                                        Timber.e("$PRO_PURCHASED_PATH: Data sync fail because it is null")
+                                    }
+                                }
+                                else -> {
+                                    Timber.e("$PRO_PURCHASED_PATH: Data sync fail because the type is unknown")
                                 }
                             }
                         }
@@ -133,8 +154,10 @@ class DataLayerListenerService : WearableListenerService() {
         const val PROJECT_UPDATE_PATH = "/projectUpdate"
         const val PROJECT_DELETE_PATH = "/projectDelete"
         const val ALL_PROJECT_SYNC_PATH = "/allProjectSync"
+        const val PRO_PURCHASED_PATH = "/proPurchased"
         const val KEY_PROJECTS = "projects"
         const val KEY_PROJECT = "project"
         const val KEY_PROJECT_ID = "projectId"
+        const val KEY_PRO_PURCHASED = "isProPurchased"
     }
 }

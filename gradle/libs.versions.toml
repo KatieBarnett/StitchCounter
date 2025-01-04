@@ -63,6 +63,9 @@ hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", ve
 horologist-composables = { group = "com.google.android.horologist", name = "horologist-composables", version.ref = "horologist" }
 horologist-compose-layout = { group = "com.google.android.horologist", name = "horologist-compose-layout", version.ref = "horologist" }
 horologist-tiles = { group = "com.google.android.horologist", name = "horologist-tiles", version.ref = "horologist" }
+horologist-datalayer= { group = "com.google.android.horologist", name = "horologist-datalayer", version.ref = "horologist" }
+horologist-datalayer-phone= { group = "com.google.android.horologist", name = "horologist-datalayer-phone", version.ref = "horologist" }
+horologist-datalayer-watch = { group = "com.google.android.horologist", name = "horologist-datalayer-watch", version.ref = "horologist" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinx-serialization-json" }
 lifecycle-runtime-compose-android = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose-android", version.ref = "lifecycleRuntimeComposeAndroid" }
 lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }

@@ -98,5 +98,11 @@
 
     <string name="whats_new_title">What\'s new?</string>
     <string name="whats_new_close">Close</string>
+
+    <string name="purchase_limit_projects">To add more projects, please sign up for the Unlimited Subscription.</string>
+    <string name="purchase_limit_counters">To add more counters, please sign up for the Unlimited Subscription.</string>
+    <string name="purchase_limit_button_purchase_get_app">Get phone app to purchase</string>
+    <string name="purchase_limit_button_purchase">Open phone app to purchase</string>
+    <string name="purchase_limit_button_cancel">Cancel</string>
     
 </resources>

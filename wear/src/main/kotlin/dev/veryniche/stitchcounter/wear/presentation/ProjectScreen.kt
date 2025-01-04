@@ -20,7 +20,6 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -58,7 +57,6 @@ import dev.veryniche.stitchcounter.core.trackEvent
 import dev.veryniche.stitchcounter.core.trackProjectScreenView
 import dev.veryniche.stitchcounter.data.models.Counter
 import dev.veryniche.stitchcounter.data.models.Project
-import dev.veryniche.stitchcounter.wear.MainViewModel
 import dev.veryniche.stitchcounter.wear.getNextCounterId
 import dev.veryniche.stitchcounter.wear.previews.PreviewScreen
 import kotlinx.coroutines.launch
@@ -66,59 +64,56 @@ import kotlinx.coroutines.launch
 @Composable
 fun ProjectScreen(
     id: Int,
-    viewModel: MainViewModel,
+    project: Project,
     listState: ScalingLazyListState,
+    onCounterUpdate: (counter: Counter) -> Unit,
     onCounterClick: (counter: Counter) -> Unit,
     onProjectEdit: (projectId: Int, projectName: String) -> Unit,
     onCounterAdd: (counterId: Int) -> Unit,
+    onProjectReset: (Project) -> Unit,
     keepScreenOn: Boolean,
     onKeepScreenOnUpdate: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     ambientAwareState: AmbientStateUpdate
 ) {
     val composableScope = rememberCoroutineScope()
-    val project = viewModel.getProject(id).collectAsState(initial = null)
     var showResetProjectDialog by remember { mutableStateOf(false) }
-    project.value?.let { project ->
-        TrackedScreen {
-            trackProjectScreenView(project.counters.size, isMobile = false)
-        }
-        val nextCounterId = project.getNextCounterId()
-        ProjectContent(
-            project = project,
-            listState = listState,
-            onCounterUpdate = { counter ->
+    TrackedScreen {
+        trackProjectScreenView(project.counters.size, isMobile = false)
+    }
+    val nextCounterId = project.getNextCounterId()
+    ProjectContent(
+        project = project,
+        listState = listState,
+        onCounterUpdate = { counter ->
+            onCounterUpdate.invoke(counter)
+        },
+        onCounterAdd = { onCounterAdd.invoke(nextCounterId) },
+        onProjectReset = {
+            showResetProjectDialog = true
+        },
+        onProjectEdit = { onProjectEdit.invoke(id, project.name) },
+        onCounterClick = onCounterClick,
+        ambientAwareState = ambientAwareState,
+        keepScreenOn = keepScreenOn,
+        onKeepScreenOnUpdate = onKeepScreenOnUpdate,
+        modifier = modifier
+    )
+    if (showResetProjectDialog) {
+        ResetProjectAlert(
+            projectName = project.name,
+            onConfirm = {
                 composableScope.launch {
-                    viewModel.updateCounter(project, counter)
-                }
-            },
-            onCounterAdd = { onCounterAdd.invoke(nextCounterId) },
-            onProjectReset = {
-                showResetProjectDialog = true
-            },
-            onProjectEdit = { onProjectEdit.invoke(id, project.name) },
-            onCounterClick = onCounterClick,
-            ambientAwareState = ambientAwareState,
-            keepScreenOn = keepScreenOn,
-            onKeepScreenOnUpdate = onKeepScreenOnUpdate,
-            modifier = modifier
-        )
-        if (showResetProjectDialog) {
-            ResetProjectAlert(
-                projectName = project.name,
-                onConfirm = {
-                    composableScope.launch {
-                        trackEvent(Analytics.Action.ResetProject, isMobile = false)
-                        viewModel.resetProject(project)
-                        showResetProjectDialog = false
-                    }
-                },
-                onCancel = {
+                    trackEvent(Analytics.Action.ResetProject, isMobile = false)
+                    onProjectReset.invoke(project)
                     showResetProjectDialog = false
                 }
-            )
-        }
-    } // TODO - else display error
+            },
+            onCancel = {
+                showResetProjectDialog = false
+            }
+        )
+    }
 }
 
 @OptIn(ExperimentalWearFoundationApi::class, ExperimentalLayoutApi::class)

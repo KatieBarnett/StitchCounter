@@ -53,31 +53,9 @@ import dev.veryniche.stitchcounter.wear.presentation.theme.StitchCounterTheme
 import dev.veryniche.stitchcounter.wear.previews.PreviewComponent
 import kotlinx.coroutines.launch
 
-@Composable
-fun ProjectListScreen(
-    viewModel: MainViewModel,
-    listState: ScalingLazyListState,
-    onProjectClick: (Int) -> Unit,
-    onAddProjectClick: () -> Unit,
-    onAboutClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    val projects: List<Project> by viewModel.projects.collectAsState(initial = emptyList())
-    ProjectList(
-        projects.sortedByDescending {
-            it.lastModified
-        },
-        listState,
-        onProjectClick,
-        onAddProjectClick,
-        onAboutClick,
-        modifier
-    )
-}
-
 @OptIn(ExperimentalWearFoundationApi::class)
 @Composable
-fun ProjectList(
+fun ProjectListScreen(
     projectList: List<Project>,
     listState: ScalingLazyListState,
     onProjectClick: (Int) -> Unit,

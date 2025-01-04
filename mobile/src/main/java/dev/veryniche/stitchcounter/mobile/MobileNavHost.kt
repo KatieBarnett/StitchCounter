@@ -17,6 +17,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import androidx.window.core.layout.WindowSizeClass
 import dev.veryniche.stitchcounter.core.Analytics.Action
+import dev.veryniche.stitchcounter.core.Analytics.Action.ProPurchaseRequiredCounter
+import dev.veryniche.stitchcounter.core.Analytics.Action.ProPurchaseRequiredProject
 import dev.veryniche.stitchcounter.core.R
 import dev.veryniche.stitchcounter.core.trackEvent
 import dev.veryniche.stitchcounter.data.models.Project
@@ -102,6 +104,7 @@ fun MobileNavHost(
                             navController.navigate(ProjectDestination(newProjectId, true))
                         }
                     } else {
+                        trackEvent(ProPurchaseRequiredProject, isMobile = true)
                         showPurchaseDialogMessage = dev.veryniche.stitchcounter.mobile.R.string.purchase_limit_projects
                     }
                 },
@@ -163,6 +166,7 @@ fun MobileNavHost(
                         ) {
                             nextAction.invoke()
                         } else {
+                            trackEvent(ProPurchaseRequiredCounter, isMobile = true)
                             showPurchaseDialogMessage = dev.veryniche.stitchcounter.mobile.R.string.purchase_limit_counters
                         }
                     },

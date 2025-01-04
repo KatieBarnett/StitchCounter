@@ -1,9 +1,12 @@
 package dev.veryniche.stitchcounter.wear.presentation
 
-
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -12,8 +15,11 @@ import androidx.wear.compose.foundation.lazy.ScalingLazyListState
 import androidx.wear.compose.navigation.SwipeDismissableNavHost
 import androidx.wear.compose.navigation.composable
 import com.google.android.horologist.compose.ambient.AmbientStateUpdate
+import dev.veryniche.stitchcounter.R.string
 import dev.veryniche.stitchcounter.core.Analytics
+import dev.veryniche.stitchcounter.core.Analytics.Action.ProPurchaseRequiredCounter
 import dev.veryniche.stitchcounter.core.trackEvent
+import dev.veryniche.stitchcounter.data.models.Project
 import dev.veryniche.stitchcounter.data.models.ScreenOnState
 import dev.veryniche.stitchcounter.wear.MainViewModel
 import dev.veryniche.stitchcounter.wear.Screens
@@ -32,7 +38,9 @@ fun NavHost(
     ambientAwareState: AmbientStateUpdate,
     startDestination: String,
 ) {
+    var showPurchaseDialogMessage by rememberSaveable { mutableStateOf<Int?>(null) }
     val coroutineScope = rememberCoroutineScope()
+    val isProPurchased by viewModel.isProPurchased.collectAsState(initial = false)
     SwipeDismissableNavHost(
         navController = navController,
         startDestination = startDestination,
@@ -86,15 +94,21 @@ fun NavHost(
         }
         composable("project_list") {
             viewModel.updateCurrentScreen(Screens.ProjectList)
+            val projects: List<Project> by viewModel.projects.collectAsState(initial = emptyList())
             ProjectListScreen(
-                viewModel = viewModel,
+                projectList = projects,
                 listState = listState,
                 onProjectClick = { projectId ->
                     navController.navigate("project/$projectId")
                 },
                 onAddProjectClick = {
-                    trackEvent(Analytics.Action.AddProject, isMobile = false)
-                    navController.navigate("edit_project")
+                    if (projects.isEmpty() || isProPurchased) {
+                        trackEvent(Analytics.Action.AddProject, isMobile = false)
+                        navController.navigate("edit_project")
+                    } else {
+                        trackEvent(ProPurchaseRequiredCounter, isMobile = true)
+                        showPurchaseDialogMessage = string.purchase_limit_projects
+                    }
                 },
                 onAboutClick = {
                     coroutineScope.launch {
@@ -107,25 +121,46 @@ fun NavHost(
         composable("project/{id}") {
             it.arguments?.getString("id")?.toIntOrNull()?.let { projectId ->
                 viewModel.updateCurrentScreen(Screens.Project)
-                ProjectScreen(
-                    viewModel = viewModel,
-                    id = projectId,
-                    listState = listState,
-                    ambientAwareState = ambientAwareState,
-                    onCounterClick = { counter ->
-                        navController.navigate("counter/$projectId/${counter.id}")
-                    },
-                    onCounterAdd = { newCounterId ->
-                        navController.navigate("edit_counter/$projectId/$newCounterId")
-                    },
-                    onProjectEdit = { id, name ->
-                        navController.navigate("edit_project/$id/$name")
-                    },
-                    keepScreenOn = screenOnState.projectScreenOn,
-                    onKeepScreenOnUpdate = { update ->
-                        onScreenOnStateUpdate.invoke(screenOnState.copy(projectScreenOn = update))
-                    },
-                )
+                val projectState by viewModel.getProject(id).collectAsState(null)
+                val projects: List<Project> by viewModel.projects.collectAsState(initial = emptyList())
+                projectState?.let { project ->
+                    ProjectScreen(
+                        id = projectId,
+                        project = project,
+                        listState = listState,
+                        ambientAwareState = ambientAwareState,
+                        onCounterClick = { counter ->
+                            navController.navigate("counter/$projectId/${counter.id}")
+                        },
+                        onCounterAdd = { newCounterId ->
+                            if ((projectState?.counters?.isEmpty() != false && projects.size == 1) ||
+                                isProPurchased
+                            ) {
+                                navController.navigate("edit_counter/$projectId/$newCounterId")
+                            } else {
+                                trackEvent(ProPurchaseRequiredCounter, isMobile = true)
+                                showPurchaseDialogMessage = string.purchase_limit_counters
+                            }
+                        },
+                        onCounterUpdate = { counter ->
+                            coroutineScope.launch {
+                                viewModel.updateCounter(project, counter)
+                            }
+                        },
+                        onProjectEdit = { id, name ->
+                            navController.navigate("edit_project/$id/$name")
+                        },
+                        onProjectReset = { project ->
+                            coroutineScope.launch {
+                                viewModel.resetProject(project)
+                            }
+                        },
+                        keepScreenOn = screenOnState.projectScreenOn,
+                        onKeepScreenOnUpdate = { update ->
+                            onScreenOnStateUpdate.invoke(screenOnState.copy(projectScreenOn = update))
+                        },
+                    )
+                }
             }
         }
         composable("edit_project") {
@@ -203,7 +238,20 @@ fun NavHost(
             }
         }
     }
+    showPurchaseDialogMessage?.let {
+        PurchaseDialog(
+            message = it,
+            onCancel = {
+                showPurchaseDialogMessage = null
+            },
+            onConfirm = {
+                showPurchaseDialogMessage = null
+            }
+        )
+    }
 }
+
+
 
 @Composable
 fun LoadEditProjectScreen(

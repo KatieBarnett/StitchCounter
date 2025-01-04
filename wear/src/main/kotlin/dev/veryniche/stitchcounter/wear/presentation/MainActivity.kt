@@ -51,8 +51,9 @@ class MainActivity : ComponentActivity() {
         internal const val EXTRA_JOURNEY_SELECT_COUNTER = "journey:select_counter"
     }
 
+    lateinit var viewModel: MainViewModel
+
     private val dataClient by lazy { Wearable.getDataClient(this) }
-    val viewModel by viewModels<MainViewModel>()
 
     @OptIn(ExperimentalHorologistApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,6 +63,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
+            val coroutineScope = rememberCoroutineScope()
+            val context = LocalContext.current
             val dataSyncState by viewModel.eventsToMobile.collectAsStateWithLifecycle()
             LaunchedEffect(dataSyncState) {
                 dataSyncState?.let {

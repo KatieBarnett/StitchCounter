@@ -102,6 +102,9 @@ dependencies {
 
     implementation(libs.compose.runtime.livedata)
 
+    implementation(libs.horologist.datalayer)
+    implementation(libs.horologist.datalayer.watch)
+
     implementation(libs.timber)
 
     implementation(libs.hilt.android)

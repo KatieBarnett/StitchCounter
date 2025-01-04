@@ -56,6 +56,8 @@ object Analytics {
         const val ReviewRequested = "Review Requested"
         const val ManageSubscription = "Manage subscription"
         const val PurchasePro = "Purchase Pro Bundle"
+        const val ProPurchaseRequiredProject = "Pro Purchase Required Project"
+        const val ProPurchaseRequiredCounter = "Pro Purchase Required Counter"
     }
 }
 
