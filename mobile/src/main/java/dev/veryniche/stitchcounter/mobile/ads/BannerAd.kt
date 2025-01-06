@@ -23,6 +23,7 @@ enum class BannerAdLocation(val adId: String) {
     CounterScreen(adId = "ca-app-pub-4584531662076255/4881589373"),
     AboutScreen(adId = "ca-app-pub-4584531662076255/5619497845"),
     SettingsScreen(adId = "ca-app-pub-4584531662076255/2685399351"),
+    PurchaseProScreen(adId = "ca-app-pub-4584531662076255/6593828542"),
 }
 
 @Composable

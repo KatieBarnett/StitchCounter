@@ -6,6 +6,7 @@ import dev.veryniche.stitchcounter.data.models.ScreenOnState
 enum class Screens(val pageContextDisplay: Int?) {
     About(R.string.app_name),
     WhatsNew(R.string.app_name),
+    PhoneAppInfo(R.string.app_name),
     ProjectList(R.string.app_name),
     Project(null),
     Counter(R.string.context_counter),
@@ -20,6 +21,7 @@ fun Screens.showScreenAlwaysOn(screenOnState: ScreenOnState): Boolean {
         Screens.About -> false
         Screens.WhatsNew -> false
         Screens.ProjectList -> false
+        Screens.PhoneAppInfo -> false
         Screens.Project -> screenOnState.projectScreenOn
         Screens.Counter -> screenOnState.counterScreenOn
         Screens.EditProject -> false

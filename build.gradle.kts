@@ -19,7 +19,7 @@ ext {
     //35.200.01.00
 
     extra["appVersionName"] = "2.0.0"
-    extra["appVersionCode"] = 352000101 // Should be this, but had to increase 341130000
+    extra["appVersionCode"] = 352000301 // Should be this, but had to increase 341130000
     extra["compileSdk"] = 35
     extra["targetSdk"] = 33
     extra["targetSdkMobile"] = 35

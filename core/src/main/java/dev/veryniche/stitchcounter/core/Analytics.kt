@@ -22,6 +22,7 @@ private const val ANALYTICS_LOG_TAG = "Analytics"
 object Analytics {
     object Screen {
         const val About = "About"
+        const val PurchasePro = "PurchasePro"
         const val Settings = "Settings"
         const val Counter = "Counter"
         const val EditCounter = "Edit Counter"
@@ -32,6 +33,8 @@ object Analytics {
         const val SelectCounterForTile = "Select Counter For Tile"
         const val SelectProjectForTile = "Select Project For Tile"
         const val WhatsNew = "Whats New"
+        const val PhoneAppInfo = "Phone App Info"
+        const val WatchAppInfo = "Watch App Info"
     }
 
     object Action {
@@ -58,6 +61,8 @@ object Analytics {
         const val PurchasePro = "Purchase Pro Bundle"
         const val ProPurchaseRequiredProject = "Pro Purchase Required Project"
         const val ProPurchaseRequiredCounter = "Pro Purchase Required Counter"
+        const val InstallWearApp = "Install Wear App"
+        const val InstallPhoneApp = "Install Phone App"
     }
 }
 

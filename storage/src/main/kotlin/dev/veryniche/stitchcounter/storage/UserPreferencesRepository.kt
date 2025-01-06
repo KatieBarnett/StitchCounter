@@ -23,6 +23,7 @@ data class UserPreferences(
     val tileProjectId: Int?,
     val tileCounterId: Int?,
     val isProPurchased: Boolean,
+    val isConectedAppInfoDoNotShow: Boolean,
 )
 
 class UserPreferencesRepository @Inject constructor(
@@ -32,6 +33,7 @@ class UserPreferencesRepository @Inject constructor(
 
     private object PreferencesKeys {
         val WHATS_NEW_LAST_SEEN = intPreferencesKey("whats_new_last_seen")
+        val CONNECTED_APP_INFO_DO_NOT_SHOW = booleanPreferencesKey("connected_app_info_do_not_show")
         val KEEP_SCREEN_ON_STATE = stringPreferencesKey("keep_screen_on_state")
         val LAST_REVIEW_DATE = longPreferencesKey("last_review_date")
         val TILE_PROJECT_ID = intPreferencesKey("tile_project_id")
@@ -66,6 +68,7 @@ class UserPreferencesRepository @Inject constructor(
             val tileProjectId = preferences[PreferencesKeys.TILE_PROJECT_ID]
             val tileCounterId = preferences[PreferencesKeys.TILE_COUNTER_ID]
             val isProPurchased = preferences[PreferencesKeys.PRO_PURCHASED] == true
+            val isConnectedAppInfoDoNotShow = preferences[PreferencesKeys.CONNECTED_APP_INFO_DO_NOT_SHOW] == true
             UserPreferences(
                 whatsNewLastSeen = whatsNewLastSeen,
                 keepScreenOn = keepScreenOnState,
@@ -74,6 +77,7 @@ class UserPreferencesRepository @Inject constructor(
                 tileProjectId = tileProjectId,
                 tileCounterId = tileCounterId,
                 isProPurchased = isProPurchased,
+                isConectedAppInfoDoNotShow = isConnectedAppInfoDoNotShow,
             )
         }
 
@@ -116,6 +120,12 @@ class UserPreferencesRepository @Inject constructor(
     suspend fun updateProPurchased(isProPurchased: Boolean) {
         dataStore.edit { preferences ->
             preferences[PreferencesKeys.PRO_PURCHASED] = isProPurchased
+        }
+    }
+
+    suspend fun updateIsConnectedAppInfoDoNotShow(isConnectedAppInfoDoNotShow: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[PreferencesKeys.CONNECTED_APP_INFO_DO_NOT_SHOW] = isConnectedAppInfoDoNotShow
         }
     }
 }

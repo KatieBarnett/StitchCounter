@@ -3,6 +3,8 @@ package dev.veryniche.stitchcounter.wear
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.horologist.annotations.ExperimentalHorologistApi
+import com.google.android.horologist.data.AppHelperResultCode.APP_HELPER_RESULT_SUCCESS
+import com.google.android.horologist.data.activityConfig
 import com.google.android.horologist.datalayer.watch.WearDataLayerAppHelper
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -19,6 +21,7 @@ import dev.veryniche.stitchcounter.storage.datasync.toUpdateAllEvent
 import dev.veryniche.stitchcounter.storage.datasync.toUpdateEvent
 import dev.veryniche.stitchcounter.wear.presentation.whatsnew.whatsNewData
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -58,7 +61,11 @@ constructor(
         it.isProPurchased
     }
 
-    val phoneState = appHelper.connectedAndInstalledNodes.map { connectedNodes ->
+    val isConnectedAppInfoDoNotShow = userPreferencesFlow.map {
+        it.isConectedAppInfoDoNotShow
+    }
+
+    val phoneState: Flow<PhoneState> = appHelper.connectedAndInstalledNodes.map { connectedNodes ->
         PhoneState(
             phoneConnected = connectedNodes.isNotEmpty(),
             appInstalledOnPhoneList = connectedNodes.map { it.id },
@@ -199,9 +206,51 @@ constructor(
             userPreferencesRepository.updateWhatsNewLastSeen(whatsNewLastSeen)
         }
     }
+
+    fun updateIsConnectedAppInfoDoNotShow(isConnectedAppInfoDoNotShow: Boolean) {
+        viewModelScope.launch {
+            userPreferencesRepository.updateIsConnectedAppInfoDoNotShow(isConnectedAppInfoDoNotShow)
+        }
+    }
+
+    suspend fun openAppOnPhoneForPurchase(state: PhoneState) {
+        val installedNodeId = state.appInstalledOnPhoneList.firstOrNull()
+        if (installedNodeId != null) {
+            val config = activityConfig {
+                classFullName = "dev.veryniche.stitchcounter.mobile.PurchaseProActivity"
+            }
+            val result = appHelper.startRemoteActivity(installedNodeId, config)
+            if (result != APP_HELPER_RESULT_SUCCESS) {
+                Timber.e("Error opening PurchaseProActivity on phone, error code: $result")
+                appHelper.installOnNode(installedNodeId)
+            }
+        } else {
+            appHelper.connectedNodes().forEach {
+                appHelper.installOnNode(it.id)
+            }
+        }
+    }
+
+    suspend fun openAppOnPhone(state: PhoneState) {
+        val installedNodeId = state.appInstalledOnPhoneList.firstOrNull()
+        if (installedNodeId != null) {
+            val result = appHelper.startRemoteOwnApp(installedNodeId)
+            if (result != APP_HELPER_RESULT_SUCCESS) {
+                Timber.e("Error opening PurchaseProActivity on phone, error code: $result")
+                appHelper.installOnNode(installedNodeId)
+            }
+        } else {
+            appHelper.connectedNodes().forEach {
+                val result = appHelper.installOnNode(it.id)
+                if (result != APP_HELPER_RESULT_SUCCESS) {
+                    Timber.e("Error installing app on phone, error code: $result")
+                }
+            }
+        }
+    }
 }
 
 data class PhoneState(
-    val appInstalledOnPhoneList: List<String>,
-    val phoneConnected: Boolean,
+    val appInstalledOnPhoneList: List<String> = listOf(),
+    val phoneConnected: Boolean = false,
 )

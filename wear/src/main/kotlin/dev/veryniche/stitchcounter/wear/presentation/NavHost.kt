@@ -1,6 +1,7 @@
 package dev.veryniche.stitchcounter.wear.presentation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -8,10 +9,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.wear.compose.foundation.lazy.ScalingLazyListState
+import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
+import androidx.wear.compose.material.dialog.Dialog
 import androidx.wear.compose.navigation.SwipeDismissableNavHost
 import androidx.wear.compose.navigation.composable
 import com.google.android.horologist.compose.ambient.AmbientStateUpdate
@@ -22,7 +24,9 @@ import dev.veryniche.stitchcounter.core.trackEvent
 import dev.veryniche.stitchcounter.data.models.Project
 import dev.veryniche.stitchcounter.data.models.ScreenOnState
 import dev.veryniche.stitchcounter.wear.MainViewModel
+import dev.veryniche.stitchcounter.wear.PhoneState
 import dev.veryniche.stitchcounter.wear.Screens
+import dev.veryniche.stitchcounter.wear.presentation.whatsnew.PhoneAppInfoScreen
 import dev.veryniche.stitchcounter.wear.presentation.whatsnew.WhatsNewScreen
 import kotlinx.coroutines.launch
 
@@ -37,10 +41,12 @@ fun NavHost(
     onTileStateUpdate: () -> Unit,
     ambientAwareState: AmbientStateUpdate,
     startDestination: String,
+    phoneState: PhoneState,
 ) {
     var showPurchaseDialogMessage by rememberSaveable { mutableStateOf<Int?>(null) }
     val coroutineScope = rememberCoroutineScope()
-    val isProPurchased by viewModel.isProPurchased.collectAsState(initial = false)
+    val isProPurchased by viewModel.isProPurchased.collectAsStateWithLifecycle(initialValue = false)
+    val isPhoneAppInfoDoNotShow by viewModel.isConnectedAppInfoDoNotShow.collectAsStateWithLifecycle(initialValue = false)
     SwipeDismissableNavHost(
         navController = navController,
         startDestination = startDestination,
@@ -50,19 +56,42 @@ fun NavHost(
             viewModel.updateCurrentScreen(Screens.About)
             AboutScreen(listState = listState)
         }
+        composable("phone_app_info") {
+            viewModel.updateCurrentScreen(Screens.PhoneAppInfo)
+            LaunchedEffect(Unit) {
+                listState.scrollToItem(0)
+            }
+            PhoneAppInfoScreen(
+                listState = listState,
+                onInstall = { doNotShow ->
+                    coroutineScope.launch {
+                        viewModel.updateIsConnectedAppInfoDoNotShow(doNotShow)
+                        viewModel.openAppOnPhone(phoneState)
+                        navController.navigate("project_list")
+                    }
+                },
+                onClose = { doNotShow ->
+                    viewModel.updateIsConnectedAppInfoDoNotShow(doNotShow)
+                    navController.navigate("project_list")
+                }
+            )
+        }
         composable("whats_new") {
             viewModel.updateCurrentScreen(Screens.WhatsNew)
 
             val whatsNewToShow by viewModel.whatsNewToShow.collectAsStateWithLifecycle(
                 listOf(),
-                lifecycleOwner = LocalLifecycleOwner.current
             )
             WhatsNewScreen(
                 listState = listState,
                 data = whatsNewToShow,
                 onClose = {
+                    if (phoneState.appInstalledOnPhoneList.isNotEmpty() || isPhoneAppInfoDoNotShow) {
+                        navController.navigate("project_list")
+                    } else {
+                        navController.navigate("phone_app_info")
+                    }
                     viewModel.updateWhatsNewLastSeen(whatsNewToShow.maxOf { it.id })
-                    navController.navigate("project_list")
                 }
             )
         }
@@ -121,9 +150,9 @@ fun NavHost(
         composable("project/{id}") {
             it.arguments?.getString("id")?.toIntOrNull()?.let { projectId ->
                 viewModel.updateCurrentScreen(Screens.Project)
-                val projectState by viewModel.getProject(id).collectAsState(null)
                 val projects: List<Project> by viewModel.projects.collectAsState(initial = emptyList())
-                projectState?.let { project ->
+
+                projects.firstOrNull { it.id == projectId }?.let { project ->
                     ProjectScreen(
                         id = projectId,
                         project = project,
@@ -133,7 +162,7 @@ fun NavHost(
                             navController.navigate("counter/$projectId/${counter.id}")
                         },
                         onCounterAdd = { newCounterId ->
-                            if ((projectState?.counters?.isEmpty() != false && projects.size == 1) ||
+                            if ((project?.counters?.isEmpty() != false && projects.size == 1) ||
                                 isProPurchased
                             ) {
                                 navController.navigate("edit_counter/$projectId/$newCounterId")
@@ -238,20 +267,30 @@ fun NavHost(
             }
         }
     }
-    showPurchaseDialogMessage?.let {
-        PurchaseDialog(
-            message = it,
-            onCancel = {
-                showPurchaseDialogMessage = null
-            },
-            onConfirm = {
-                showPurchaseDialogMessage = null
-            }
-        )
+
+    val scrollState = rememberScalingLazyListState()
+    Dialog(
+        showDialog = showPurchaseDialogMessage != null,
+        onDismissRequest = { showPurchaseDialogMessage = null },
+        scrollState = scrollState,
+    ) {
+        showPurchaseDialogMessage?.let {
+            PurchaseDialog(
+                scrollState = scrollState,
+                message = it,
+                onCancel = {
+                    showPurchaseDialogMessage = null
+                },
+                onConfirm = {
+                    coroutineScope.launch {
+                        viewModel.openAppOnPhoneForPurchase(phoneState)
+                        showPurchaseDialogMessage = null
+                    }
+                }
+            )
+        }
     }
 }
-
-
 
 @Composable
 fun LoadEditProjectScreen(

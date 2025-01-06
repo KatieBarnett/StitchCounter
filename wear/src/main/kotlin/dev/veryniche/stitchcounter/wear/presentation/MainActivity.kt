@@ -38,6 +38,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import dev.veryniche.stitchcounter.data.models.ScreenOnState
 import dev.veryniche.stitchcounter.tiles.counter.CounterTileService
 import dev.veryniche.stitchcounter.wear.MainViewModel
+import dev.veryniche.stitchcounter.wear.PhoneState
 import dev.veryniche.stitchcounter.wear.Screens
 import dev.veryniche.stitchcounter.wear.presentation.MainActivity.Companion.EXTRA_JOURNEY_SELECT_COUNTER
 import dev.veryniche.stitchcounter.wear.presentation.theme.StitchCounterTheme
@@ -138,11 +139,17 @@ fun StitchCounterWearApp(
         val whatsNewToShow by viewModel.whatsNewToShow.collectAsStateWithLifecycle(
             listOf(),
         )
+        val phoneState by viewModel.phoneState.collectAsStateWithLifecycle(initialValue = PhoneState())
+        val isPhoneAppInfoDoNotShow by viewModel.isConnectedAppInfoDoNotShow.collectAsStateWithLifecycle(
+            initialValue = false
+        )
 
         val startDestination = when (journey) {
             EXTRA_JOURNEY_SELECT_COUNTER -> "select_project_for_tile"
             else -> if (whatsNewToShow.isNotEmpty()) {
                 "whats_new"
+            } else if (phoneState.appInstalledOnPhoneList.isEmpty() && isPhoneAppInfoDoNotShow == false) {
+                "phone_app_info"
             } else {
                 "project_list"
             }
@@ -187,13 +194,10 @@ fun StitchCounterWearApp(
             ) {
                 NavHost(
                     navController = navController,
-                    startDestination = if (whatsNewToShow.isNotEmpty()) {
-                        startDestination
-                    } else {
-                        startDestination
-                    },
+                    startDestination = startDestination,
                     viewModel = viewModel,
                     listState = listState,
+                    phoneState = phoneState,
                     screenOnState = screenOnState,
                     ambientAwareState = ambientAwareUpdate,
                     onScreenOnStateUpdate = { newState ->

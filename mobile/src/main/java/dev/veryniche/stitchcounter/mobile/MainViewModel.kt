@@ -1,9 +1,13 @@
 package dev.veryniche.stitchcounter.mobile
 
 import android.app.Activity
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.horologist.annotations.ExperimentalHorologistApi
+import com.google.android.horologist.data.AppHelperResultCode.APP_HELPER_RESULT_SUCCESS
 import com.google.android.horologist.datalayer.phone.PhoneDataLayerAppHelper
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -36,7 +40,6 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import kotlin.collections.map
 
 @OptIn(ExperimentalHorologistApi::class)
 @HiltViewModel(assistedFactory = MainViewModel.MainViewModelFactory::class)
@@ -56,25 +59,26 @@ constructor(
         fun create(purchaseManager: PurchaseManager, appHelper: PhoneDataLayerAppHelper): MainViewModel
     }
 
-    val purchaseStatus = purchaseManager.purchases.combine(
-        purchaseManager.subscriptions
-    ) { purchases, activeSubscriptions ->
-        val isProPurchased = activeSubscriptions.contains(Products.bundle)
-        eventsToWatch.emit(
-            Event(
-                path = PRO_PURCHASED_PATH,
-                key = KEY_PRO_PURCHASED,
-                data = isProPurchased.toString()
+    val purchaseStatus = purchaseManager.subscriptions.map { activeSubscriptions ->
+        val isProPurchased = activeSubscriptions?.let {
+            val isProPurchased = it.contains(Products.bundle)
+            eventsToWatch.emit(
+                Event(
+                    path = PRO_PURCHASED_PATH,
+                    key = KEY_PRO_PURCHASED,
+                    data = isProPurchased.toString()
+                )
             )
-        )
-        PurchaseStatus(isBundleSubscribed = isProPurchased)
+            isProPurchased
+        }
+        PurchaseStatus(isBundleSubscribed = isProPurchased == true)
     }
 
     val availableSubscriptions: Flow<List<Subscription>> = purchaseManager.availableSubscriptions
         .combine(purchaseManager.subscriptions) { availableProducts, activeSubscriptions ->
-            availableProducts.map {
-                it.copy(purchased = activeSubscriptions.contains(it.productId))
-            }
+            availableProducts?.map {
+                it.copy(purchased = activeSubscriptions?.contains(it.productId))
+            } ?: emptyList()
         }
 
     fun purchaseSubscription(productId: String, offerToken: String, onError: (message: Int) -> Unit) {
@@ -104,14 +108,28 @@ constructor(
     private val eventsFromWatch = MutableStateFlow<Event?>(null)
     val eventsToWatch = MutableStateFlow<Event?>(null)
 
-    val watchState = appHelper.connectedAndInstalledNodes.map { connectedNodes ->
-        WatchState(
-            watchConnected = connectedNodes.isNotEmpty(),
-            appInstalledOnWatchList = connectedNodes.map { it.id },
-        )
+    private var isWatchConnected = MutableStateFlow<Boolean>(false)
+
+    val watchState = appHelper.connectedAndInstalledNodes
+        .combine(isWatchConnected) { connectedNodes, isWatchConnected ->
+            WatchState(
+                watchConnected = isWatchConnected,
+                appInstalledOnWatchList = connectedNodes.map { it.id },
+            )
+        }
+
+    val isUninstalledWatchAvailable = watchState.map {
+        it.watchConnected && it.appInstalledOnWatchList.isEmpty()
+    }
+
+    val isConnectedAppInfoDoNotShow = userPreferencesFlow.map {
+        it.isConectedAppInfoDoNotShow
     }
 
     init {
+        viewModelScope.launch {
+            isWatchConnected.emit(appHelper.connectedNodes().isNotEmpty())
+        }
         viewModelScope.launch(Dispatchers.IO) {
             eventsFromWatch.collect { value ->
                 Timber.d("Data from watch: $value")
@@ -185,12 +203,32 @@ constructor(
         }
     }
 
+    fun updateIsConnectedAppInfoDoNotShow(isConnectedAppInfoDoNotShow: Boolean) {
+        viewModelScope.launch {
+            userPreferencesRepository.updateIsConnectedAppInfoDoNotShow(isConnectedAppInfoDoNotShow)
+        }
+    }
+
     private val reviewManager = ReviewManager(userPreferencesRepository)
 
     fun requestReviewIfAble(activity: Activity) {
         viewModelScope.launch {
             reviewManager.requestReviewIfAble(activity, this)
         }
+    }
+
+    fun installAppOnWatch(context: Context) {
+        viewModelScope.launch {
+            appHelper.connectedNodes().forEach {
+                val result = appHelper.installOnNode(it.id)
+                if (result != APP_HELPER_RESULT_SUCCESS) {
+                    Timber.e("Error installing app on watch, error code: $result")
+                }
+            }
+        }
+        val intent = Intent(Intent.ACTION_VIEW)
+            .setData(Uri.parse("https://play.google.com/store/apps/details?id=dev.veryniche.stitchcounter"))
+        context.startActivity(intent)
     }
 }
 

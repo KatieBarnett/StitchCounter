@@ -1,6 +1,5 @@
 package dev.veryniche.stitchcounter.data.models
 
-import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.Serializable
 
 @Serializable

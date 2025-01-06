@@ -95,12 +95,17 @@
     <string name="counter_tile_open_app">Open app</string>
     <string name="counter_tile_counter_selected">Counter selected for tile:</string>
 
-
     <string name="whats_new_title">What\'s new?</string>
     <string name="whats_new_close">Close</string>
 
-    <string name="purchase_limit_projects">To add more projects, please sign up for the Unlimited Subscription.</string>
-    <string name="purchase_limit_counters">To add more counters, please sign up for the Unlimited Subscription.</string>
+    <string name="phone_app_info_title">Did you know there is a phone app?</string>
+    <string name="phone_app_info_message">Get access to all your counters and projects synced to your phone! Also sign up to an Unlimited Subscription to get an unlimited number of projects, counters and other features (plus more to come soon!).</string>
+    <string name="phone_app_info_do_not_show_again">Do not show this again</string>
+    <string name="phone_app_info_install">Install</string>
+    <string name="phone_app_info_close">Close</string>
+
+    <string name="purchase_limit_projects">To add more projects, please sign up for the Unlimited Subscription on the phone app.</string>
+    <string name="purchase_limit_counters">To add more counters, please sign up for the Unlimited Subscription on the phone app.</string>
     <string name="purchase_limit_button_purchase_get_app">Get phone app to purchase</string>
     <string name="purchase_limit_button_purchase">Open phone app to purchase</string>
     <string name="purchase_limit_button_cancel">Cancel</string>

@@ -38,4 +38,8 @@
     <string name="purchase_limit_counters">To add more counters, please sign up for the Unlimited Subscription.</string>
     <string name="purchase_limit_button_cancel">Cancel</string>
 
+    <string name="wear_app_info_title">Android Wear Watch App Available!</string>
+    <string name="wear_app_info_do_not_show_again">Do not show this again</string>
+    <string name="wear_app_info_button_cancel">Cancel</string>
+
 </resources>

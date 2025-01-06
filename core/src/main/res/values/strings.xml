@@ -68,7 +68,7 @@
 <!--    <string name="about_content_wear_get_mobile_cta">Get the phone app!</string>-->
     <string name="about_content_mobile">This is an app to keep track of your rows or stitches when working on craft projects like knitting, crochet and cross stitch.\n\nI always have several craft projects on the go and use either paper or a physical stitch counter to keep track of where I am up to.</string>
     <string name="about_content_mobile_get_wear">Did you know there is a watch app? Track your projects right on your wrist!</string>
-<!--    <string name="about_content_mobile_get_wear_cta">Get the Wear app!</string>-->
+    <string name="about_content_mobile_get_wear_cta">Get the Wear app!</string>
     <string name="about_feedback">Found any bugs or have any feature suggestions? Leave a review or please email:</string>
     <string name="about_email">very.niche.dev@gmail.com</string>
     <string name="about_email_subject">Feedback: Stitch Counter</string>
@@ -135,5 +135,7 @@
     <string name="purchases_pro_feature_3">No Ads on the phone app</string>
     <string name="purchases_pro_feature_4">Allow project and counter screens to remain on while in use</string>
     <string name="purchases_pro_feature_5">Change the display theme (phone app only)</string>
+
+    <string name="purchase_pro_title">Stitch Counter: Subscribe to Unlimited</string>
     
 </resources>

@@ -71,16 +71,16 @@ class PurchaseManager(
     private val activity: Activity,
     private val coroutineScope: CoroutineScope
 ) {
-    private val _purchases = MutableStateFlow<List<String>>(emptyList())
+    private val _purchases = MutableStateFlow<List<String>?>(null)
     val purchases = _purchases.asStateFlow()
 
-    private val _subscriptions = MutableStateFlow<List<String>>(emptyList())
+    private val _subscriptions = MutableStateFlow<List<String>?>(null)
     val subscriptions = _subscriptions.asStateFlow()
 
-    private val _availableProducts = MutableStateFlow<List<InAppProduct>>(emptyList())
+    private val _availableProducts = MutableStateFlow<List<InAppProduct>?>(null)
     val availableProducts = _availableProducts.asStateFlow()
 
-    private val _availableSubscriptions = MutableStateFlow<List<Subscription>>(emptyList())
+    private val _availableSubscriptions = MutableStateFlow<List<Subscription>?>(null)
     val availableSubscriptions = _availableSubscriptions.asStateFlow()
 
     private val purchasesUpdatedListener =
@@ -139,20 +139,16 @@ class PurchaseManager(
             // Process the result.
             // Update products list
             _availableProducts.update {
-                val newList = it.toMutableList()
-                newList.addAll(
-                    productDetailsResult.productDetailsList?.map {
-                        InAppProduct(
-                            productId = it.productId,
-                            productName = it.name,
-                            productDescription = it.description,
-                            purchasePrice = it.oneTimePurchaseOfferDetails?.formattedPrice,
-                            purchaseCurrency = it.oneTimePurchaseOfferDetails?.priceCurrencyCode,
-                            purchased = null
-                        )
-                    } ?: listOf()
-                )
-                newList
+                productDetailsResult.productDetailsList?.map {
+                    InAppProduct(
+                        productId = it.productId,
+                        productName = it.name,
+                        productDescription = it.description,
+                        purchasePrice = it.oneTimePurchaseOfferDetails?.formattedPrice,
+                        purchaseCurrency = it.oneTimePurchaseOfferDetails?.priceCurrencyCode,
+                        purchased = null
+                    )
+                }
             }
         }
     }
@@ -170,26 +166,22 @@ class PurchaseManager(
             // Process the result.
             // Update products list
             _availableSubscriptions.update {
-                val newList = it.toMutableList()
-                newList.addAll(
-                    productDetailsResult.productDetailsList?.map {
-                        Subscription(
-                            productId = it.productId,
-                            productName = it.name,
-                            productDescription = it.description,
-                            plans = it.subscriptionOfferDetails?.map {
-                                Plan(
-                                    planId = it.basePlanId,
-                                    purchasePrice = it.pricingPhases.pricingPhaseList.firstOrNull()?.formattedPrice,
-                                    purchaseCurrency = it.pricingPhases.pricingPhaseList.firstOrNull()?.priceCurrencyCode,
-                                    offerToken = it.offerToken,
-                                )
-                            },
-                            purchased = null
-                        )
-                    } ?: listOf()
-                )
-                newList
+                productDetailsResult.productDetailsList?.map {
+                    Subscription(
+                        productId = it.productId,
+                        productName = it.name,
+                        productDescription = it.description,
+                        plans = it.subscriptionOfferDetails?.map {
+                            Plan(
+                                planId = it.basePlanId,
+                                purchasePrice = it.pricingPhases.pricingPhaseList.firstOrNull()?.formattedPrice,
+                                purchaseCurrency = it.pricingPhases.pricingPhaseList.firstOrNull()?.priceCurrencyCode,
+                                offerToken = it.offerToken,
+                            )
+                        },
+                        purchased = null
+                    )
+                }
             }
         }
     }

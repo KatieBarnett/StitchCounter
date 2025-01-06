@@ -1,11 +1,14 @@
 package dev.veryniche.stitchcounter.wear.presentation
 
 import androidx.compose.material.icons.Icons.Filled
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Output
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.wear.compose.foundation.lazy.ScalingLazyListState
+import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
 import androidx.wear.compose.material.Button
 import androidx.wear.compose.material.ButtonDefaults
 import androidx.wear.compose.material.Icon
@@ -19,8 +22,10 @@ fun PurchaseDialog(
     message: Int,
     onCancel: () -> Unit,
     onConfirm: () -> Unit,
+    scrollState: ScalingLazyListState,
 ) {
     Alert(
+        scrollState = scrollState,
         title = {
             Text(
                 text = stringResource(message),
@@ -44,11 +49,12 @@ fun PurchaseDialog(
                 colors = ButtonDefaults.primaryButtonColors()
             ) {
                 Icon(
-                    imageVector = Filled.Check,
+                    imageVector = Filled.Output,
                     contentDescription = stringResource(string.purchase_limit_button_purchase)
                 )
             }
-        }
+        },
+        modifier = Modifier
     )
 }
 
@@ -58,6 +64,7 @@ fun PurchaseDialogPreview() {
     PurchaseDialog(
         message = string.purchase_limit_projects,
         onCancel = {},
-        onConfirm = {}
+        onConfirm = {},
+        scrollState = rememberScalingLazyListState()
     )
 }

@@ -9,6 +9,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
@@ -24,6 +25,7 @@ import dev.veryniche.stitchcounter.core.trackEvent
 import dev.veryniche.stitchcounter.data.models.Project
 import dev.veryniche.stitchcounter.data.models.ScreenOnState
 import dev.veryniche.stitchcounter.mobile.components.PurchaseDialog
+import dev.veryniche.stitchcounter.mobile.components.WearAppInfoDialog
 import dev.veryniche.stitchcounter.mobile.purchase.PurchaseAction
 import dev.veryniche.stitchcounter.mobile.purchase.PurchaseStatus
 import dev.veryniche.stitchcounter.mobile.screens.AboutScreen
@@ -47,9 +49,14 @@ fun MobileNavHost(
     onKeepScreenOnChanged: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
     val defaultProjectName = stringResource(R.string.project_name_default)
     val availableSubscriptions by viewModel.availableSubscriptions.collectAsStateWithLifecycle(listOf())
     var showPurchaseDialogMessage by rememberSaveable { mutableStateOf<Int?>(null) }
+    val showWearAppInfo by viewModel.isUninstalledWatchAvailable.collectAsStateWithLifecycle(false)
+    val isPhoneAppInfoDoNotShow by viewModel.isConnectedAppInfoDoNotShow.collectAsStateWithLifecycle(true)
+
     NavHost(
         navController = navController,
         startDestination = ProjectListDestination,
@@ -64,6 +71,10 @@ fun MobileNavHost(
                 onPurchaseClick = onPurchaseClick,
                 snackbarHostState = snackbarHostState,
                 availableSubscriptions = availableSubscriptions,
+                showWearAppInfo = showWearAppInfo,
+                onInstallWearAppClick = {
+                    viewModel.installAppOnWatch(context)
+                }
             )
         }
         composable<SettingsDestination> {
@@ -224,6 +235,19 @@ fun MobileNavHost(
                 onPurchaseClick.invoke(purchaseAction)
                 showPurchaseDialogMessage = null
             }
+        )
+    }
+
+    if (!isPhoneAppInfoDoNotShow && showWearAppInfo) {
+        WearAppInfoDialog(
+            onDismiss = { doNotShowAgain ->
+                showPurchaseDialogMessage = null
+                viewModel.updateIsConnectedAppInfoDoNotShow(!doNotShowAgain)
+            },
+            onInstallWearAppClick = { doNotShowAgain ->
+                viewModel.installAppOnWatch(context)
+                viewModel.updateIsConnectedAppInfoDoNotShow(!doNotShowAgain)
+            },
         )
     }
 }

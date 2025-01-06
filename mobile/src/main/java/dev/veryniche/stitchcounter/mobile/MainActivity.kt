@@ -26,7 +26,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.rememberNavController
 import androidx.window.core.layout.WindowSizeClass
 import com.google.android.gms.ads.MobileAds
@@ -44,7 +43,6 @@ import dev.veryniche.stitchcounter.mobile.ui.theme.StitchCounterTheme
 import dev.veryniche.stitchcounter.mobile.update.AppUpdateHelper
 import dev.veryniche.stitchcounter.storage.ThemeMode
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 
