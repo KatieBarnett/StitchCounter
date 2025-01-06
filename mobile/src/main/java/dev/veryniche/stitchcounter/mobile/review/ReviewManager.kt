@@ -14,16 +14,25 @@ class ReviewManager(
     private val userPreferencesRepository: UserPreferencesRepository
 ) {
     companion object {
+        const val DAYS_SINCE_LAST_REVIEW_FIRST = 2
         const val DAYS_SINCE_LAST_REVIEW = 30
     }
 
-    private val lastReviewDateFlow = userPreferencesRepository.userPreferencesFlow.map { it.lastReviewDate }
+    private val reviewFlow = userPreferencesRepository.userPreferencesFlow.map {
+        it.lastReviewDate to it.hasBeenAskedForReview
+    }
 
     suspend fun requestReviewIfAble(activity: Activity, coroutineScope: CoroutineScope) {
-        lastReviewDateFlow.collectLatest { lastReviewDate ->
+        reviewFlow.collectLatest { reviewPair ->
+            val lastReviewDate = reviewPair.first
+            val hasBeenAskedForReview = reviewPair.second
             val currentTimestamp = System.currentTimeMillis()
             val daysSinceLastReview = (currentTimestamp - lastReviewDate) / (1000 * 60 * 60 * 24)
-            if (lastReviewDate == -1L || daysSinceLastReview >= DAYS_SINCE_LAST_REVIEW) {
+            if (lastReviewDate == -1L) {
+                userPreferencesRepository.updateLastReviewDate()
+            } else if ((!hasBeenAskedForReview && daysSinceLastReview >= DAYS_SINCE_LAST_REVIEW_FIRST) ||
+                daysSinceLastReview >= DAYS_SINCE_LAST_REVIEW
+            ) {
                 val manager = ReviewManagerFactory.create(activity)
                 val request = manager.requestReviewFlow()
                 trackReviewRequested()
@@ -37,6 +46,7 @@ class ReviewManager(
                             // reviewed or not, or even whether the review dialog was shown. Thus, no
                             // matter the result, we continue our app flow.
                             coroutineScope.launch {
+                                userPreferencesRepository.updateHasBeenAskedForReview(true)
                                 userPreferencesRepository.updateLastReviewDate()
                             }
                         }

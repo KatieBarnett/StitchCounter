@@ -19,6 +19,7 @@ data class UserPreferences(
     val whatsNewLastSeen: Int,
     val keepScreenOn: ScreenOnState,
     val themeMode: ThemeMode,
+    val hasBeenAskedForReview: Boolean,
     val lastReviewDate: Long,
     val tileProjectId: Int?,
     val tileCounterId: Int?,
@@ -36,6 +37,7 @@ class UserPreferencesRepository @Inject constructor(
         val CONNECTED_APP_INFO_DO_NOT_SHOW = booleanPreferencesKey("connected_app_info_do_not_show")
         val KEEP_SCREEN_ON_STATE = stringPreferencesKey("keep_screen_on_state")
         val LAST_REVIEW_DATE = longPreferencesKey("last_review_date")
+        val HAS_BEEN_ASKED_FOR_REVIEW = booleanPreferencesKey("has_been_asked_for_review")
         val TILE_PROJECT_ID = intPreferencesKey("tile_project_id")
         val TILE_COUNTER_ID = intPreferencesKey("tile_counter_id")
         val THEME_MODE = stringPreferencesKey("theme_mode")
@@ -65,6 +67,7 @@ class UserPreferencesRepository @Inject constructor(
                 ThemeMode.valueOf(it)
             } ?: ThemeMode.Auto
             val lastReviewDate = preferences[PreferencesKeys.LAST_REVIEW_DATE] ?: -1L
+            val hasBeenAskedForReview = preferences[PreferencesKeys.HAS_BEEN_ASKED_FOR_REVIEW] == true
             val tileProjectId = preferences[PreferencesKeys.TILE_PROJECT_ID]
             val tileCounterId = preferences[PreferencesKeys.TILE_COUNTER_ID]
             val isProPurchased = preferences[PreferencesKeys.PRO_PURCHASED] == true
@@ -78,6 +81,7 @@ class UserPreferencesRepository @Inject constructor(
                 tileCounterId = tileCounterId,
                 isProPurchased = isProPurchased,
                 isConectedAppInfoDoNotShow = isConnectedAppInfoDoNotShow,
+                hasBeenAskedForReview = hasBeenAskedForReview,
             )
         }
 
@@ -102,6 +106,12 @@ class UserPreferencesRepository @Inject constructor(
     suspend fun updateLastReviewDate() {
         dataStore.edit { preferences ->
             preferences[PreferencesKeys.LAST_REVIEW_DATE] = System.currentTimeMillis()
+        }
+    }
+
+    suspend fun updateHasBeenAskedForReview(hasBeenAskedForReview: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[PreferencesKeys.HAS_BEEN_ASKED_FOR_REVIEW] = hasBeenAskedForReview
         }
     }
 
