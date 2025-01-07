@@ -1,6 +1,7 @@
 package dev.veryniche.stitchcounter.mobile.screens
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -51,6 +52,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.window.core.layout.WindowHeightSizeClass
 import androidx.window.core.layout.WindowSizeClass
+import androidx.window.core.layout.WindowWidthSizeClass
 import dev.veryniche.stitchcounter.core.Analytics.Action
 import dev.veryniche.stitchcounter.core.Analytics.Screen
 import dev.veryniche.stitchcounter.core.R
@@ -113,7 +115,7 @@ fun CounterScreen(
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     Scaffold(
         topBar = {
-            if (windowSizeClass.windowHeightSizeClass == WindowHeightSizeClass.COMPACT) {
+            if (windowSizeClass.windowHeightSizeClass == WindowHeightSizeClass.COMPACT || (windowSizeClass.windowHeightSizeClass == WindowHeightSizeClass.MEDIUM && windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.EXPANDED)) {
                 CollapsedTopAppBar(
                     titleText = if (BuildConfig.SHOW_IDS) {
                         "$counterName (${counter.id})"
@@ -208,8 +210,9 @@ fun CounterScreen(
         fun CounterCentre(modifier: Modifier = Modifier) {
             if (showCounterEditMode) {
                 Surface {
-                    Column(modifier.padding(Dimen.spacingTriple)) {
-                        Spacer(Modifier.weight(1f))
+
+                    @Composable
+                    fun Content(textfieldModifier: Modifier) {
                         OutlinedTextField(
                             value = counterName,
                             onValueChange = { counterName = it },
@@ -231,7 +234,7 @@ fun CounterScreen(
                                     )
                                 }
                             },
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = textfieldModifier
                         )
                         OutlinedTextField(
                             value = counterMaxCount.toString(),
@@ -258,8 +261,34 @@ fun CounterScreen(
                                     )
                                 )
                             },
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = textfieldModifier
                         )
+                    }
+
+                    if (windowSizeClass.windowHeightSizeClass == WindowHeightSizeClass.COMPACT || (windowSizeClass.windowHeightSizeClass == WindowHeightSizeClass.MEDIUM && windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.EXPANDED)) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(Dimen.spacingDouble),
+                            modifier = modifier
+                        ) {
+                            Content(Modifier.weight(1f))
+                        }
+                    } else {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = modifier
+                        ) {
+                            Spacer(Modifier.weight(1f))
+                            Content(Modifier.fillMaxWidth())
+                            Spacer(Modifier.weight(1f))
+                        }
+                    }
+
+
+
+                    Column(modifier.padding(Dimen.spacingTriple)) {
+                        Spacer(Modifier.weight(1f))
+
                         Spacer(Modifier.weight(1f))
                     }
                 }
@@ -267,7 +296,8 @@ fun CounterScreen(
                 CounterCentreLarge(
                     currentCount = counter.currentCount,
                     maxCount = counter.maxCount,
-                    modifier = modifier
+                    modifier = modifier,
+                    windowSizeClass = windowSizeClass,
                 )
             }
         }
@@ -382,7 +412,8 @@ fun CounterScreen(
 fun CounterCentreLarge(
     currentCount: Int,
     maxCount: Int,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    windowSizeClass: WindowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
 ) {
     var showMaxCount by remember(maxCount) { mutableStateOf(maxCount > 0) }
     val currentCountFontSizeSmall = MaterialTheme.typography.displayLarge.fontSize
@@ -391,11 +422,9 @@ fun CounterCentreLarge(
     val maxCountFontSizeSmall = MaterialTheme.typography.displayMedium.fontSize
     val maxCountFontSizeLarge = MaterialTheme.typography.displayLarge.fontSize
     var maxCountFontSize by remember { mutableStateOf(maxCountFontSizeLarge) }
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier
-    ) {
-        Spacer(Modifier.weight(1f))
+
+    @Composable
+    fun Content() {
         Text(
             text = currentCount.toString(),
             textAlign = TextAlign.Center,
@@ -425,8 +454,28 @@ fun CounterCentreLarge(
                 },
             )
         }
-        Spacer(Modifier.weight(1f))
     }
+
+    if (windowSizeClass.windowHeightSizeClass == WindowHeightSizeClass.COMPACT || (windowSizeClass.windowHeightSizeClass == WindowHeightSizeClass.MEDIUM && windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.EXPANDED)) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = modifier
+        ) {
+            Spacer(Modifier.weight(1f))
+            Content()
+            Spacer(Modifier.weight(1f))
+        }
+    } else {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = modifier
+        ) {
+            Spacer(Modifier.weight(1f))
+            Content()
+            Spacer(Modifier.weight(1f))
+        }
+    }
+
 }
 
 @PreviewScreen

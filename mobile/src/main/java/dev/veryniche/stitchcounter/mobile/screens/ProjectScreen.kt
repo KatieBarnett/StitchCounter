@@ -129,7 +129,7 @@ fun ProjectScreen(
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     Scaffold(
         topBar = {
-            if (windowSizeClass.windowHeightSizeClass == WindowHeightSizeClass.COMPACT) {
+            if (windowSizeClass.windowHeightSizeClass == WindowHeightSizeClass.COMPACT || (windowSizeClass.windowHeightSizeClass == WindowHeightSizeClass.MEDIUM && windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.EXPANDED)) {
                 CollapsedTopAppBar(
                     titleText = if (BuildConfig.SHOW_IDS) {
                         "$projectName (${project.id})"
