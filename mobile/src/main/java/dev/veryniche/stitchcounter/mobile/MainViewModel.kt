@@ -104,6 +104,13 @@ constructor(
     private val eventsFromWatch = MutableStateFlow<Event?>(null)
     val eventsToWatch = MutableStateFlow<Event?>(null)
 
+    val watchState = appHelper.connectedAndInstalledNodes.map { connectedNodes ->
+        WatchState(
+            watchConnected = connectedNodes.isNotEmpty(),
+            appInstalledOnWatchList = connectedNodes.map { it.id },
+        )
+    }
+
     init {
         viewModelScope.launch(Dispatchers.IO) {
             eventsFromWatch.collect { value ->
@@ -112,6 +119,14 @@ constructor(
         }
         viewModelScope.launch {
             purchaseManager.connectToBilling()
+        }
+        viewModelScope.launch {
+            watchState.collectLatest {
+                if (it.appInstalledOnWatchList.isNotEmpty()) {
+                    Timber.d("Syncing all projects")
+                    syncAllProjects()
+                }
+            }
         }
     }
 
@@ -174,3 +189,8 @@ constructor(
         }
     }
 }
+
+data class WatchState(
+    val appInstalledOnWatchList: List<String>,
+    val watchConnected: Boolean,
+)
