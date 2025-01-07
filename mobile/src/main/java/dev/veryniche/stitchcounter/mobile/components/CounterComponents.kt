@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -35,10 +36,12 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -61,6 +64,7 @@ fun CounterListItemComponent(
     inEditMode: Boolean = false,
     modifier: Modifier = Modifier
 ) {
+    val keyboardController = LocalSoftwareKeyboardController.current
     var counterName by rememberSaveable { mutableStateOf(counter.name) }
     var counterMaxCount by rememberSaveable { mutableStateOf<String>(counter.maxCount.toString()) }
     Card(
@@ -121,6 +125,7 @@ fun CounterListItemComponent(
                             value = counterName,
                             onValueChange = { counterName = it },
                             isError = counterName.isBlank(),
+                            singleLine = true,
                             label = {
                                 Text(
                                     stringResource(dev.veryniche.stitchcounter.mobile.R.string.label_counter_name)
@@ -136,13 +141,20 @@ fun CounterListItemComponent(
                                     )
                                 }
                             },
+                            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                            keyboardActions = KeyboardActions(
+                                onDone = { keyboardController?.hide() }
+                            ),
                             modifier = Modifier.fillMaxWidth()
                         )
                         OutlinedTextField(
                             value = counterMaxCount.toString(),
                             isError = counterMaxCount.trim().toIntOrNull() == null,
                             singleLine = true,
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Number,
+                                imeAction = ImeAction.Done
+                            ),
                             onValueChange = { counterMaxCount = it },
                             supportingText = {
                                 if (counterMaxCount.trim().toIntOrNull() == null) {
@@ -161,6 +173,9 @@ fun CounterListItemComponent(
                                     )
                                 )
                             },
+                            keyboardActions = KeyboardActions(
+                                onDone = { keyboardController?.hide() }
+                            ),
                             modifier = Modifier.fillMaxWidth()
                         )
                         FlowRow(

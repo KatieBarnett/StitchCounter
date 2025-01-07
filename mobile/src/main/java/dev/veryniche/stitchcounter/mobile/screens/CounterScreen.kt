@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -45,8 +46,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalInspectionMode
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -206,17 +209,19 @@ fun CounterScreen(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
     ) { contentPadding ->
 
+        val keyboardController = LocalSoftwareKeyboardController.current
+
         @Composable
         fun CounterCentre(modifier: Modifier = Modifier) {
             if (showCounterEditMode) {
                 Surface {
-
                     @Composable
                     fun Content(textfieldModifier: Modifier) {
                         OutlinedTextField(
                             value = counterName,
                             onValueChange = { counterName = it },
                             isError = counterName.isBlank(),
+                            singleLine = true,
                             label = {
                                 Text(
                                     stringResource(
@@ -224,6 +229,10 @@ fun CounterScreen(
                                     )
                                 )
                             },
+                            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                            keyboardActions = KeyboardActions(
+                                onDone = { keyboardController?.hide() }
+                            ),
                             supportingText = {
                                 if (counterName.isBlank()) {
                                     Text(
@@ -240,7 +249,13 @@ fun CounterScreen(
                             value = counterMaxCount.toString(),
                             isError = counterMaxCount.trim().toIntOrNull() == null,
                             singleLine = true,
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Number,
+                                imeAction = ImeAction.Done
+                            ),
+                            keyboardActions = KeyboardActions(
+                                onDone = { keyboardController?.hide() }
+                            ),
                             onValueChange = {
                                 counterMaxCount = it
                             },
@@ -283,8 +298,6 @@ fun CounterScreen(
                             Spacer(Modifier.weight(1f))
                         }
                     }
-
-
 
                     Column(modifier.padding(Dimen.spacingTriple)) {
                         Spacer(Modifier.weight(1f))
@@ -475,7 +488,6 @@ fun CounterCentreLarge(
             Spacer(Modifier.weight(1f))
         }
     }
-
 }
 
 @PreviewScreen

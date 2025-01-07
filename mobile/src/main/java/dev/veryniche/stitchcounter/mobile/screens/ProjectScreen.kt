@@ -18,6 +18,8 @@ import androidx.compose.foundation.lazy.grid.GridCells.Fixed
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
@@ -51,7 +53,9 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalInspectionMode
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.window.core.layout.WindowHeightSizeClass
 import androidx.window.core.layout.WindowSizeClass
@@ -122,7 +126,7 @@ fun ProjectScreen(
     var showSaveProjectConfirmation by rememberSaveable { mutableStateOf(false) }
     val countersInEditMode = rememberSaveable(saver = snapshotStateListSaver()) { mutableStateListOf<Int>() }
     val context = LocalContext.current
-    val isKeyboardOpen by keyboardAsState()
+    val keyboardController = LocalSoftwareKeyboardController.current
     TrackedScreen {
         trackScreenView(name = Screen.Project, isMobile = true)
     }
@@ -246,6 +250,7 @@ fun ProjectScreen(
                         OutlinedTextField(
                             value = projectName,
                             onValueChange = { projectName = it },
+                            singleLine = true,
                             isError = projectName.isBlank(),
                             label = {
                                 Text(
@@ -267,6 +272,10 @@ fun ProjectScreen(
                                     )
                                 }
                             },
+                            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                            keyboardActions = KeyboardActions(
+                                onDone = { keyboardController?.hide() }
+                            ),
                             modifier = Modifier.weight(1f)
                         )
                         Icon(
