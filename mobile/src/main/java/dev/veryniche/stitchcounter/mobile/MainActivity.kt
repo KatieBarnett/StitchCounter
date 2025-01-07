@@ -74,18 +74,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-        if (::viewModel.isInitialized) {
-            lifecycleScope.launch {
-                Timber.d("Syncing all projects")
-                viewModel.syncAllProjects()
-            }
-        } else {
-            Timber.e("Main viewmodel is not initialized for data sync")
-        }
-    }
-
+    @OptIn(ExperimentalHorologistApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
@@ -96,8 +85,16 @@ class MainActivity : ComponentActivity() {
         setContent {
             val coroutineScope = rememberCoroutineScope()
             val purchaseManager = remember { PurchaseManager(this, coroutineScope) }
+
+            val wearDataLayerRegistry = WearDataLayerRegistry.fromContext(
+                application = application,
+                coroutineScope = coroutineScope,
+            )
+
+            val appHelper = PhoneDataLayerAppHelper(this, wearDataLayerRegistry)
+
             viewModel = hiltViewModel<MainViewModel, MainViewModel.MainViewModelFactory> { factory ->
-                factory.create(purchaseManager)
+                factory.create(purchaseManager, appHelper)
             }
             val dataSyncState by viewModel.eventsToWatch.collectAsStateWithLifecycle()
             val themeMode by viewModel.themeMode.collectAsStateWithLifecycle(ThemeMode.Auto)

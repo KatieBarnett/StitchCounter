@@ -38,16 +38,22 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import kotlin.collections.map
 
+@OptIn(ExperimentalHorologistApi::class)
 @HiltViewModel(assistedFactory = MainViewModel.MainViewModelFactory::class)
-class MainViewModel @AssistedInject constructor(
+class MainViewModel
+@OptIn(ExperimentalHorologistApi::class)
+@AssistedInject
+constructor(
     @Assisted val purchaseManager: PurchaseManager,
+    @Assisted val appHelper: PhoneDataLayerAppHelper,
     private val savedProjectsRepository: ProjectsRepository,
-    private val userPreferencesRepository: UserPreferencesRepository
+    private val userPreferencesRepository: UserPreferencesRepository,
 ) : ViewModel() {
 
     @AssistedFactory
     interface MainViewModelFactory {
-        fun create(purchaseManager: PurchaseManager): MainViewModel
+        @OptIn(ExperimentalHorologistApi::class)
+        fun create(purchaseManager: PurchaseManager, appHelper: PhoneDataLayerAppHelper): MainViewModel
     }
 
     val purchaseStatus = purchaseManager.purchases.combine(
