@@ -37,6 +37,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -118,9 +119,7 @@ constructor(
             )
         }
 
-    val isUninstalledWatchAvailable = watchState.map {
-        it.watchConnected && it.appInstalledOnWatchList.isEmpty()
-    }
+    val isUninstalledWatchAvailable = flowOf(false)
 
     val isConnectedAppInfoDoNotShow = userPreferencesFlow.map {
         it.isConectedAppInfoDoNotShow
@@ -128,7 +127,16 @@ constructor(
 
     init {
         viewModelScope.launch {
-            isWatchConnected.emit(appHelper.connectedNodes().isNotEmpty())
+            if (appHelper.isAvailable()) {
+                isWatchConnected.emit(appHelper.connectedNodes().isNotEmpty())
+            }
+        }
+        viewModelScope.launch {
+            if (appHelper.isAvailable()) {
+                watchState.map {
+                    it.watchConnected && it.appInstalledOnWatchList.isEmpty()
+                }
+            }
         }
         viewModelScope.launch(Dispatchers.IO) {
             eventsFromWatch.collect { value ->
