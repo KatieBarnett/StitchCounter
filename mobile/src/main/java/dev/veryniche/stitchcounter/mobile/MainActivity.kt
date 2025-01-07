@@ -102,19 +102,21 @@ class MainActivity : ComponentActivity() {
                 ScreenOnState(false, false)
             )
             LaunchedEffect(dataSyncState) {
-                dataSyncState?.let {
-                    try {
-                        val request = PutDataMapRequest.create(it.path).apply {
-                            dataMap.putString(it.key, it.data)
+                if (appHelper.isAvailable()) {
+                    dataSyncState?.let {
+                        try {
+                            val request = PutDataMapRequest.create(it.path).apply {
+                                dataMap.putString(it.key, it.data)
+                            }
+                                .asPutDataRequest()
+                                .setUrgent()
+                            val result = dataClient.putDataItem(request).await()
+                            Timber.d("DataItem $it synced: $result")
+                        } catch (cancellationException: CancellationException) {
+                            throw cancellationException
+                        } catch (exception: Exception) {
+                            Timber.d("Syncing DataItem failed: $exception")
                         }
-                            .asPutDataRequest()
-                            .setUrgent()
-                        val result = dataClient.putDataItem(request).await()
-                        Timber.d("DataItem $it synced: $result")
-                    } catch (cancellationException: CancellationException) {
-                        throw cancellationException
-                    } catch (exception: Exception) {
-                        Timber.d("Syncing DataItem failed: $exception")
                     }
                 }
             }

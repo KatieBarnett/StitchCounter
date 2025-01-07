@@ -121,11 +121,15 @@ constructor(
             purchaseManager.connectToBilling()
         }
         viewModelScope.launch {
-            watchState.collectLatest {
-                if (it.appInstalledOnWatchList.isNotEmpty()) {
-                    Timber.d("Syncing all projects")
-                    syncAllProjects()
+            if (appHelper.isAvailable()) {
+                watchState.collectLatest {
+                    if (it.appInstalledOnWatchList.isNotEmpty()) {
+                        Timber.d("Syncing all projects")
+                        syncAllProjects()
+                    }
                 }
+            } else {
+                Timber.e("API not available")
             }
         }
     }
@@ -191,6 +195,6 @@ constructor(
 }
 
 data class WatchState(
-    val appInstalledOnWatchList: List<String>,
-    val watchConnected: Boolean,
+    val appInstalledOnWatchList: List<String> = listOf(),
+    val watchConnected: Boolean = false,
 )
