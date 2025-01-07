@@ -3,7 +3,9 @@ package dev.veryniche.stitchcounter.wear.presentation
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -192,20 +194,22 @@ fun StitchCounterWearApp(
                 },
                 modifier = modifier
             ) {
-                NavHost(
-                    navController = navController,
-                    startDestination = startDestination,
-                    viewModel = viewModel,
-                    listState = listState,
-                    phoneState = phoneState,
-                    screenOnState = screenOnState,
-                    ambientAwareState = ambientAwareUpdate,
-                    onScreenOnStateUpdate = { newState ->
-                        viewModel.updateScreenOnState(newState)
-                    },
-                    onTileStateUpdate = onTileStateUpdate,
-                    modifier = Modifier.fillMaxSize()
-                )
+                Box(Modifier.imePadding()) {
+                    NavHost(
+                        navController = navController,
+                        startDestination = startDestination,
+                        viewModel = viewModel,
+                        listState = listState,
+                        phoneState = phoneState,
+                        screenOnState = screenOnState,
+                        ambientAwareState = ambientAwareUpdate,
+                        onScreenOnStateUpdate = { newState ->
+                            viewModel.updateScreenOnState(newState)
+                        },
+                        onTileStateUpdate = onTileStateUpdate,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
             }
         }
     }
