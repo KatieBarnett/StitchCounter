@@ -1,8 +1,12 @@
 package dev.veryniche.stitchcounter.wear
 
-import android.app.Activity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.horologist.annotations.ExperimentalHorologistApi
+import com.google.android.horologist.datalayer.watch.WearDataLayerAppHelper
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.veryniche.stitchcounter.data.models.Counter
 import dev.veryniche.stitchcounter.data.models.Project
@@ -17,19 +21,30 @@ import dev.veryniche.stitchcounter.wear.presentation.whatsnew.whatsNewData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import javax.inject.Inject
 
-@HiltViewModel
-class MainViewModel @Inject constructor(
+@OptIn(ExperimentalHorologistApi::class)
+@HiltViewModel(assistedFactory = MainViewModel.MainViewModelFactory::class)
+class MainViewModel
+@OptIn(ExperimentalHorologistApi::class)
+@AssistedInject
+constructor(
+    @Assisted val appHelper: WearDataLayerAppHelper,
     private val savedProjectsRepository: ProjectsRepository,
-    private val userPreferencesRepository: UserPreferencesRepository
+    private val userPreferencesRepository: UserPreferencesRepository,
 ) : ViewModel() {
+
+    @AssistedFactory
+    interface MainViewModelFactory {
+        @OptIn(ExperimentalHorologistApi::class)
+        fun create(appHelper: WearDataLayerAppHelper): MainViewModel
+    }
 
     private val userPreferencesFlow = userPreferencesRepository.userPreferencesFlow
 
@@ -39,6 +54,17 @@ class MainViewModel @Inject constructor(
         whatsNewData.filter { it.id > lastSeenId }.sortedBy { it.id }
     }
 
+    val isProPurchased = userPreferencesFlow.map {
+        it.isProPurchased
+    }
+
+    val phoneState = appHelper.connectedAndInstalledNodes.map { connectedNodes ->
+        PhoneState(
+            phoneConnected = connectedNodes.isNotEmpty(),
+            appInstalledOnPhoneList = connectedNodes.map { it.id },
+        )
+    }
+
     private val eventsFromMobile = MutableStateFlow<Event?>(null)
     val eventsToMobile = MutableStateFlow<Event?>(null)
 
@@ -46,6 +72,18 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             eventsFromMobile.collect { value ->
                 Timber.d("Data from phone: $value")
+            }
+        }
+        viewModelScope.launch {
+            if (appHelper.isAvailable()) {
+                phoneState.collectLatest {
+                    if (it.appInstalledOnPhoneList.isNotEmpty()) {
+                        Timber.d("Syncing all projects")
+                        syncAllProjects()
+                    }
+                }
+            } else {
+                Timber.e("API not available")
             }
         }
     }
@@ -162,3 +200,8 @@ class MainViewModel @Inject constructor(
         }
     }
 }
+
+data class PhoneState(
+    val appInstalledOnPhoneList: List<String>,
+    val phoneConnected: Boolean,
+)

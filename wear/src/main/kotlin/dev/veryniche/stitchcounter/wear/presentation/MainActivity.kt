@@ -3,16 +3,17 @@ package dev.veryniche.stitchcounter.wear.presentation
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.lifecycleScope
 import androidx.wear.compose.foundation.CurvedTextStyle
 import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
 import androidx.wear.compose.material.MaterialTheme
@@ -31,6 +32,8 @@ import com.google.android.gms.wearable.Wearable
 import com.google.android.horologist.annotations.ExperimentalHorologistApi
 import com.google.android.horologist.compose.ambient.AmbientAware
 import com.google.android.horologist.compose.ambient.AmbientState
+import com.google.android.horologist.data.WearDataLayerRegistry
+import com.google.android.horologist.datalayer.watch.WearDataLayerAppHelper
 import dagger.hilt.android.AndroidEntryPoint
 import dev.veryniche.stitchcounter.data.models.ScreenOnState
 import dev.veryniche.stitchcounter.tiles.counter.CounterTileService
@@ -39,7 +42,6 @@ import dev.veryniche.stitchcounter.wear.Screens
 import dev.veryniche.stitchcounter.wear.presentation.MainActivity.Companion.EXTRA_JOURNEY_SELECT_COUNTER
 import dev.veryniche.stitchcounter.wear.presentation.theme.StitchCounterTheme
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 
@@ -65,21 +67,37 @@ class MainActivity : ComponentActivity() {
         setContent {
             val coroutineScope = rememberCoroutineScope()
             val context = LocalContext.current
+            val wearDataLayerRegistry = WearDataLayerRegistry.fromContext(
+                application = application,
+                coroutineScope = coroutineScope,
+            )
+            val appHelper = WearDataLayerAppHelper(
+                context = context,
+                registry = wearDataLayerRegistry,
+                scope = coroutineScope,
+            )
+
+            viewModel = hiltViewModel<MainViewModel, MainViewModel.MainViewModelFactory> { factory ->
+                factory.create(appHelper)
+            }
             val dataSyncState by viewModel.eventsToMobile.collectAsStateWithLifecycle()
+
             LaunchedEffect(dataSyncState) {
-                dataSyncState?.let {
-                    try {
-                        val request = PutDataMapRequest.create(it.path).apply {
-                            dataMap.putString(it.key, it.data)
+                if (appHelper.isAvailable()) {
+                    dataSyncState?.let {
+                        try {
+                            val request = PutDataMapRequest.create(it.path).apply {
+                                dataMap.putString(it.key, it.data)
+                            }
+                                .asPutDataRequest()
+                                .setUrgent()
+                            val result = dataClient.putDataItem(request).await()
+                            Timber.d("DataItem $it synced: $result")
+                        } catch (cancellationException: CancellationException) {
+                            throw cancellationException
+                        } catch (exception: Exception) {
+                            Timber.d("Syncing DataItem failed: $exception")
                         }
-                            .asPutDataRequest()
-                            .setUrgent()
-                        val result = dataClient.putDataItem(request).await()
-                        Timber.d("DataItem $it synced: $result")
-                    } catch (cancellationException: CancellationException) {
-                        throw cancellationException
-                    } catch (exception: Exception) {
-                        Timber.d("Syncing DataItem failed: $exception")
                     }
                 }
             }
@@ -92,14 +110,6 @@ class MainActivity : ComponentActivity() {
                     finish()
                 }
             )
-        }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        lifecycleScope.launch {
-            Timber.d("Syncing all projects")
-            viewModel.syncAllProjects()
         }
     }
 }
