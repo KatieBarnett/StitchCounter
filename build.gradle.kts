@@ -19,10 +19,10 @@ ext {
     // phone: xx.xxx.xx.00
     // watch: xx.xxx.xx.01
 
-    //35.200.01.00
+    //35.201.01.00
 
-    extra["appVersionName"] = "2.0.0"
-    extra["appVersionCode"] = 352000301
+    extra["appVersionName"] = "2.0.1"
+    extra["appVersionCode"] = 352010001
     extra["compileSdk"] = 35
     extra["targetSdk"] = 33
     extra["targetSdkMobile"] = 35

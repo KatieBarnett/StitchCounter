@@ -15,7 +15,7 @@ class ReviewManager(
 ) {
     companion object {
         const val DAYS_SINCE_LAST_REVIEW_FIRST = 2
-        const val DAYS_SINCE_LAST_REVIEW = 30
+        const val DAYS_SINCE_LAST_REVIEW = 60
     }
 
     private val reviewFlow = userPreferencesRepository.userPreferencesFlow.map {

@@ -63,7 +63,13 @@ fun CounterListItemComponent(
                 .clickable { onCounterClick.invoke(counter) },
         )
         Button(
-            onClick = { onCounterUpdate.invoke(counter.copy(currentCount = counter.currentCount + 1)) },
+            onClick = {
+                if (counter.maxCount > 0 && counter.currentCount >= counter.maxCount) {
+                    onCounterUpdate.invoke(counter.copy(currentCount = 1))
+                } else {
+                    onCounterUpdate.invoke(counter.copy(currentCount = counter.currentCount + 1))
+                }
+            },
             colors = ButtonDefaults.primaryButtonColors()
         ) {
             Icon(
@@ -133,13 +139,16 @@ fun CounterPreview() {
 fun CounterLongTextPreview() {
     StitchCounterTheme {
         Column(verticalArrangement = Arrangement.Center, modifier = Modifier.fillMaxSize()) {
-            CounterListItemComponent(Counter(
-                id = 3,
-                name = "pattern that is something super long",
-                currentCount = 4000,
-                maxCount = 1000
-            ), {
-            }, {})
+            CounterListItemComponent(
+                Counter(
+                    id = 3,
+                    name = "pattern that is something super long",
+                    currentCount = 4000,
+                    maxCount = 1000
+                ),
+                {
+                }, {}
+            )
         }
     }
 }

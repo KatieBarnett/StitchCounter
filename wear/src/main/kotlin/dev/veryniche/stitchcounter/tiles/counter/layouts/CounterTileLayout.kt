@@ -283,7 +283,7 @@ fun counterMainContent(
                 )
                 .addContent(
                     Button.Builder(context, clickablePositive)
-                        .setContentDescription("Subtract 1")
+                        .setContentDescription("Add 1")
                         .setIconContent(ID_IC_ADD)
                         .setSize(
                             if (extraSmallButtons) {

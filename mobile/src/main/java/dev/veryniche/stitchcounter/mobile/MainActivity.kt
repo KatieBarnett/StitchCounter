@@ -41,6 +41,7 @@ import dev.veryniche.stitchcounter.mobile.purchase.PurchaseManager
 import dev.veryniche.stitchcounter.mobile.purchase.PurchaseStatus
 import dev.veryniche.stitchcounter.mobile.ui.theme.StitchCounterTheme
 import dev.veryniche.stitchcounter.mobile.update.AppUpdateHelper
+import dev.veryniche.stitchcounter.mobile.whatsnew.WhatsNewDialog
 import dev.veryniche.stitchcounter.storage.ThemeMode
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.tasks.await
@@ -169,6 +170,7 @@ class MainActivity : ComponentActivity() {
         var showPurchaseErrorMessage by rememberSaveable { mutableStateOf<Int?>(null) }
         val navController = rememberNavController()
         val purchaseStatus by viewModel.purchaseStatus.collectAsStateWithLifecycle(PurchaseStatus())
+        val whatsNewToShow by viewModel.whatsNewToShow.collectAsStateWithLifecycle(listOf())
         MobileNavHost(
             navController = navController,
             viewModel = viewModel,
@@ -207,6 +209,12 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             )
+        }
+
+        if (whatsNewToShow.isNotEmpty()) {
+            WhatsNewDialog(whatsNewToShow) {
+                viewModel.updateWhatsNewLastSeen(whatsNewToShow.maxOf { it.id })
+            }
         }
     }
 }

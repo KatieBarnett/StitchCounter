@@ -110,7 +110,13 @@ fun CounterListItemComponent(
                 Button(
                     enabled = !inEditMode,
                     modifier = Modifier.width(Dimen.mobileListCounterButtonWidth).aspectRatio(1f),
-                    onClick = { onCounterUpdate.invoke(counter.copy(currentCount = counter.currentCount + 1)) },
+                    onClick = {
+                        if (counter.maxCount > 0 && counter.currentCount >= counter.maxCount) {
+                            onCounterUpdate.invoke(counter.copy(currentCount = 1))
+                        } else {
+                            onCounterUpdate.invoke(counter.copy(currentCount = counter.currentCount + 1))
+                        }
+                    },
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Add,

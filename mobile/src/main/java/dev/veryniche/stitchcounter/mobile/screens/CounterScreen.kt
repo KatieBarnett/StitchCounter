@@ -345,7 +345,13 @@ fun CounterScreen(
                     modifier = Modifier.fillMaxHeight().weight(1f),
                     enabled = !showCounterEditMode,
                     shape = RoundedCornerShape(CornerSize(Dimen.mobileCounterButtonCornerRadius)),
-                    onClick = { onCounterUpdate.invoke(counter.copy(currentCount = counter.currentCount + 1)) },
+                    onClick = {
+                        if (counter.maxCount > 0 && counter.currentCount >= counter.maxCount) {
+                            onCounterUpdate.invoke(counter.copy(currentCount = 1))
+                        } else {
+                            onCounterUpdate.invoke(counter.copy(currentCount = counter.currentCount + 1))
+                        }
+                    },
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Add,
@@ -384,7 +390,13 @@ fun CounterScreen(
                     modifier = Modifier.fillMaxWidth().weight(1f),
                     enabled = !showCounterEditMode,
                     shape = RoundedCornerShape(CornerSize(Dimen.mobileCounterButtonCornerRadius)),
-                    onClick = { onCounterUpdate.invoke(counter.copy(currentCount = counter.currentCount + 1)) },
+                    onClick = {
+                        if (counter.maxCount > 0 && counter.currentCount >= counter.maxCount) {
+                            onCounterUpdate.invoke(counter.copy(currentCount = 1))
+                        } else {
+                            onCounterUpdate.invoke(counter.copy(currentCount = counter.currentCount + 1))
+                        }
+                    },
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Add,

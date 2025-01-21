@@ -273,7 +273,13 @@ fun CounterContent(
                 if (useCompactButton) {
                     if (ambientAwareState.ambientState is AmbientState.Interactive) {
                         CompactButton(
-                            onClick = { onCounterUpdate.invoke(counter.copy(currentCount = counter.currentCount + 1)) },
+                            onClick = {
+                                if (counter.maxCount > 0 && counter.currentCount >= counter.maxCount) {
+                                    onCounterUpdate.invoke(counter.copy(currentCount = 1))
+                                } else {
+                                    onCounterUpdate.invoke(counter.copy(currentCount = counter.currentCount + 1))
+                                }
+                            },
                             colors = ButtonDefaults.primaryButtonColors()
                         ) {
                             Icon(
@@ -283,7 +289,13 @@ fun CounterContent(
                         }
                     } else {
                         OutlinedCompactButton(
-                            onClick = { onCounterUpdate.invoke(counter.copy(currentCount = counter.currentCount + 1)) },
+                            onClick = {
+                                if (counter.maxCount > 0 && counter.currentCount >= counter.maxCount) {
+                                    onCounterUpdate.invoke(counter.copy(currentCount = 1))
+                                } else {
+                                    onCounterUpdate.invoke(counter.copy(currentCount = counter.currentCount + 1))
+                                }
+                            },
                             colors = ButtonDefaults.outlinedButtonColors()
                         ) {
                             Icon(
@@ -295,7 +307,13 @@ fun CounterContent(
                 } else {
                     if (ambientAwareState.ambientState is AmbientState.Interactive) {
                         Button(
-                            onClick = { onCounterUpdate.invoke(counter.copy(currentCount = counter.currentCount + 1)) },
+                            onClick = {
+                                if (counter.maxCount > 0 && counter.currentCount >= counter.maxCount) {
+                                    onCounterUpdate.invoke(counter.copy(currentCount = 1))
+                                } else {
+                                    onCounterUpdate.invoke(counter.copy(currentCount = counter.currentCount + 1))
+                                }
+                            },
                             colors = ButtonDefaults.primaryButtonColors()
                         ) {
                             Icon(
@@ -305,7 +323,13 @@ fun CounterContent(
                         }
                     } else {
                         OutlinedButton(
-                            onClick = { onCounterUpdate.invoke(counter.copy(currentCount = counter.currentCount + 1)) },
+                            onClick = {
+                                if (counter.maxCount > 0 && counter.currentCount >= counter.maxCount) {
+                                    onCounterUpdate.invoke(counter.copy(currentCount = 1))
+                                } else {
+                                    onCounterUpdate.invoke(counter.copy(currentCount = counter.currentCount + 1))
+                                }
+                            },
                             colors = ButtonDefaults.outlinedButtonColors()
                         ) {
                             Icon(

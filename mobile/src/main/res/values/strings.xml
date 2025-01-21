@@ -42,4 +42,7 @@
     <string name="wear_app_info_do_not_show_again">Do not show this again</string>
     <string name="wear_app_info_button_cancel">Cancel</string>
 
+    <string name="whats_new_title">What\'s new?</string>
+    <string name="whats_new_close">Close</string>
+
 </resources>

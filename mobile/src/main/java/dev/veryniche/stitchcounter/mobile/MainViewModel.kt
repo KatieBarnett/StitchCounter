@@ -21,6 +21,7 @@ import dev.veryniche.stitchcounter.mobile.purchase.PurchaseManager
 import dev.veryniche.stitchcounter.mobile.purchase.PurchaseStatus
 import dev.veryniche.stitchcounter.mobile.purchase.Subscription
 import dev.veryniche.stitchcounter.mobile.review.ReviewManager
+import dev.veryniche.stitchcounter.mobile.whatsnew.whatsNewData
 import dev.veryniche.stitchcounter.storage.ProjectsRepository
 import dev.veryniche.stitchcounter.storage.ThemeMode
 import dev.veryniche.stitchcounter.storage.UserPreferencesRepository
@@ -100,6 +101,12 @@ constructor(
 
     val themeMode = userPreferencesFlow.map {
         it.themeMode
+    }
+
+    val whatsNewToShow = userPreferencesFlow.map {
+        it.whatsNewLastSeen
+    }.map { lastSeenId ->
+        whatsNewData.filter { it.id > lastSeenId }.sortedBy { it.id }
     }
 
     val projects = savedProjectsRepository.getProjects()
@@ -214,6 +221,12 @@ constructor(
     fun updateIsConnectedAppInfoDoNotShow(isConnectedAppInfoDoNotShow: Boolean) {
         viewModelScope.launch {
             userPreferencesRepository.updateIsConnectedAppInfoDoNotShow(isConnectedAppInfoDoNotShow)
+        }
+    }
+
+    fun updateWhatsNewLastSeen(whatsNewLastSeen: Int) {
+        viewModelScope.launch {
+            userPreferencesRepository.updateWhatsNewLastSeen(whatsNewLastSeen)
         }
     }
 

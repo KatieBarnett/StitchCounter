@@ -72,7 +72,13 @@ class CounterTileService @Inject constructor() : SuspendingTileService() {
                     ID_CLICKABLE_INCREMENT -> {
                         updateCounter(
                             currentState.project,
-                            currentState.counter.copy(currentCount = currentState.counter.currentCount + 1)
+                            if (currentState.counter.maxCount > 0 &&
+                                currentState.counter.currentCount >= currentState.counter.maxCount
+                            ) {
+                                currentState.counter.copy(currentCount = 1)
+                            } else {
+                                currentState.counter.copy(currentCount = currentState.counter.currentCount + 1)
+                            }
                         )
                         tileState = latestTileState()
                     }
