@@ -22,7 +22,7 @@ ext {
     //35.201.01.00
 
     extra["appVersionName"] = "2.0.1"
-    extra["appVersionCode"] = 352010001
+    extra["appVersionCode"] = 352010101
     extra["compileSdk"] = 35
     extra["targetSdk"] = 33
     extra["targetSdkMobile"] = 35

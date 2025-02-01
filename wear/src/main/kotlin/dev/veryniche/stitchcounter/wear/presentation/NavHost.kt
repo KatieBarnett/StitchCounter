@@ -276,7 +276,6 @@ fun NavHost(
     ) {
         showPurchaseDialogMessage?.let {
             PurchaseDialog(
-                scrollState = scrollState,
                 message = it,
                 onCancel = {
                     showPurchaseDialogMessage = null

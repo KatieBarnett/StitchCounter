@@ -62,6 +62,7 @@ hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hil
 hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hilt_androidx" }
 horologist-composables = { group = "com.google.android.horologist", name = "horologist-composables", version.ref = "horologist" }
 horologist-compose-layout = { group = "com.google.android.horologist", name = "horologist-compose-layout", version.ref = "horologist" }
+horologist-compose-material = { group = "com.google.android.horologist", name = "horologist-compose-material", version.ref = "horologist" }
 horologist-tiles = { group = "com.google.android.horologist", name = "horologist-tiles", version.ref = "horologist" }
 horologist-datalayer= { group = "com.google.android.horologist", name = "horologist-datalayer", version.ref = "horologist" }
 horologist-datalayer-phone= { group = "com.google.android.horologist", name = "horologist-datalayer-phone", version.ref = "horologist" }

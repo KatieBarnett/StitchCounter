@@ -1,6 +1,7 @@
 package dev.veryniche.stitchcounter.wear.presentation
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -51,6 +52,7 @@ import com.google.android.horologist.composables.ProgressIndicatorSegment
 import com.google.android.horologist.composables.SquareSegmentedProgressIndicator
 import com.google.android.horologist.compose.ambient.AmbientState
 import com.google.android.horologist.compose.ambient.AmbientStateUpdate
+import com.google.android.horologist.compose.material.ResponsiveDialogContent
 import dev.veryniche.stitchcounter.R
 import dev.veryniche.stitchcounter.R.string
 import dev.veryniche.stitchcounter.core.Analytics
@@ -123,37 +125,22 @@ fun CounterScreen(
     } // TODO - else display error
 }
 
+@OptIn(ExperimentalHorologistApi::class)
 @Composable
 fun ResetCounterAlert(counterName: String, onConfirm: () -> Unit, onCancel: () -> Unit) {
-    Alert(
+    ResponsiveDialogContent(
         title = {
             Text(
                 text = stringResource(string.reset_counter_message, counterName),
                 textAlign = TextAlign.Center
             )
         },
-        negativeButton = {
-            Button(
-                onClick = onCancel,
-                colors = ButtonDefaults.secondaryButtonColors()
-            ) {
-                Icon(
-                    imageVector = Filled.Close,
-                    contentDescription = stringResource(string.reset_counter_negative)
-                )
-            }
-        },
-        positiveButton = {
-            Button(
-                onClick = onConfirm,
-                colors = ButtonDefaults.primaryButtonColors()
-            ) {
-                Icon(
-                    imageVector = Filled.Check,
-                    contentDescription = stringResource(string.reset_counter_positive)
-                )
-            }
-        }
+        onOk = onConfirm,
+        onCancel = onCancel,
+        okButtonContentDescription = stringResource(string.reset_counter_positive),
+        cancelButtonContentDescription = stringResource(string.reset_counter_negative),
+        showPositionIndicator = true,
+        modifier = Modifier.background(MaterialTheme.colors.background),
     )
 }
 

@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.inputmethod.EditorInfo
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -38,6 +39,8 @@ import androidx.wear.compose.material.dialog.Alert
 import androidx.wear.compose.material.dialog.Confirmation
 import androidx.wear.input.RemoteInputIntentHelper
 import androidx.wear.input.wearableExtender
+import com.google.android.horologist.annotations.ExperimentalHorologistApi
+import com.google.android.horologist.compose.material.ResponsiveDialogContent
 import dev.veryniche.stitchcounter.R
 import dev.veryniche.stitchcounter.R.string
 import dev.veryniche.stitchcounter.core.Analytics
@@ -206,34 +209,19 @@ fun EditCounterScreen(
     }
 }
 
+@OptIn(ExperimentalHorologistApi::class)
 @Composable
 fun DeleteCounterAlert(counterName: String, onConfirm: () -> Unit, onCancel: () -> Unit) {
-    Alert(
+    ResponsiveDialogContent(
         title = {
             Text(stringResource(string.delete_project_message, counterName))
         },
-        negativeButton = {
-            Button(
-                onClick = onCancel,
-                colors = ButtonDefaults.secondaryButtonColors()
-            ) {
-                Icon(
-                    imageVector = Filled.Close,
-                    contentDescription = stringResource(string.delete_counter_negative)
-                )
-            }
-        },
-        positiveButton = {
-            Button(
-                onClick = onConfirm,
-                colors = ButtonDefaults.primaryButtonColors()
-            ) {
-                Icon(
-                    imageVector = Filled.Check,
-                    contentDescription = stringResource(string.delete_counter_positive)
-                )
-            }
-        }
+        onOk = onConfirm,
+        onCancel = onCancel,
+        okButtonContentDescription = stringResource(string.delete_counter_positive),
+        cancelButtonContentDescription = stringResource(string.delete_counter_negative),
+        showPositionIndicator = true,
+        modifier = Modifier.background(MaterialTheme.colors.background),
     )
 }
 

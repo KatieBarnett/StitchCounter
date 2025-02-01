@@ -46,8 +46,10 @@ import androidx.wear.compose.material.ListHeader
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
 import androidx.wear.compose.material.dialog.Alert
+import com.google.android.horologist.annotations.ExperimentalHorologistApi
 import com.google.android.horologist.compose.ambient.AmbientState
 import com.google.android.horologist.compose.ambient.AmbientStateUpdate
+import com.google.android.horologist.compose.material.ResponsiveDialogContent
 import dev.veryniche.stitchcounter.BuildConfig
 import dev.veryniche.stitchcounter.R
 import dev.veryniche.stitchcounter.R.string
@@ -236,37 +238,22 @@ fun ProjectContent(
     }
 }
 
+@OptIn(ExperimentalHorologistApi::class)
 @Composable
 fun ResetProjectAlert(projectName: String, onConfirm: () -> Unit, onCancel: () -> Unit) {
-    Alert(
+    ResponsiveDialogContent(
         title = {
             Text(
                 text = stringResource(string.reset_project_message, projectName),
                 textAlign = TextAlign.Center
             )
         },
-        negativeButton = {
-            Button(
-                onClick = onCancel,
-                colors = ButtonDefaults.secondaryButtonColors()
-            ) {
-                Icon(
-                    imageVector = Filled.Close,
-                    contentDescription = stringResource(string.reset_project_negative)
-                )
-            }
-        },
-        positiveButton = {
-            Button(
-                onClick = onConfirm,
-                colors = ButtonDefaults.primaryButtonColors()
-            ) {
-                Icon(
-                    imageVector = Filled.Check,
-                    contentDescription = stringResource(string.reset_project_positive)
-                )
-            }
-        }
+        onOk = onConfirm,
+        onCancel = onCancel,
+        okButtonContentDescription = stringResource(string.reset_project_positive),
+        cancelButtonContentDescription = stringResource(string.reset_project_negative),
+        showPositionIndicator = true,
+        modifier = Modifier.background(MaterialTheme.colors.background),
     )
 }
 
