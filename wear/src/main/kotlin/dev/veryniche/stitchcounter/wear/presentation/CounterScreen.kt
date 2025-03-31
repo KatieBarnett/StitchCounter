@@ -190,22 +190,69 @@ fun CounterContent(
             }
         }
     }
+
+    var accumulatedScroll by remember { mutableStateOf(0f) }
+    var lastEventTime by remember { mutableStateOf<Long?>(null) }
+    var lastThresholdTime by remember { mutableStateOf<Long>(0L) }
+    var accumulatedScrollNegative by remember { mutableStateOf(0f) }
+    var lastEventTimeNegative by remember { mutableStateOf<Long?>(null) }
+    var lastThresholdTimeNegative by remember { mutableStateOf<Long>(0L) }
     Box(modifier = modifier.fillMaxSize()) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
             modifier = Modifier
                 .fillMaxSize()
-                .onRotaryScrollEvent {
-                    // handle rotary scroll events
-                    if (it.verticalScrollPixels > 10) {
-                        onCounterUpdate.invoke(counter.copy(currentCount = counter.currentCount + 1))
+                .onRotaryScrollEvent { event ->
+                    val currentTime = event.uptimeMillis
+                    val scrollAmount = event.verticalScrollPixels
+                    if (scrollAmount > 0) {
+                        if (lastEventTime == null) {
+                            lastEventTime = currentTime
+                        }
+                        val timeDiff = currentTime - (lastEventTime ?: currentTime)
+                        if (timeDiff > 1000) { // Reset if more than 1 second has passed
+                            accumulatedScroll = 0f
+                            lastEventTime = currentTime
+                        }
+                        accumulatedScroll += scrollAmount
+                        lastEventTime = currentTime
+                        Timber.d(
+                            "Rotary scroll amount: ${event.verticalScrollPixels} time: ${event.uptimeMillis}, accumulated: $accumulatedScroll, timeDiff: $timeDiff"
+                        )
+                        if (accumulatedScroll >= 100) {
+                            val thresholdTimeDiff = currentTime - lastThresholdTime
+                            if (thresholdTimeDiff >= 1000) {
+                                onCounterUpdate.invoke(counter.copy(currentCount = counter.currentCount + 1))
+                                lastThresholdTime = currentTime
+                            }
+                            accumulatedScroll = 0f
+                            lastEventTime = null; // Reset timer
+                        }
+                    } else {
+                        if (lastEventTimeNegative == null) {
+                            lastEventTimeNegative = currentTime
+                        }
+                        val timeDiff = currentTime - (lastEventTimeNegative ?: currentTime)
+                        if (timeDiff > 1000) { // Reset if more than 1 second has passed
+                            accumulatedScrollNegative = 0f
+                            lastEventTimeNegative = currentTime
+                        }
+                        accumulatedScrollNegative += scrollAmount
+                        lastEventTimeNegative = currentTime
+                        Timber.d(
+                            "Rotary scroll amount: Negative ${event.verticalScrollPixels} time: ${event.uptimeMillis}, accumulated: $accumulatedScrollNegative, timeDiff: $timeDiff"
+                        )
+                        if (accumulatedScrollNegative <= -100) {
+                            val thresholdTimeDiff = currentTime - lastThresholdTimeNegative
+                            if (thresholdTimeDiff >= 1000) {
+                                onCounterUpdate.invoke(counter.copy(currentCount = counter.currentCount - 1))
+                                lastThresholdTimeNegative = currentTime
+                            }
+                            accumulatedScrollNegative = 0f
+                            lastEventTimeNegative = null; // Reset timer
+                        }
                     }
-
-                    if (it.verticalScrollPixels < -10) {
-                        onCounterUpdate.invoke(counter.copy(currentCount = counter.currentCount - 1))
-                    }
-                    Timber.d("Rotary scroll amount: ${it.verticalScrollPixels}")
                     true
                 }
                 .focusRequester(focusRequester)
