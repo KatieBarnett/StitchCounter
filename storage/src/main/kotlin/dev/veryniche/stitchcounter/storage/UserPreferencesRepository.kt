@@ -109,8 +109,9 @@ class UserPreferencesRepository @Inject constructor(
         }
     }
 
-    suspend fun updateHasBeenAskedForReview(hasBeenAskedForReview: Boolean) {
+    suspend fun updateHasBeenAskedForReviewAndUpdateDate(hasBeenAskedForReview: Boolean) {
         dataStore.edit { preferences ->
+            preferences[PreferencesKeys.LAST_REVIEW_DATE] = System.currentTimeMillis()
             preferences[PreferencesKeys.HAS_BEEN_ASKED_FOR_REVIEW] = hasBeenAskedForReview
         }
     }
