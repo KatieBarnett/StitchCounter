@@ -2,6 +2,7 @@ package dev.veryniche.stitchcounter.wear.presentation
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -15,12 +16,11 @@ import androidx.compose.material.icons.Icons.Filled
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.BrightnessHigh
 import androidx.compose.material.icons.filled.BrightnessLow
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Remove
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -30,13 +30,21 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.input.rotary.onRotaryScrollEvent
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.wear.compose.material.Button
 import androidx.wear.compose.material.ButtonDefaults
 import androidx.wear.compose.material.CircularProgressIndicator
@@ -46,7 +54,6 @@ import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.OutlinedButton
 import androidx.wear.compose.material.OutlinedCompactButton
 import androidx.wear.compose.material.Text
-import androidx.wear.compose.material.dialog.Alert
 import com.google.android.horologist.annotations.ExperimentalHorologistApi
 import com.google.android.horologist.composables.ProgressIndicatorSegment
 import com.google.android.horologist.composables.SquareSegmentedProgressIndicator
@@ -69,6 +76,7 @@ import dev.veryniche.stitchcounter.wear.presentation.theme.StitchCounterTheme
 import dev.veryniche.stitchcounter.wear.previews.PreviewScreen
 import dev.veryniche.stitchcounter.wear.util.conditional
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 @Composable
 fun CounterScreen(
@@ -165,13 +173,43 @@ fun CounterContent(
     } else {
         0.5f
     }
+    val lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current
 
+    val focusRequester: FocusRequester = remember { FocusRequester() }
+    LocalView.current.viewTreeObserver.addOnWindowFocusChangeListener {
+        if (it) {
+            focusRequester.requestFocus()
+        }
+    }
+    LaunchedEffect(Unit) {
+        lifecycleOwner.repeatOnLifecycle(state = Lifecycle.State.RESUMED) {
+            try {
+                focusRequester.requestFocus()
+            } catch (e: IllegalStateException) {
+                Timber.w(e, "Focus Requester not working")
+            }
+        }
+    }
     Box(modifier = modifier.fillMaxSize()) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
             modifier = Modifier
                 .fillMaxSize()
+                .onRotaryScrollEvent {
+                    // handle rotary scroll events
+                    if (it.verticalScrollPixels > 10) {
+                        onCounterUpdate.invoke(counter.copy(currentCount = counter.currentCount + 1))
+                    }
+
+                    if (it.verticalScrollPixels < -10) {
+                        onCounterUpdate.invoke(counter.copy(currentCount = counter.currentCount - 1))
+                    }
+                    Timber.d("Rotary scroll amount: ${it.verticalScrollPixels}")
+                    true
+                }
+                .focusRequester(focusRequester)
+                .focusable()
                 .padding(Dimen.withinProgressIndicatorPadding)
         ) {
             Row(

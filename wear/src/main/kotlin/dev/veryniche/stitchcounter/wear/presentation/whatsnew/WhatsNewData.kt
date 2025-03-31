@@ -31,6 +31,15 @@ val whatsNewData = listOf(
             )
         )
     ),
+    WhatsNewData(
+        id = 3,
+        text = listOf(
+            AnnotatedString(
+                "On the individual counter screen, you can now increase or " +
+                    "decrease the counter using the rotary bezel or crown."
+            )
+        )
+    ),
 //    WhatsNewData(
 //        id = 2,
 //        text = listOf(
