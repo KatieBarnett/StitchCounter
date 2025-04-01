@@ -62,7 +62,7 @@ constructor(
     }
 
     val isConnectedAppInfoDoNotShow = userPreferencesFlow.map {
-        it.isConectedAppInfoDoNotShow
+        it.isConnectedAppInfoDoNotShow
     }
 
     val phoneState: Flow<PhoneState> = appHelper.connectedAndInstalledNodes.map { connectedNodes ->

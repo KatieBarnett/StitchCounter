@@ -24,7 +24,7 @@ data class UserPreferences(
     val tileProjectId: Int?,
     val tileCounterId: Int?,
     val isProPurchased: Boolean,
-    val isConectedAppInfoDoNotShow: Boolean,
+    val isConnectedAppInfoDoNotShow: Boolean,
 )
 
 class UserPreferencesRepository @Inject constructor(
@@ -80,7 +80,7 @@ class UserPreferencesRepository @Inject constructor(
                 tileProjectId = tileProjectId,
                 tileCounterId = tileCounterId,
                 isProPurchased = isProPurchased,
-                isConectedAppInfoDoNotShow = isConnectedAppInfoDoNotShow,
+                isConnectedAppInfoDoNotShow = isConnectedAppInfoDoNotShow,
                 hasBeenAskedForReview = hasBeenAskedForReview,
             )
         }
