@@ -5,6 +5,7 @@ import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -84,7 +85,7 @@ fun PhoneAppInfoScreen(
             ListHeader(Modifier) {
                 ListTitle(
                     stringResource(R.string.phone_app_info_title),
-                    modifier = Modifier.padding(top = Dimen.spacingQuad)
+                    modifier = Modifier.padding(top = Dimen.spacingHuge)
                 )
             }
         }
@@ -156,6 +157,9 @@ fun PhoneAppInfoScreen(
                     )
                 },
             )
+        }
+        item {
+            Spacer(Modifier.padding(top = Dimen.spacingDouble))
         }
     }
 }
