@@ -84,7 +84,7 @@ constructor(
         viewModelScope.launch {
             if (appHelper.isAvailable()) {
                 phoneState.collectLatest {
-                    if (it.appInstalledOnPhoneList.isNotEmpty()) {
+                    if (it.appInstalledOnPhoneList?.isNotEmpty() == true) {
                         Timber.d("Syncing all projects")
                         syncAllProjects()
                     }
@@ -214,7 +214,7 @@ constructor(
     }
 
     suspend fun openAppOnPhoneForPurchase(state: PhoneState) {
-        val installedNodeId = state.appInstalledOnPhoneList.firstOrNull()
+        val installedNodeId = state.appInstalledOnPhoneList?.firstOrNull()
         if (installedNodeId != null) {
             val config = activityConfig {
                 classFullName = "dev.veryniche.stitchcounter.mobile.PurchaseProActivity"
@@ -232,7 +232,7 @@ constructor(
     }
 
     suspend fun openAppOnPhone(state: PhoneState) {
-        val installedNodeId = state.appInstalledOnPhoneList.firstOrNull()
+        val installedNodeId = state.appInstalledOnPhoneList?.firstOrNull()
         if (installedNodeId != null) {
             val result = appHelper.startRemoteOwnApp(installedNodeId)
             if (result != APP_HELPER_RESULT_SUCCESS) {
@@ -251,6 +251,6 @@ constructor(
 }
 
 data class PhoneState(
-    val appInstalledOnPhoneList: List<String> = listOf(),
+    val appInstalledOnPhoneList: List<String>? = null,
     val phoneConnected: Boolean = false,
 )

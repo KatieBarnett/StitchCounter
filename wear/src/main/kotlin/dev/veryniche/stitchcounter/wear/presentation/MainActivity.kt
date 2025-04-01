@@ -143,14 +143,14 @@ fun StitchCounterWearApp(
         )
         val phoneState by viewModel.phoneState.collectAsStateWithLifecycle(initialValue = PhoneState())
         val isPhoneAppInfoDoNotShow by viewModel.isConnectedAppInfoDoNotShow.collectAsStateWithLifecycle(
-            initialValue = false
+            initialValue = null
         )
 
         val startDestination = when (journey) {
             EXTRA_JOURNEY_SELECT_COUNTER -> "select_project_for_tile"
             else -> if (whatsNewToShow.isNotEmpty()) {
                 "whats_new"
-            } else if (phoneState.appInstalledOnPhoneList.isEmpty() && isPhoneAppInfoDoNotShow == false) {
+            } else if (phoneState.appInstalledOnPhoneList?.isEmpty() == true && isPhoneAppInfoDoNotShow == false) {
                 "phone_app_info"
             } else {
                 "project_list"

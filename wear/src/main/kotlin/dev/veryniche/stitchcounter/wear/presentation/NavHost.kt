@@ -86,7 +86,7 @@ fun NavHost(
                 listState = listState,
                 data = whatsNewToShow,
                 onClose = {
-                    if (phoneState.appInstalledOnPhoneList.isNotEmpty() || isPhoneAppInfoDoNotShow) {
+                    if (phoneState.appInstalledOnPhoneList?.isNotEmpty() == true || isPhoneAppInfoDoNotShow) {
                         navController.navigate("project_list")
                     } else {
                         navController.navigate("phone_app_info")
