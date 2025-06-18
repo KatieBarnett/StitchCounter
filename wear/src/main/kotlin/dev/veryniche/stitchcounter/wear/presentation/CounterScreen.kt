@@ -176,11 +176,6 @@ fun CounterContent(
     val lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current
 
     val focusRequester: FocusRequester = remember { FocusRequester() }
-    LocalView.current.viewTreeObserver.addOnWindowFocusChangeListener {
-        if (it) {
-            focusRequester.requestFocus()
-        }
-    }
     LaunchedEffect(Unit) {
         lifecycleOwner.repeatOnLifecycle(state = Lifecycle.State.RESUMED) {
             try {

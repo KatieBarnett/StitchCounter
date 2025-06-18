@@ -129,7 +129,7 @@ constructor(
     val isUninstalledWatchAvailable = flowOf(false)
 
     val isConnectedAppInfoDoNotShow = userPreferencesFlow.map {
-        it.isConectedAppInfoDoNotShow
+        it.isConnectedAppInfoDoNotShow
     }
 
     init {
