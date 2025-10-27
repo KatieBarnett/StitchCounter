@@ -31,8 +31,8 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    kotlinOptions {
-        jvmTarget = "17"
+    kotlin {
+        jvmToolchain(17)
     }
 }
 
@@ -74,18 +74,10 @@ protobuf {
     }
 }
 
-androidComponents {
-    onVariants(selector().all()) { variant ->
-        afterEvaluate {
-            val protoTask =
-                project.tasks.getByName("generate" + variant.name.replaceFirstChar { it.uppercaseChar() } + "Proto") as GenerateProtoTask
-
-            project.tasks.getByName("ksp" + variant.name.replaceFirstChar { it.uppercaseChar() } + "Kotlin") {
-                dependsOn(protoTask)
-                (this as org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompileTool<*>).setSource(
-                    protoTask.outputBaseDir
-                )
-            }
-        }
-    }
-}
+//androidComponents {
+//    onVariants(selector().all()) { variant ->
+//        val protoTask = tasks.named("generate" + variant.name.replaceFirstChar { it.uppercaseChar() } + "Proto", GenerateProtoTask::class.java)
+//        variant.sources.java?.addGeneratedSourceDirectory(protoTask, GenerateProtoTask::getOutputBaseDir)
+//        variant.sources.kotlin?.addGeneratedSourceDirectory(protoTask, GenerateProtoTask::getOutputBaseDir)
+//    }
+//}
