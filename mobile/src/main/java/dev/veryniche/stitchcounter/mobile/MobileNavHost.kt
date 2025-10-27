@@ -29,10 +29,7 @@ import dev.veryniche.stitchcounter.mobile.components.WearAppInfoDialog
 import dev.veryniche.stitchcounter.mobile.purchase.PurchaseAction
 import dev.veryniche.stitchcounter.mobile.purchase.PurchaseStatus
 import dev.veryniche.stitchcounter.mobile.screens.AboutScreen
-import dev.veryniche.stitchcounter.mobile.screens.CounterScreen
 import dev.veryniche.stitchcounter.mobile.screens.ProjectListScreen
-import dev.veryniche.stitchcounter.mobile.screens.ProjectScreen
-import dev.veryniche.stitchcounter.mobile.screens.SettingsScreen
 import dev.veryniche.stitchcounter.storage.ThemeMode
 import kotlinx.coroutines.launch
 
@@ -79,24 +76,6 @@ fun MobileNavHost(
         }
         composable<SettingsDestination> {
             onKeepScreenOnChanged.invoke(false)
-            SettingsScreen(
-                purchaseStatus = purchaseStatus,
-                onNavigateBack = { navController.navigateUp() },
-                onAboutClick = {
-                    navController.navigate(AboutDestination)
-                },
-                onPurchaseClick = onPurchaseClick,
-                onThemeModeSelected = {
-                    viewModel.updateThemeMode(it)
-                },
-                onKeepScreenOnStateSelected = {
-                    viewModel.updateScreenOnState(it)
-                },
-                snackbarHostState = snackbarHostState,
-                themeMode = themeMode,
-                keepScreenOnState = keepScreenOnState,
-                availableSubscriptions = availableSubscriptions,
-            )
         }
         composable<ProjectListDestination> {
             onKeepScreenOnChanged.invoke(false)
@@ -135,57 +114,6 @@ fun MobileNavHost(
             val projects: List<Project> by viewModel.projects.collectAsState(initial = emptyList())
             val projectState by viewModel.getProject(arguments.id).collectAsState(null)
             projectState?.let { project ->
-                ProjectScreen(
-                    project = project,
-                    projectEditMode = arguments.inEditMode,
-                    onAboutClick = {
-                        navController.navigate(AboutDestination)
-                    },
-                    onSave = { updatedProject ->
-                        coroutineScope.launch {
-                            viewModel.saveProject(updatedProject)
-                        }
-                    },
-                    onDelete = {
-                        coroutineScope.launch {
-                            trackEvent(Action.DeleteProject, isMobile = true)
-                            viewModel.deleteProject(arguments.id)
-                            navController.navigateUp()
-                        }
-                    },
-                    onBack = {
-                        navController.navigateUp()
-                    },
-                    onOpenCounter = { counter ->
-                        projectState?.id?.let {
-                            navController.navigate(CounterDestination(it, counter.id))
-                        }
-                    },
-                    onCounterUpdate = { updatedCounter ->
-                        coroutineScope.launch {
-                            viewModel.updateCounter(project, updatedCounter)
-                        }
-                    },
-                    onCounterDelete = { counter ->
-                        coroutineScope.launch {
-                            viewModel.deleteCounter(project.id ?: -1, counter.id)
-                        }
-                    },
-                    onAddCounter = { nextAction ->
-                        if ((projectState?.counters?.isEmpty() != false && projects.size == 1) ||
-                            purchaseStatus.isBundleSubscribed
-                        ) {
-                            nextAction.invoke()
-                        } else {
-                            trackEvent(ProPurchaseRequiredCounter, isMobile = true)
-                            showPurchaseDialogMessage = dev.veryniche.stitchcounter.mobile.R.string.purchase_limit_counters
-                        }
-                    },
-                    snackbarHostState = snackbarHostState,
-                    windowSizeClass = windowSizeClass,
-                    onSettingsClick = { navController.navigate(SettingsDestination) },
-                    purchaseStatus = purchaseStatus,
-                )
             }
         }
         composable<CounterDestination> { backstackNavigation ->
@@ -194,32 +122,7 @@ fun MobileNavHost(
             val coroutineScope = rememberCoroutineScope()
             val projectState by viewModel.getProject(arguments.projectId).collectAsState(null)
             projectState?.counters?.firstOrNull { it.id == arguments.counterId }?.let { counter ->
-                CounterScreen(
-                    counter = counter,
-                    onAboutClick = {
-                        navController.navigate(AboutDestination)
-                    },
-                    onCounterUpdate = { updatedCounter ->
-                        coroutineScope.launch {
-                            projectState?.let {
-                                viewModel.updateCounter(it, updatedCounter)
-                            }
-                        }
-                    },
-                    onCounterDelete = {
-                        coroutineScope.launch {
-                            viewModel.deleteCounter(arguments.projectId, counter.id)
-                            navController.navigateUp()
-                        }
-                    },
-                    onBack = {
-                        navController.navigateUp()
-                    },
-                    snackbarHostState = snackbarHostState,
-                    windowSizeClass = windowSizeClass,
-                    onSettingsClick = { navController.navigate(SettingsDestination) },
-                    purchaseStatus = purchaseStatus,
-                )
+                
             }
         }
     }
