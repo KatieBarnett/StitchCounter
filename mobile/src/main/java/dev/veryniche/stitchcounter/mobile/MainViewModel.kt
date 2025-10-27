@@ -61,19 +61,23 @@ constructor(
         fun create(purchaseManager: PurchaseManager, appHelper: PhoneDataLayerAppHelper): MainViewModel
     }
 
-    val purchaseStatus = purchaseManager.subscriptions.map { activeSubscriptions ->
-        val isProPurchased = activeSubscriptions?.let {
-            val isProPurchased = it.contains(Products.bundle)
-            eventsToWatch.emit(
-                Event(
-                    path = PRO_PURCHASED_PATH,
-                    key = KEY_PRO_PURCHASED,
-                    data = isProPurchased.toString()
+    val purchaseStatus: Flow<PurchaseStatus> = if (BuildConfig.DEBUG) {
+        flowOf(PurchaseStatus(isBundleSubscribed = true))
+    } else {
+        purchaseManager.subscriptions.map { activeSubscriptions ->
+            val isProPurchased = activeSubscriptions?.let {
+                val isProPurchased = it.contains(Products.bundle)
+                eventsToWatch.emit(
+                    Event(
+                        path = PRO_PURCHASED_PATH,
+                        key = KEY_PRO_PURCHASED,
+                        data = isProPurchased.toString()
+                    )
                 )
-            )
-            isProPurchased
+                isProPurchased
+            }
+            PurchaseStatus(isBundleSubscribed = isProPurchased == true)
         }
-        PurchaseStatus(isBundleSubscribed = isProPurchased == true)
     }
 
     val availableSubscriptions: Flow<List<Subscription>> = purchaseManager.availableSubscriptions
