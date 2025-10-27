@@ -28,7 +28,7 @@ android {
     buildTypes {
         debug {
             versionNameSuffix = ".debug"
-            buildConfigField("boolean", "SHOW_IDS", "true")
+            buildConfigField("boolean", "SHOW_IDS", "false")
         }
         release {
             isMinifyEnabled = true
